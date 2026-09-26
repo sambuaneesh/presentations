@@ -35,7 +35,7 @@ you need to work on the tooling itself.
 - Keep the CLI, the `pres` screen (`bin/lib/app.mjs`) and the studio in step: a new command or
   `deck.json` field should appear in all of them. The user doesn't memorise commands; the screen
   is how they use `pres`, so it needs everything, in plain words, with key hints on screen.
-  `deck.json` stays minimal (`title`, optional `description`, `listed`, `pack`, `publish`); don't
+  `deck.json` stays minimal (`title`, optional `description`, `listed`, `pack`, `publish`, `home`); don't
   add tags, dates or presenters to the UI.
 - A new shape type also needs the live-room schema (`sync-worker/src/TldrawDurableObject.ts`) and a
   worker redeploy (ask first: it's outward-facing).

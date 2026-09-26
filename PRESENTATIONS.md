@@ -20,12 +20,18 @@ puts it on the PATH). If `pres` isn't found, use `node {{REPO}}/bin/pres.mjs` in
   copies it to the website.
 - **In the presentations repo** (`{{REPO}}/decks/<folder>/<name>/`): `pres new "<Title>" --in <folder>`.
 
+A talk that's already on the website can be **brought into a project** to work on it there:
+`pres bring <deck> --into <project>` (on the `pres` screen: open it, then *Work on it in this
+project*). The project copy publishes back to the same place, and the website copy records where it's
+edited (`"home"` in its deck.json); edit only the project copy then.
+
 A deck folder:
 
 ```
 <name>/
   <name>.tldraw     the deck (tldraw Desktop document; never edit it as a file)
-  deck.json         { "title", "description", "listed", "pack" } (+ "publish": { "folder" } for project decks)
+  deck.json         { "title", "description", "listed", "pack" } (+ "publish": { "folder" } for project decks,
+                    "home" on a website copy that's edited in a project)
   slides/           the slides as code: manifest.json (the order) + one .js file per slide
   cover.jpg         the website card (made when publishing)
   ext/              optional: the deck's own actions/scenes (see {{REPO}}/docs/extending.md)
@@ -144,6 +150,7 @@ pres build <deck> [--only a,b]               draw slides/*.js into the deck
 pres shot <deck> [--slide n|name] [--step k | --steps] [--all] [--out dir]   screenshots; prints the paths
 pres check [<deck>]                          validate
 pres publish <deck> [--to <folder>] [-m "…"] put just this deck on the website
+pres bring <deck> [--into <project>]         copy a website deck into a project to work on it there
 pres open <deck> · cover <deck> · install <deck>
 pres pack · pres upgrade <deck>              template versions (below)
 pres folder <path> · move <deck> <folder>    organise the website's tree

@@ -3,5 +3,6 @@
 	"description": "",
 	"date": "2026-09-26",
 	"listed": true,
-	"pack": 1
+	"pack": 1,
+	"home": "~/IIITH/Research/decomplab/presentations/agentic-workflow"
 }

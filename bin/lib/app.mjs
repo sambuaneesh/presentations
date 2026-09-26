@@ -32,6 +32,15 @@ function whereAmI() {
 	return { repo: false, root, name: path.basename(root), here: cwd }
 }
 
+// Other names a project goes by: its GitHub repo names (a folder called "decomplab" may be the
+// repo "mono2micro-research"), so it can be matched to the right website folder.
+function aliases(where) {
+	const names = new Set([where.name])
+	const remotes = spawnSync('git', ['remote', '-v'], { cwd: where.root, encoding: 'utf8' })
+	for (const m of (remotes.stdout ?? '').matchAll(/[/:]([^/\s]+?)(?:\.git)?\s/g)) names.add(m[1])
+	return [...names]
+}
+
 // The deck you're standing in, if any (cd into a deck folder, then `pres`).
 function deckHere(where) {
 	for (let d = where.here; d.startsWith(where.root) && d !== path.dirname(d); d = path.dirname(d)) {
@@ -95,9 +104,14 @@ function folderGuesses({ deck, project, title, moving = false } = {}) {
 			add(100, 'where it is now')
 		}
 		if (hereRel && (hereRel === f.path || hereRel.startsWith(f.path + '/'))) add(90, "you're in it")
-		const pn = norm(project)
 		const names = [f.name, f.title].map(norm)
-		if (pn && names.some((n) => n && (pn.includes(n) || n.includes(pn)))) add(60, `matches the project “${project}”`)
+		for (const alias of [project].flat().filter(Boolean)) {
+			const pn = norm(alias)
+			if (pn && names.some((n) => n && n.length >= 3 && (pn.includes(n) || n.includes(pn)))) {
+				add(60, `matches the project “${alias}”`)
+				break
+			}
+		}
 		const tw = new Set([...words(title ?? deck?.meta.title), ...words(deck?.meta.description)])
 		const fw = new Set([...words(f.name), ...words(f.title), ...words(f.description)])
 		const inside = decks.filter((d) => d.folder === f.path || d.folder.startsWith(f.path + '/'))
@@ -167,6 +181,7 @@ let W // where we are
 export async function runApp(api) {
 	A = api
 	W = whereAmI()
+	W.aliases = W.repo ? [] : aliases(W)
 	start()
 	try {
 		const here = deckHere(W)
@@ -182,7 +197,10 @@ async function homeScreen() {
 	for (;;) {
 		const local = W.repo ? [] : localDecksOf(W.root)
 		const { folders, decks } = A.walk()
-		const related = W.repo ? [] : folderGuesses({ project: W.name }).filter((g) => g.why.startsWith('matches the project')).map((g) => g.f)
+		const related = W.repo ? [] : folderGuesses({ project: W.aliases }).filter((g) => g.why.startsWith('matches the project')).map((g) => g.f)
+		// A project presentation and its copy on the website are one presentation: list it once.
+		const twins = new Set(local.map((d) => (d.meta.publish?.folder !== undefined ? [d.meta.publish.folder, d.name].filter(Boolean).join('/') : null)).filter(Boolean))
+		const visible = decks.filter((d) => !twins.has(d.path))
 		const items = []
 		const deckItem = (d, where) => {
 			const p = published(d)
@@ -197,14 +215,14 @@ async function homeScreen() {
 		items.push({ label: '＋ New presentation', value: 'new', key: 'n', about: W.repo ? 'Make a presentation in one of the website’s folders. It starts with three hand-drawn slides.' : `Make a presentation inside this project (./${A.LOCAL_DIR}/). Only it is yours to change; publishing puts a copy on the website.` })
 		items.push({ label: '✦ Ask an agent to make one', value: 'agent', key: 'a', about: 'Describe the talk; you get a ready-made request to paste into Claude Code, Codex, Cursor or any agent (copied to the clipboard).' })
 		for (const f of related) {
-			const inside = decks.filter((d) => d.folder === f.path || d.folder.startsWith(f.path + '/'))
+			const inside = visible.filter((d) => d.folder === f.path || d.folder.startsWith(f.path + '/'))
 			if (!inside.length) continue
 			items.push({ heading: true, label: `Related on the website · ${f.path}` })
 			for (const d of inside) items.push(deckItem(d, d.folder))
 		}
 		items.push({ heading: true, label: related.length ? 'Everything else on the website' : `On the website · ${decks.length} presentation${decks.length === 1 ? '' : 's'}` })
-		const shownRelated = new Set(related.flatMap((f) => decks.filter((d) => d.folder === f.path || d.folder.startsWith(f.path + '/')).map((d) => d.dir)))
-		for (const d of decks) if (!shownRelated.has(d.dir)) items.push(deckItem(d, d.folder || 'top level'))
+		const shownRelated = new Set(related.flatMap((f) => visible.filter((d) => d.folder === f.path || d.folder.startsWith(f.path + '/')).map((d) => d.dir)))
+		for (const d of visible) if (!shownRelated.has(d.dir)) items.push(deckItem(d, d.folder || 'top level'))
 		items.push({ heading: true, label: 'More' })
 		items.push({ label: 'Open the website', value: 'site', key: 'w', hint: A.remoteSite() ?? '' })
 		items.push({ label: 'Folders on the website', value: 'folders', key: 'f', about: 'See the folders, rename their titles, make new ones.' })
@@ -219,7 +237,7 @@ async function homeScreen() {
 
 		const intro = (cols) => [
 			fit(W.repo ? `${c.bold('Your presentations')}  ${c.grey(tilde(A.ROOT))}` : `${c.bold(W.name)}  ${c.grey(tilde(W.root))}`, cols),
-			W.repo ? c.grey(`${decks.length} on the website, in ${folders.length} folder${folders.length === 1 ? '' : 's'}.`) : c.grey(local.length ? `${local.length} presentation${local.length === 1 ? '' : 's'} in this project.` : related.length ? `Nothing here yet · this project looks related to ${related.map((f) => f.path).join(', ')} on the website.` : 'Nothing here yet. Make one, or ask an agent to.'),
+			W.repo ? c.grey(`${decks.length} on the website, in ${folders.length} folder${folders.length === 1 ? '' : 's'}.`) : c.grey(local.length ? `${local.length} presentation${local.length === 1 ? '' : 's'} in this project${related.length ? ` · related to ${related.map((f) => f.path).join(', ')} on the website` : ''}.` : related.length ? `Nothing here yet · this project looks related to ${related.map((f) => f.path).join(', ')} on the website: open one of its talks to bring it here.` : 'Nothing here yet. Make one, or ask an agent to.'),
 		]
 		const choice = await menu({ crumbs: [], intro, items, search: true, start: last, back: false, hints: [['q', 'quit']] })
 		last = choice
@@ -263,18 +281,24 @@ async function deckScreen(deck) {
 		const newer = pack !== 'dev' && versions.length && Number(pack) < versions.at(-1) ? versions.at(-1) : null
 		const slides = manifest(deck)
 		const where = deck.local ? tilde(deck.dir) : `decks/${deck.path}`
+		const home = deck.local ? null : A.homeOf(deck)
+		const homeHere = home && fs.existsSync(home) ? home : null
 		const url = p.at && p.state !== 'never' ? siteUrl(p.at) : null
 		const intro = (cols) => [
 			c.bold(title) + (deck.meta.description ? c.grey('  ' + deck.meta.description) : ''),
 			'',
 			`${c.grey('where    ')} ${where}`,
+			...(homeHere ? [`${c.grey('edited in')} ${c.yellow(tilde(homeHere))}  ${c.grey('(this is its website copy: change it there)')}`] : []),
 			`${c.grey('slides   ')} ${n ?? '?'}${deck.hasSlides ? c.grey(` · drawn from code (${slides.length} in slides/)`) : c.grey(' · drawn by hand')}`,
 			`${c.grey('website  ')} ${stateText(p)}${!url && deck.local && p.at ? c.grey(`  · will go to ${p.at}`) : ''}`,
 			...(url ? [`${c.grey('link     ')} ${c.grey(url)}`] : []),
 			`${c.grey('tldraw   ')} ${doc ? (doc.unsavedChanges ? c.yellow('open, unsaved changes') : 'open') : c.grey('closed')}`,
 			`${c.grey('template ')} version ${pack}${newer ? c.yellow(`  · version ${newer} is available`) : ''}`,
 		].map((l, i) => (i ? fit(l, cols) : l))
+		const bringable = !deck.local && !W.repo && !homeHere
 		const items = [
+			...(homeHere ? [{ heading: true, label: 'Worked on elsewhere' }, { label: 'Go to the copy you work on', value: 'home', key: 'h', about: `${tilde(homeHere)}: publishing from there updates this website copy.` }] : []),
+			...(bringable ? [{ heading: true, label: 'This project' }, { label: 'Work on it in this project', value: 'bring', key: 'h', about: `Copies it into ./${A.LOCAL_DIR}/${deck.name}/ in ${W.name}. You (and this project's agent) edit it there; publishing sends it back to ${deck.path}.` }] : []),
 			{ heading: true, label: 'Make it' },
 			{ label: doc ? 'Show it in tldraw' : 'Open it in tldraw', value: 'open', key: 'o', about: 'Draw and edit by hand in tldraw Desktop.' },
 			...(deck.hasSlides
@@ -307,7 +331,14 @@ async function deckScreen(deck) {
 		last = choice
 		if (choice === null) return
 		const target = deck.dir
-		if (choice === 'open') await pres(crumbs, 'Opening it in tldraw', ['open', target])
+		if (choice === 'home') await deckScreen(A.deckAt(homeHere))
+		else if (choice === 'bring') {
+			const ok = await confirm({ crumbs, question: `Work on “${title}” in ${W.name}?`, detail: [`It's copied to ${tilde(path.join(W.root, A.LOCAL_DIR, deck.name))}/ and publishes back to ${deck.path}.`, 'The website copy is marked as edited there, so it isn’t changed in two places.'], yes: 'Yes, bring it here' })
+			if (ok) {
+				const r = await pres(crumbs, 'Bringing it into this project', ['bring', deck.dir, '--into', W.root])
+				if (r.ok) return deckScreen(A.deckAt(path.join(W.root, A.LOCAL_DIR, deck.name)))
+			}
+		} else if (choice === 'open') await pres(crumbs, 'Opening it in tldraw', ['open', target])
 		else if (choice === 'build') await pres(crumbs, 'Building the slides', ['build', target])
 		else if (choice === 'build-one') {
 			const which = await pick({ crumbs, question: 'Which slide?', options: slides.map((s, i) => ({ label: s, value: s, hint: `slide ${i + 1}` })) })
@@ -325,7 +356,7 @@ async function deckScreen(deck) {
 		else if (choice === 'cover') await pres(crumbs, 'Making the cover', ['cover', target])
 		else if (choice === 'edit') await editFlow(deck, crumbs)
 		else if (choice === 'folder') {
-			const f = await chooseFolder({ crumbs, question: 'Where should it appear on the website?', deck, project: W.name })
+			const f = await chooseFolder({ crumbs, question: 'Where should it appear on the website?', deck, project: W.aliases })
 			if (f !== null) {
 				deck.meta.publish = { folder: f }
 				fs.writeFileSync(path.join(deck.dir, 'deck.json'), JSON.stringify(deck.meta, null, '\t') + '\n')
@@ -363,7 +394,7 @@ async function publishFlow(deck, crumbs) {
 	if (deck.local) {
 		folder = deck.meta.publish?.folder
 		if (folder === undefined) {
-			folder = await chooseFolder({ crumbs, question: `Where on the website should “${title}” go?`, deck, project: W.name })
+			folder = await chooseFolder({ crumbs, question: `Where on the website should “${title}” go?`, deck, project: W.aliases })
 			if (folder === null) return
 		}
 	}
@@ -420,7 +451,7 @@ async function newFlow() {
 	let place
 	if (W.repo) place = { folder: await chooseFolder({ crumbs: [...crumbs, title], question: 'Which folder on the website?', title }) }
 	else {
-		const guess = folderGuesses({ project: W.name, title })[0]
+		const guess = folderGuesses({ project: W.aliases, title })[0]
 		const choice = await menu({
 			crumbs: [...crumbs, title],
 			intro: [c.bold('Where should it live while you make it?')],
@@ -430,7 +461,7 @@ async function newFlow() {
 			],
 		})
 		if (choice === null) return null
-		place = choice === 'here' ? { here: true } : { folder: await chooseFolder({ crumbs: [...crumbs, title], question: 'Which folder on the website?', project: W.name, title }) }
+		place = choice === 'here' ? { here: true } : { folder: await chooseFolder({ crumbs: [...crumbs, title], question: 'Which folder on the website?', project: W.aliases, title }) }
 	}
 	if (place.folder === null) return null
 	const description = await input({ crumbs: [...crumbs, title], question: 'A one-line description?', detail: ['Shown on its card. Optional: press enter to skip.'], optional: true })

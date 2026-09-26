@@ -97,7 +97,10 @@ pres shot what-we-built --all              # screenshots to check
 pres publish what-we-built --to talks      # onto the website, in decks/talks/
 ```
 
-The first publish asks which folder (`--to`); it's remembered in its `deck.json`. Commit the
+The first publish asks which folder (`--to`); it's remembered in its `deck.json`. A talk that's
+already on the website moves into a project the other way round: `pres bring <deck> --into <project>`
+(or *Work on it in this project* on its page in the `pres` screen). Either way the website copy
+records where it's edited (`"home"`), and the `pres` screen points you there. Commit the
 `presentations/` folder in that project if you like; the website gets its own copy on each publish.
 [PRESENTATIONS.md](../PRESENTATIONS.md) is the full guide an agent follows.
 

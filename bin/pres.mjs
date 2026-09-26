@@ -22,6 +22,7 @@
 //   pres check [<deck>]                      validate deck(s) before publishing
 //   pres publish <deck> [--to <folder>] [-m "…"]
 //                                            commit and push just this deck to the website
+//   pres bring <deck> [--into <project>]     copy a website deck into a project to work on it there
 //   pres open <deck> · install <deck> · cover <deck>
 //   pres pack [release]                      pack versions and which decks use them; freeze script/ as a new one
 //   pres upgrade <deck> [--to <n>|dev]       move a deck to the newest (or another) pack version
@@ -196,18 +197,54 @@ export function makeFolder(rel, title) {
 
 // Pointer files for agents working inside a deck that lives in another project.
 function writeAgentPointers(dir) {
+	const name = path.basename(dir)
+	const deck = deckAt(dir)
+	const lines = [
+		deck.hasSlides && `- slides: \`slides/*.js\` (order in \`slides/manifest.json\`), drawn with \`pres build ${name}\``,
+		!deck.hasSlides && `- slides: drawn in tldraw (open it with \`pres open ${name}\`); add code slides in \`slides/\` if you like (see the guide)`,
+		deck.hasExt && `- its own code (animated scenes, actions): \`ext/\`; after changing it, \`pres install ${name}\``,
+		`- check: \`pres shot ${name} --all\` (look at the images), \`pres check ${name}\``,
+		deck.meta.publish?.folder !== undefined
+			? `- on the website at \`${[deck.meta.publish.folder, name].filter(Boolean).join('/')}\`; \`pres publish ${name}\` updates it (only when asked)`
+			: `- publish to the website: \`pres publish ${name} --to <folder>\` (only when asked)`,
+	].filter(Boolean)
 	const text = `# This folder is a presentation
 
-It was made with \`pres\` (${ROOT}) and is drawn in its hand-made house style.
+${deck.meta.title ? `“${deck.meta.title}”, made` : 'Made'} with \`pres\` (${ROOT}) in its hand-made house style.
 Before changing it, **run \`pres guide\`** and follow it: the style, the facts rules, the slide kit,
-and how to check your work.
+and how to check your work. Every fact on a slide must come from this project's sources.
 
-- slides: \`slides/*.js\` (order in \`slides/manifest.json\`), drawn with \`pres build ${path.basename(dir)}\`
-- check: \`pres shot ${path.basename(dir)} --all\` (look at the images), \`pres check ${path.basename(dir)}\`
-- publish to the website: \`pres publish ${path.basename(dir)}\` (asks for \`--to <folder>\` the first time)
+${lines.join('\n')}
 `
 	fs.writeFileSync(path.join(dir, 'AGENTS.md'), text)
 	fs.writeFileSync(path.join(dir, 'CLAUDE.md'), '@AGENTS.md\n')
+}
+
+const tildePath = (p) => (p.startsWith(os.homedir() + path.sep) ? '~' + p.slice(os.homedir().length) : p)
+const untilde = (p) => (p?.startsWith('~/') ? path.join(os.homedir(), p.slice(2)) : p)
+// Where a website deck is really worked on, if it came from (or was brought into) a project.
+export const homeOf = (deck) => (deck.meta.home ? untilde(deck.meta.home) : null)
+
+// Bring a website deck into a project (./presentations/<name>/) to work on it there. The project copy
+// publishes back to the same place, and the website copy records where it's edited.
+export async function bringDeck(deck, into) {
+	if (deck.local) die(`${deck.label} is already a project presentation`)
+	into = path.resolve(into)
+	if (into === ROOT || into.startsWith(ROOT + path.sep)) die('bring it into another project, not this repo')
+	if (!fs.existsSync(into)) die(`no folder ${into}`)
+	const dest = path.join(into, LOCAL_DIR, deck.name)
+	if (fs.existsSync(dest)) die(`${tildePath(dest)} already exists`)
+	const open = ((await openDocs()) ?? []).find((d) => d.filePath && path.resolve(d.filePath) === deck.file)
+	if (open?.unsavedChanges) await (await tl()).exec(open.id, 'await helpers.saveDoc(); return true')
+	fs.mkdirSync(path.dirname(dest), { recursive: true })
+	fs.cpSync(deck.dir, dest, { recursive: true, filter: (src) => !PUBLISH_SKIP.has(path.basename(src)) })
+	const meta = { ...deck.meta, publish: { folder: deck.folder } }
+	delete meta.home
+	fs.writeFileSync(path.join(dest, 'deck.json'), JSON.stringify(meta, null, '\t') + '\n')
+	writeAgentPointers(dest)
+	deck.meta.home = tildePath(dest)
+	fs.writeFileSync(path.join(deck.dir, 'deck.json'), JSON.stringify(deck.meta, null, '\t') + '\n')
+	return dest
 }
 
 export async function newDeck({ title, folder = '', name, description = '', here = false, cwd = process.cwd() }) {
@@ -411,6 +448,11 @@ async function screenshots(deck, doc, { slides = null, step = null, size = 'larg
 	return results
 }
 
+function warnHome(deck) {
+	const home = homeOf(deck)
+	if (!deck.local && home && fs.existsSync(home)) console.log(`note: ${deck.label} is worked on in ${tildePath(home)}; changes made here are replaced the next time it's published from there`)
+}
+
 // ---------- checking ----------
 async function checkDecks(decks) {
 	let problems = 0
@@ -421,6 +463,7 @@ async function checkDecks(decks) {
 		else if (!d.meta.title) bad(d, 'deck.json has no title')
 		if (!NAME.test(d.name)) bad(d, 'deck names are lowercase letters, digits and dashes')
 		if (!d.hasFile) bad(d, `missing ${d.name}.tldraw`)
+		if (!d.local && homeOf(d) && !fs.existsSync(homeOf(d))) console.log(`· ${d.label}: its project copy (${d.meta.home}) is gone; edit it here, or remove "home" from deck.json`)
 		if (d.meta.pack === undefined) console.log(`· ${d.label}: no "pack" in deck.json; it follows the newest pack version (pres upgrade ${d.name} pins it)`)
 		else if (d.meta.pack !== 'dev' && !packVersions().includes(Number(d.meta.pack))) bad(d, `deck.json asks for pack ${d.meta.pack}, which doesn't exist`)
 		else if (d.meta.pack === 'dev') console.log(`· ${d.label}: runs the unreleased pack ("dev"); release it (pres pack release) and upgrade before publishing`)
@@ -496,6 +539,13 @@ async function publishDeck(deck, { to, message }) {
 		const dest = path.join(tmp, 'decks', ...target.split('/'))
 		fs.rmSync(dest, { recursive: true, force: true })
 		fs.cpSync(deck.dir, dest, { recursive: true, filter: (src) => !PUBLISH_SKIP.has(path.basename(src)) && !(deck.local && ['AGENTS.md', 'CLAUDE.md'].includes(path.basename(src)) && path.dirname(src) === deck.dir) })
+		// The website copy remembers where it's worked on, so nobody edits it in two places.
+		if (deck.local) {
+			const f = path.join(dest, 'deck.json')
+			const meta = readJson(f) ?? {}
+			meta.home = tildePath(deck.dir)
+			fs.writeFileSync(f, JSON.stringify(meta, null, '\t') + '\n')
+		}
 		// Its folders need a folder.json (a title); take the central checkout's, else make one.
 		const parts = target.split('/').slice(0, -1)
 		for (let i = 1; i <= parts.length; i++) {
@@ -533,7 +583,7 @@ async function publishDeck(deck, { to, message }) {
 // Bring your own checkout of the repo up to date with what was just pushed, when that is safe.
 function catchUpCheckout(deck, target) {
 	git(['fetch', '--quiet', 'origin'])
-	const paths = deck.local ? [] : [path.join('decks', ...target.split('/'))]
+	const paths = [path.join('decks', ...target.split('/'))]
 	let stashed = false
 	if (paths.length && git(['status', '--porcelain', '--', ...paths]).stdout.trim()) {
 		// The published deck's files are in the new commit already; set your copy aside while fast-forwarding.
@@ -608,8 +658,15 @@ const commands = {
 
 	async open(args) {
 		const deck = findDeck(args._[0])
+		warnHome(deck)
 		const doc = await openDocFor(deck)
 		console.log(`${deck.label} is open (${doc.name})`)
+	},
+
+	async bring(args) {
+		const deck = findDeck(args._[0])
+		const dest = await bringDeck(deck, args.into ?? process.cwd())
+		console.log(`brought ${deck.label} into ${tildePath(dest)}/: work on it there; pres publish ${deck.name} (run from that project) updates the website`)
 	},
 
 	async install(args) {
@@ -654,6 +711,7 @@ const commands = {
 
 	async build(args) {
 		const deck = findDeck(args._[0])
+		warnHome(deck)
 		if (!deck.hasSlides) die(`${deck.label} has no slides/manifest.json (it is drawn by hand, not from code).`)
 		const doc = await openDocFor(deck)
 		const extra = [args.only && ['--only', String(args.only)], args['clear-scenes'] && ['--clear-scenes']].filter(Boolean).flat()
@@ -719,7 +777,7 @@ const commands = {
 
 // What the TUI (lib/app.mjs) uses. Handed over rather than imported: this module is still running
 // (top-level await) while the TUI runs, so importing it back would wait forever.
-const API = { ROOT, DECKS, PACK, LOCAL_DIR, GUIDE, PRES: fileURLToPath(import.meta.url), NAME, walk, localDecks, deckAt, isDeckDir, slugify, titleFromName, readJson, packVersions, latestPack, openDocs, remoteSite, git }
+const API = { homeOf, tildePath, ROOT, DECKS, PACK, LOCAL_DIR, GUIDE, PRES: fileURLToPath(import.meta.url), NAME, walk, localDecks, deckAt, isDeckDir, slugify, titleFromName, readJson, packVersions, latestPack, openDocs, remoteSite, git }
 
 if (AS_CLI) {
 	const [cmd, ...rest] = process.argv.slice(2)
