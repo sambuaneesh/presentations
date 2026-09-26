@@ -9,13 +9,16 @@
 //     into the tree when it's ready
 // A deck can be named by its folder path, its path in the tree, or any unique part of its name.
 //
+//   pres                                     (in a terminal) the friendly all-in-one screen
+//   pres help                                this list
 //   pres guide [--full]                      the instructions: style, workflow, the slide kit
 //   pres list [--json]                       the central tree (and ./presentations/ decks here)
 //   pres new "<title>" [--in <folder>] [--here] [--name <name>] [--description "…"]
 //                                            make a deck from the starter (tldraw not needed)
 //   pres build <deck> [--only a,b]           draw the deck's code slides (slides/*.js) into it
-//   pres shot <deck> [--slide n|name] [--step k] [--all] [--out dir]
-//                                            screenshot slides (prints image paths) to check them
+//   pres shot <deck> [--slide n|name] [--step k | --steps] [--all] [--out dir]
+//                                            screenshot slides (prints image paths) to check them;
+//                                            --steps: one image per click
 //   pres check [<deck>]                      validate deck(s) before publishing
 //   pres publish <deck> [--to <folder>] [-m "…"]
 //                                            commit and push just this deck to the website
@@ -367,8 +370,9 @@ async function saveCover(deck, doc) {
 }
 
 // Screenshot slides of an open deck. `slides`: 1-based numbers or name fragments; `step`: show the
-// slide as it looks after that many clicks (default: everything revealed). Returns [{ n, name, file }].
-async function screenshots(deck, doc, { slides = null, step = null, size = 'large', out } = {}) {
+// slide as it looks after that many clicks (default: everything revealed), or 'all' for one image per
+// click (0 … its last). Returns [{ n, name, step, file }].
+async function screenshots(deck, doc, { slides = null, step = null, size = 'large', out, onShot = () => {} } = {}) {
 	const { search, exec } = await tl()
 	const frames = await search(`return (await api.getShapes(${JSON.stringify(doc.id)})).shapes.filter(s => s.type === 'frame' && !s.meta?.joinSlide).sort((a, b) => a.x - b.x || a.y - b.y).map(f => ({ id: f.id, name: f.props.name, x: f.x, y: f.y, w: f.props.w, h: f.props.h }))`)
 	const pick = slides
@@ -382,15 +386,24 @@ async function screenshots(deck, doc, { slides = null, step = null, size = 'larg
 	out = out ?? path.join(os.tmpdir(), 'pres-shots', deck.name)
 	fs.mkdirSync(out, { recursive: true })
 	const results = []
+	const jobs = []
 	for (const f of pick) {
 		const n = frames.indexOf(f) + 1
+		if (step !== 'all') jobs.push({ f, n, step })
+		else {
+			const last = await exec(doc.id, `const id = ${JSON.stringify(f.id)}; return Math.max(0, ...editor.getCurrentPageShapes().filter(s => typeof s.meta?.beat === 'number' && editor.hasAncestor(s, id)).map(s => s.meta.beat))`)
+			for (let k = 0; k <= last; k++) jobs.push({ f, n, step: k })
+		}
+	}
+	for (const { f, n, step } of jobs) {
 		// A step is shown by pinning the slide (meta.previewBeat), shooting it, and unpinning it again.
 		if (step !== null) await exec(doc.id, `editor.run(() => editor.updateShape({ id: ${JSON.stringify(f.id)}, type: 'frame', meta: { ...editor.getShape(${JSON.stringify(f.id)}).meta, previewBeat: ${Number(step)} } }), { history: 'ignore', ignoreShapeLock: true }); await new Promise(r => setTimeout(r, 400)); return true`)
 		try {
 			const file = await search(`return (await api.getScreenshot(${JSON.stringify(doc.id)}, { size: ${JSON.stringify(size)}, bounds: { x: ${f.x}, y: ${f.y}, w: ${f.w}, h: ${f.h} } })).filePath`)
 			const dest = path.join(out, `${String(n).padStart(2, '0')}${step !== null ? `-step${step}` : ''}.jpg`)
 			fs.copyFileSync(file, dest)
-			results.push({ n, name: f.name, file: dest })
+			results.push({ n, name: f.name, step, file: dest })
+			onShot(results.at(-1), jobs.length)
 		} finally {
 			if (step !== null) await exec(doc.id, `const s = editor.getShape(${JSON.stringify(f.id)}); const { previewBeat, ...meta } = s.meta; editor.run(() => editor.updateShape({ id: s.id, type: 'frame', meta }), { history: 'ignore', ignoreShapeLock: true }); await helpers.saveDoc(); return true`)
 		}
@@ -654,8 +667,11 @@ const commands = {
 		const deck = findDeck(args._[0])
 		const doc = await openDocFor(deck)
 		const slides = args.all ? null : args.slide !== undefined ? String(args.slide).split(',') : [1]
-		const shots = await screenshots(deck, doc, { slides, step: args.step !== undefined ? Number(args.step) : null, out: args.out, size: args.size ?? 'large' })
-		for (const s of shots) console.log(`${String(s.n).padStart(2)} ${s.name}\n   ${s.file}`)
+		const step = args.steps ? 'all' : args.step !== undefined ? Number(args.step) : null
+		const out = args.out ?? path.join(os.tmpdir(), 'pres-shots', deck.name)
+		// Old pictures of this deck would be confusing next to the new ones.
+		if (!args.out) for (const f of fs.existsSync(out) ? fs.readdirSync(out) : []) if (f.endsWith('.jpg')) fs.rmSync(path.join(out, f))
+		await screenshots(deck, doc, { slides, step, out, size: args.size ?? 'large', onShot: (s) => console.log(`${String(s.n).padStart(2)} ${s.name}${s.step !== null ? ` · after ${s.step} click${s.step === 1 ? '' : 's'}` : ''}\n   ${s.file}`) })
 	},
 
 	async cover(args) {
@@ -701,11 +717,21 @@ const commands = {
 	},
 }
 
+// What the TUI (lib/app.mjs) uses. Handed over rather than imported: this module is still running
+// (top-level await) while the TUI runs, so importing it back would wait forever.
+const API = { ROOT, DECKS, PACK, LOCAL_DIR, GUIDE, PRES: fileURLToPath(import.meta.url), NAME, walk, localDecks, deckAt, isDeckDir, slugify, titleFromName, readJson, packVersions, latestPack, openDocs, remoteSite, git }
+
 if (AS_CLI) {
 	const [cmd, ...rest] = process.argv.slice(2)
+	// Plain `pres` in a terminal opens the TUI; anywhere else (agents, scripts) it prints the help.
+	if (!cmd && process.stdin.isTTY && process.stdout.isTTY) {
+		await (await import('./lib/app.mjs')).runApp(API)
+		process.exit(0)
+	}
+	if (cmd === 'help' || cmd === '--help' || cmd === '-h') process.argv[2] = undefined
 	if (!cmd || !commands[cmd]) {
 		console.log(fs.readFileSync(fileURLToPath(import.meta.url), 'utf8').split('\n').slice(1).filter((l, i, all) => all.slice(0, i + 1).every((m) => m.startsWith('//'))).map((l) => l.replace(/^\/\/ ?/, '')).join('\n'))
-		process.exit(cmd ? 1 : 0)
+		process.exit(cmd && !['help', '--help', '-h'].includes(cmd) ? 1 : 0)
 	}
 	try {
 		await commands[cmd](parseArgs(rest))

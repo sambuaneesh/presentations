@@ -16,7 +16,13 @@ kept in one repository, published together on one website.
 
 ## Quick start
 
-The easiest way in is the **studio**, a local web app for managing everything:
+Type **`pres`** in a terminal, in any folder. A friendly screen opens with all your presentations
+(the ones in the project you're in first) and everything you can do with them: make one, open it in
+tldraw, build and look at the slides, ask an agent to work on it, publish it. Folders are suggested
+and searchable, so there's nothing to remember. (First time: `node bin/pres.mjs setup` puts `pres`
+on your PATH.)
+
+There's also the **studio**, the same in a web page:
 
 ```bash
 npm run studio          # opens http://localhost:4321/
@@ -24,7 +30,7 @@ npm run studio          # opens http://localhost:4321/
 
 Browse the folders, make presentations and folders, edit titles and descriptions, set covers, move
 things around, preview the website, and commit and push. A new presentation is a `.tldraw` file: open
-it in tldraw Desktop to draw it. The same things from the command line:
+it in tldraw Desktop to draw it. Every action is also a command (what agents use):
 
 ```bash
 pres list                                   # the tree

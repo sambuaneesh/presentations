@@ -23,7 +23,25 @@ decks/
 Names in paths (folders and presentations) are lowercase letters, digits and dashes; titles can be
 anything.
 
-## The studio (the easy way)
+## The pres screen (the easiest way)
+
+Type `pres` in a terminal, anywhere. You get:
+
+- **your presentations**: the ones in the project you're in first, then ones on the website that look
+  related to it (by name), then the rest. `/` searches (fuzzy: `sif` finds *Seeing is Fixing*).
+- **a page per presentation** with everything you can do with it: open it in tldraw, build its code
+  slides, screenshots of every slide or of one slide click by click, check, publish, the cover, its
+  title and folder, template updates, and **ask an agent**: describe the change, and a ready-made
+  request is copied for you to paste into any agent.
+- **smart folder picking**: when a presentation needs a website folder (making, publishing, moving),
+  the folders already there are listed with the best guess on top (the one it used before, the one
+  matching the project's name, or the one with similar talks). Type to narrow them down; a name that
+  doesn't exist yet becomes a new folder.
+
+Run it inside a presentation's folder and it opens that presentation's page directly. Keys are shown
+at the bottom of every screen: ↑↓ and enter, esc goes back, the letters in [brackets] are shortcuts.
+
+## The studio (in a browser)
 
 ```bash
 npm run studio          # http://localhost:4321/ (only this machine can reach it)

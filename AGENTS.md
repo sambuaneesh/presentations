@@ -14,6 +14,7 @@ you need to work on the tooling itself.
 |---|---|
 | `PRESENTATIONS.md` | the guide (`pres guide` prints it, with `{{REPO}}` filled in) |
 | `bin/pres.mjs` | the tool (`bin/deck.mjs` is its old name, kept as an alias) |
+| `bin/lib/app.mjs`, `bin/lib/tui.mjs` | the screen plain `pres` opens in a terminal (for people), and its small terminal-UI kit; it runs `pres <command>` underneath |
 | `bin/lib/tldraw-file.mjs` | read/write .tldraw files without the app: records, stamping, the board script |
 | `studio/` | the local web UI (`npm run studio`): a JSON API over `decks/` and `bin/pres.mjs`, plus git |
 | `decks/…/<name>/` | a central deck (in folders with `folder.json`) |
@@ -31,7 +32,9 @@ you need to work on the tooling itself.
 - **Released packs never change.** Edit `presentation-pack/script/`, try it on a deck with
   `pres upgrade <deck> --to dev`, then `pres pack release` and upgrade the decks that should move.
   A new release must still export everything `site-entry.js` lists (the website loads that).
-- Keep the CLI and the studio in step: a new command or `deck.json` field should appear in both.
+- Keep the CLI, the `pres` screen (`bin/lib/app.mjs`) and the studio in step: a new command or
+  `deck.json` field should appear in all of them. The user doesn't memorise commands; the screen
+  is how they use `pres`, so it needs everything, in plain words, with key hints on screen.
   `deck.json` stays minimal (`title`, optional `description`, `listed`, `pack`, `publish`); don't
   add tags, dates or presenters to the UI.
 - A new shape type also needs the live-room schema (`sync-worker/src/TldrawDurableObject.ts`) and a

@@ -5,6 +5,11 @@ website. It works the same for any coding agent (Claude Code, Codex, Cursor, Gem
 Aneesh by hand. Print it anywhere with `pres guide`; `pres guide --full` adds the whole slide-kit
 reference.
 
+**People: just type `pres`** in any folder. A friendly screen opens with your presentations
+(this project's first) and everything you can do with them, with folder suggestions and search, so
+there's nothing to remember. **Agents: use the commands below.** In a shell without a terminal,
+plain `pres` only prints the help.
+
 Everything goes through one command, `pres` (it lives in `{{REPO}}/bin/pres.mjs`; `pres setup`
 puts it on the PATH). If `pres` isn't found, use `node {{REPO}}/bin/pres.mjs` instead.
 
@@ -44,7 +49,7 @@ Name a deck by its folder path, its name (`scratch-talk`), or any unique part of
    Use `--only 02-the-problem,03-x` to rebuild some.
 6. **Look.** `pres shot <deck> --all` prints one image per slide. **Open and look at every one**:
    overlaps, clipping, text running off the slide, too much on one slide. For the build-up, use
-   `pres shot <deck> --slide 4 --step 0` (then `--step 1`, …) to see a slide after that many clicks.
+   `pres shot <deck> --slide 4 --steps` to get one picture per click (or `--step k` for one).
    Fix, rebuild with `--only`, look again.
 7. **Check.** `pres check <deck>` validates the files and notes.
 8. **Publish** only when Aneesh asks: `pres publish <deck>` (a project deck needs `--to <folder>` the
@@ -131,11 +136,12 @@ Interactive slides use `DO` (what to press or drag) instead of `CLICKS`.
 ## All commands
 
 ```
+pres                                         (people, in a terminal) the all-in-one screen
 pres guide [--full]                          this guide (+ the full kit reference)
 pres new "<title>" --here | --in <folder>    make a deck [--name <name>] [--description "…"]
 pres list                                    this project's decks and the website's tree
 pres build <deck> [--only a,b]               draw slides/*.js into the deck
-pres shot <deck> [--slide n|name] [--step k] [--all] [--out dir]   screenshots; prints the paths
+pres shot <deck> [--slide n|name] [--step k | --steps] [--all] [--out dir]   screenshots; prints the paths
 pres check [<deck>]                          validate
 pres publish <deck> [--to <folder>] [-m "…"] put just this deck on the website
 pres open <deck> · cover <deck> · install <deck>
