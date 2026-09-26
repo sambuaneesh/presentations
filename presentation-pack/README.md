@@ -5,9 +5,10 @@ turns a tldraw Desktop canvas into a slide deck (slide panel, layouts, themes, s
 steps, presenting, interactive slides), plus the builders that draw hand-made slides from code.
 Slides are plain **frames**, so a deck still opens and exports correctly without the pack.
 
-You normally use it through the repo's `bin/deck.mjs` (see the [root README](../README.md) and
-[docs/](../docs/)). This folder is the source of truth: change it here, then `deck install <deck>`
-to update a deck's copy (the website always uses this folder directly).
+You normally use it through the repo's `bin/pres.mjs` (see the [root README](../README.md) and
+[docs/](../docs/)). `script/` is where the pack is worked on ("dev"). Decks run a frozen
+copy of it, `releases/<n>/`, named in their `deck.json`: `pres pack release` makes the next one,
+`pres upgrade <deck>` moves a deck to it (see [docs/extending.md](../docs/extending.md#versions-old-decks-are-frozen)).
 
 ## In the app
 
@@ -35,7 +36,7 @@ state, so stepping never marks the deck unsaved, and in a live room viewers see 
 ## Code-drawn slides (`paper/`)
 
 `paper/kit.exec.js` is the kit that draws slides out of real tldraw shapes; `bin/paper.mjs` runs a
-deck's `slides/` through it (`deck build <deck>` calls it). `paper/starter/` holds the slides a new
+deck's `slides/` through it (`pres build <deck>` calls it). `paper/starter/` holds the slides a new
 deck starts from. Guide: [docs/drawing-slides.md](../docs/drawing-slides.md).
 
 ## Deck extensions
@@ -49,7 +50,7 @@ deck's extension into that deck's board script, and the website loads every deck
 
 1. Design a slide on the canvas. Anything goes: layout shapes, your own drawings, images.
 2. Right-click its thumbnail → **Save as layout…**. It shows up under *Saved in this deck*.
-3. To reuse it in every deck: `node bin/pull.mjs <deck>`, then `node ../bin/deck.mjs install <other deck>`.
+3. To reuse it in every deck: `node bin/pull.mjs <deck>`, then `node ../bin/pres.mjs install <other deck>`.
    Pack layouts live in `script/layouts/custom/`.
 
 To add a built-in layout, theme, or deck template in code, edit `script/lib/layouts.js`,
@@ -62,6 +63,7 @@ script/
   config.js          editor setup: UI components, the present tool, the scene shape, beat visibility
   main.js            runs when the deck opens: seeds a requested template, keeps numbers and footers in sync
   extensions.js      placeholder for a deck's extension (replaced at install time / on the website)
+  site-entry.js      what the website takes from this version (it never runs in the app)
   lib/deck.js        deck settings, stored in the document's meta.pp (theme, title, footer, saved layouts)
   lib/slides.js      slide model and operations (insert, duplicate, delete, move, theme, sync)
   lib/layouts.js     built-in layouts; every shape carries meta.role so themes can restyle it
@@ -73,11 +75,12 @@ script/
   scenes/            the `scene` shape, its kit (palette, reveal helpers), the registry (scenes from extensions)
   scenes/vendor/     htm (Apache-2.0), so scenes can be written as tagged templates without a build step
   layouts/custom/    pack layouts (index.json + one JSON file per layout)
+releases/<n>/        frozen copies of script/, one per version; never edit them
 paper/
   kit.exec.js        the kit code-drawn slides are drawn with (runs inside tldraw)
-  starter/           the slides `deck new` starts from
+  starter/           the slides `pres new` starts from
 bin/
-  install.mjs        put this script/ (+ a deck's ext/) into an open deck
+  install.mjs        put a version of script/ (+ a deck's ext/) into an open deck; packFiles() lists the files
   paper.mjs          draw a slides/ folder into an open deck
   new-deck.mjs       (low level) create a deck file from a pack template
   pull.mjs           copy a deck's saved layouts (or script) back into the pack

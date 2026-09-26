@@ -9,25 +9,27 @@ import { useEffect, useMemo, useState } from 'react'
 import { Tldraw, inlineBase64AssetStore, defaultShapeUtils, useValue } from 'tldraw'
 import { useSync } from '@tldraw/sync'
 import 'tldraw/tldraw.css'
-import packConfig, { DECK_CSS, getShapeVisibility } from '@pack/config.js'
-import runPackMain from '@pack/main.js'
-import { PresentOverlay, BeatStyles } from '@pack/ui/Overlays.js'
-import { presentIndex } from '@pack/ui/state.js'
+import { loadPack } from './pack.js'
 import { SYNC_URL, roomId, hashPath, seedFromDeck, useLiveRoom, LiveBar, slideCount, roomStatus, connectUri, RoomClosed, roomUrl } from './live.jsx'
 import { ensureJoinSlide, hasJoinSlide } from './joinSlide.js'
 import { Gallery, NotFound, Loading } from './Gallery.jsx'
 
-const pack = packConfig({
-	config: { shapeUtils: [], bindingUtils: [], assetUtils: [], overlayUtils: [], tools: [], components: {}, options: {} },
-})
-const PackInFront = pack.components.InFrontOfTheCanvas
-// A live room's store needs every shape type up front, including the pack's scenes.
-const syncShapeUtils = [...defaultShapeUtils, ...pack.shapeUtils]
+// The deck's pack version (see pack.js), set up once it has loaded.
+let P = null // its site-entry
+let pack = null // its tldraw config: tools, shapeUtils, components
+let syncShapeUtils = null // a live room's store needs every shape type up front, including the pack's scenes
+async function setUpPack(version) {
+	P = await loadPack(version)
+	pack = P.configure({
+		config: { shapeUtils: [], bindingUtils: [], assetUtils: [], overlayUtils: [], tools: [], components: {}, options: {} },
+	})
+	syncShapeUtils = [...defaultShapeUtils, ...pack.shapeUtils]
+}
 const licenseKey = import.meta.env.VITE_TLDRAW_LICENSE_KEY
 
 // "← back" to the deck's folder, out of the way while presenting.
 function BackLink() {
-	const presenting = useValue(presentIndex) >= 0
+	const presenting = useValue(P.presentIndex) >= 0
 	if (presenting) return null
 	const folder = hashPath().split('/').slice(0, -1).join('/')
 	return (
@@ -52,7 +54,7 @@ function zoomToFirstSlide(editor) {
 function mountPack(editor) {
 	const controller = new AbortController()
 	// Keeps slide numbers and footers in step; only run by someone who can edit.
-	runPackMain({ editor, signal: controller.signal, app: { board: { isHost: true } } })
+	P.runMain({ editor, signal: controller.signal, app: { board: { isHost: true } } })
 	zoomToFirstSlide(editor)
 	return () => controller.abort()
 }
@@ -60,16 +62,16 @@ function mountPack(editor) {
 function useComponents(deck) {
 	return useMemo(() => {
 		// Editors (solo visitors and live-room presenters): the full pack UI.
-		const editor = { ...pack.components, InFrontOfTheCanvas: () => (<><PackInFront /><style>{BACK_CSS}</style><BackLink /><LiveBar deck={deck} isPresenter /></>) }
+		const editor = { ...pack.components, InFrontOfTheCanvas: () => (<><pack.components.InFrontOfTheCanvas /><style>{BACK_CSS}</style><BackLink /><LiveBar deck={deck} isPresenter /></>) }
 		// Live-room viewers: no editing UI, just the presenting overlay and the room bar.
-		const viewer = { InFrontOfTheCanvas: () => (<><style>{DECK_CSS + BACK_CSS}</style><BeatStyles /><PresentOverlay /><BackLink /><LiveBar deck={deck} isPresenter={false} /></>) }
+		const viewer = { InFrontOfTheCanvas: () => (<><style>{P.DECK_CSS + BACK_CSS}</style><P.BeatStyles /><P.PresentOverlay /><BackLink /><LiveBar deck={deck} isPresenter={false} /></>) }
 		return { editor, viewer }
 	}, [deck])
 }
 
 function Solo({ deck }) {
 	const { editor } = useComponents(deck)
-	return <Tldraw snapshot={deck} tools={pack.tools} shapeUtils={pack.shapeUtils} getShapeVisibility={getShapeVisibility} components={editor} licenseKey={licenseKey} onMount={mountPack} />
+	return <Tldraw snapshot={deck} tools={pack.tools} shapeUtils={pack.shapeUtils} getShapeVisibility={P.getShapeVisibility} components={editor} licenseKey={licenseKey} onMount={mountPack} />
 }
 
 function Live({ deck, isPresenter }) {
@@ -82,7 +84,7 @@ function Live({ deck, isPresenter }) {
 			store={store}
 			tools={pack.tools}
 			shapeUtils={pack.shapeUtils}
-			getShapeVisibility={getShapeVisibility}
+			getShapeVisibility={P.getShapeVisibility}
 			components={isPresenter ? components.editor : components.viewer}
 			licenseKey={licenseKey}
 			onMount={(editor) => {
@@ -113,9 +115,9 @@ function DeckView({ entry }) {
 	useEffect(() => {
 		let gone = false
 		document.title = `${entry.title} · presentations`
-		fetch(`decks/${entry.path}.json`)
-			.then((r) => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`))))
-			.then((deck) => !gone && setState({ deck, error: null }), (error) => !gone && setState({ deck: null, error }))
+		const deck = fetch(`decks/${entry.path}.json`).then((r) => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`))))
+		Promise.all([deck, setUpPack(entry.pack)])
+			.then(([deck]) => !gone && setState({ deck, error: null }), (error) => (console.error(error), !gone && setState({ deck: null, error })))
 		return () => void (gone = true)
 	}, [entry.path])
 	if (state.error) return <NotFound path={entry.path} />

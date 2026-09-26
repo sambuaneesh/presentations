@@ -1,6 +1,7 @@
 // Read and write .tldraw files without tldraw Desktop. A .tldraw file is a zip: db.sqlite (one JSON
 // record per row), metadata.json, preview.png, session.json and the board script under script/.
 // Used to make new decks from presentation-pack/paper/starter.tldraw, and to read decks for export.
+import crypto from 'node:crypto'
 import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
@@ -139,4 +140,36 @@ export function stampFile(template, out, values, displayName) {
 	}
 	fs.mkdirSync(path.dirname(out), { recursive: true })
 	fs.writeFileSync(out, writeZip(entries))
+}
+
+// The board script's fingerprint, as tldraw Desktop records it in metadata.json: sha256 over
+// "<path>\0<sha256 of the file>\n" for every file, in path order.
+export function scriptHash(files) {
+	const hex = (d) => crypto.createHash('sha256').update(d).digest('hex')
+	const h = crypto.createHash('sha256')
+	for (const rel of [...files.keys()].sort()) h.update(`${rel}\0${hex(files.get(rel))}\n`)
+	return h.digest('hex')
+}
+
+// The board script inside a (closed) .tldraw file: a Map of path → Buffer.
+export function readScript(file) {
+	const files = new Map()
+	for (const e of readZip(fs.readFileSync(file))) if (e.name.startsWith('script/') && !e.name.endsWith('/')) files.set(e.name.slice(7), e.data)
+	return files
+}
+
+// Replace the board script inside a (closed) .tldraw file, the offline twin of installing it
+// through the app.
+export function writeScript(file, files) {
+	const entries = readZip(fs.readFileSync(file)).filter((e) => !e.name.startsWith('script/'))
+	for (const e of entries) {
+		if (e.name !== 'metadata.json') continue
+		const meta = JSON.parse(e.data.toString('utf8'))
+		meta.script = { ...(meta.script ?? {}), sha256: scriptHash(files), author: meta.script?.author ?? 'agent' }
+		e.data = Buffer.from(JSON.stringify(meta, null, '\t'), 'utf8')
+	}
+	const at = entries.findIndex((e) => e.name === 'session.json')
+	const scripts = [...files.keys()].sort().map((rel) => ({ name: `script/${rel}`, data: files.get(rel) }))
+	entries.splice(at < 0 ? entries.length : at, 0, ...scripts)
+	fs.writeFileSync(file, writeZip(entries))
 }

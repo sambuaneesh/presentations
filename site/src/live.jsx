@@ -8,11 +8,14 @@
 // filling a new room from the published deck, and the following.
 import { useEffect, useState } from 'react'
 import { useEditor, useValue } from 'tldraw'
-import { getDeck } from '@pack/lib/deck.js'
-import { getSlides } from '@pack/lib/slides.js'
-import { live, presentIndex, presentBeat } from '@pack/ui/state.js'
-import { h, css, guard, Button } from '@pack/ui/kit.js'
+import { pack } from './pack.js'
 import { ensureJoinSlide } from './joinSlide.js'
+
+// The deck's own pack version's UI kit (see pack.js), so the room bar matches the deck.
+const h = (...args) => pack.h(...args)
+const css = new Proxy({}, { get: (_, key) => pack.css[key] })
+const guard = (editor) => pack.guard(editor)
+const Button = (props) => pack.h(pack.Button, props)
 
 export const SYNC_URL = import.meta.env.VITE_SYNC_URL
 export const roomId = new URLSearchParams(location.search).get('room')?.replace(/[^a-zA-Z0-9_-]/g, '').slice(0, 48) || null
@@ -102,7 +105,7 @@ export function seedFromDeck(editor, deck, { reset = false } = {}) {
 }
 
 export function slideCount(editor) {
-	return getSlides(editor).length
+	return pack.getSlides(editor).length
 }
 
 // ---------- presenting and following ----------
@@ -123,20 +126,20 @@ export function useLiveRoom(editor, isPresenter) {
 
 		if (isPresenter) {
 			writeDeckMeta(editor, { host: me })
-			live.set({
+			pack.live.set({
 				onPresent: (index, beat = 0) => {
-					const current = getDeck(editor).live
+					const current = pack.getDeck(editor).live
 					writeDeckMeta(editor, { live: index === null ? null : { presenter: me, index, beat, at: current?.presenter === me ? current.at : Date.now() } })
 				},
 			})
-			return () => live.set(null)
+			return () => pack.live.set(null)
 		}
 
 		let skipAt = null // a presentation this viewer chose to stop following
-		live.set({ onStopFollowing: () => (skipAt = getDeck(editor).live?.at ?? null) })
+		pack.live.set({ onStopFollowing: () => (skipAt = pack.getDeck(editor).live?.at ?? null) })
 
 		function follow() {
-			const deck = getDeck(editor)
+			const deck = pack.getDeck(editor)
 			const collaborators = editor.getCollaborators()
 			const here = (id) => id && collaborators.find((c) => bare(c.userId) === id)
 			const tool = editor.getCurrentToolId()
@@ -152,7 +155,7 @@ export function useLiveRoom(editor, isPresenter) {
 					editor.setCurrentTool('present', { startIndex: state.index, startBeat: state.beat ?? 0, follower: true })
 					ownChange = false
 				}
-				else if (presentIndex.get() !== state.index || presentBeat.get() !== (state.beat ?? 0)) editor.getCurrentTool().followTo(state.index, state.beat ?? 0)
+				else if (pack.presentIndex.get() !== state.index || pack.presentBeat.get() !== (state.beat ?? 0)) editor.getCurrentTool().followTo(state.index, state.beat ?? 0)
 				return
 			}
 			if (followingSlides) editor.setCurrentTool('select')
@@ -180,7 +183,7 @@ export function useLiveRoom(editor, isPresenter) {
 		return () => {
 			stop()
 			stopWatchingFollow()
-			live.set(null)
+			pack.live.set(null)
 			followAgain = null
 		}
 	}, [editor, isPresenter])
@@ -219,7 +222,7 @@ function PasswordForm({ title, submitLabel, onDone, onCancel, withName }) {
 // Bar at the top: go live / room status, copy link, and role-specific actions.
 export function LiveBar({ deck, isPresenter }) {
 	const editor = useEditor()
-	const presenting = useValue(presentIndex) >= 0
+	const presenting = useValue(pack.presentIndex) >= 0
 	const people = useValue('collaborators', () => editor.getCollaborators().length + 1, [editor])
 	const following = useValue('following', () => !!editor.getInstanceState().followingUserId, [editor])
 	const [copied, setCopied] = useState(false)

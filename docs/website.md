@@ -69,8 +69,9 @@ npm run dev        # exports every deck, then serves at http://localhost:5173
 npm run build      # the static site in site/dist/ (npx vite preview to look at it)
 ```
 
-`node bin/deck.mjs export` runs just the export. It needs Node 22.13 or newer and works whether or not
-tldraw Desktop is open, but it reads the **saved** `.tldraw` files, so save first.
+`pres export` runs just the export. It needs Node 22.13 or newer and works whether or not
+tldraw Desktop is open, but it reads the **saved** `.tldraw` files, so save first. A deck it can't
+export (a broken `deck.json`, a missing file, an unknown pack version) is skipped with a warning.
 
 For live rooms locally: put `ROOM_PASSWORD=<anything>` in `sync-worker/.dev.vars`, run
 `npx wrangler dev --port 8799` in `sync-worker/`, and start the site with
@@ -90,3 +91,4 @@ For local production builds, put it in `site/.env.local` (see `site/.env.example
 | routes, the deck player, the back link | `site/src/App.jsx` |
 | live rooms | `site/src/live.jsx` |
 | what gets exported per deck | `site/scripts/export-decks.mjs` |
+| which pack version a deck runs | `site/vite.config.js` (bundles every `presentation-pack/releases/<n>/` and resolves `@pack/…` per deck) and `site/src/pack.js` (loads a deck's version) |

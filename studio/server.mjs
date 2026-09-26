@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Studio: a local web app for organising the presentations: folders, decks, what the website shows,
-// covers, previewing and committing. It works on the files in decks/ (through bin/deck.mjs), so it
+// covers, previewing and committing. It works on the files in decks/ (through bin/pres.mjs), so it
 // never needs tldraw Desktop: make a deck here, then open its .tldraw file in tldraw to draw it.
 //
 //   node studio/server.mjs [--port 4321] [--no-open]      (or: npm run studio)
@@ -12,13 +12,13 @@ import http from 'node:http'
 import path from 'node:path'
 import { spawn, execFile } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
-import { walk, newDeck, makeFolder, moveEntry, slugify, openDocs } from '../bin/deck.mjs'
+import { walk, newDeck, makeFolder, moveEntry, slugify, openDocs } from '../bin/pres.mjs'
 
 const HERE = path.dirname(fileURLToPath(import.meta.url))
 const ROOT = path.resolve(HERE, '..')
 const DECKS = path.join(ROOT, 'decks')
 const PUBLIC = path.join(HERE, 'public')
-const DECK_TOOL = path.join(ROOT, 'bin', 'deck.mjs')
+const DECK_TOOL = path.join(ROOT, 'bin', 'pres.mjs')
 const argv = process.argv.slice(2)
 const PORT = Number(argv[argv.indexOf('--port') + 1]) || Number(process.env.STUDIO_PORT) || 4321
 const SITE_PORT = 5173
@@ -229,10 +229,10 @@ function serveFile(res, file) {
 	if (!fs.existsSync(file) || !fs.statSync(file).isFile()) return send(res, 404, { error: 'not found' })
 	send(res, 200, fs.readFileSync(file), TYPES[path.extname(file)] ?? 'application/octet-stream')
 }
-// deck.mjs throws plain errors for bad input: send those back as 400s.
-const wrap = (fn) => (b) => {
+// pres.mjs throws plain errors for bad input: send those back as 400s.
+const wrap = (fn) => async (b) => {
 	try {
-		return fn(b)
+		return await fn(b)
 	} catch (e) {
 		throw e.status ? e : httpError(400, e.message)
 	}
@@ -240,7 +240,7 @@ const wrap = (fn) => (b) => {
 
 const routes = {
 	'GET /api/state': async () => ({ ...(await tree()), git: await gitStatus(), site: await siteUp() }),
-	'POST /api/new': wrap((b) => changed({ path: newDeck({ title: b.title, folder: b.folder ?? '', description: b.description }) })),
+	'POST /api/new': wrap(async (b) => changed({ path: await newDeck({ title: b.title, folder: b.folder ?? '', description: b.description }) })),
 	'POST /api/folder': wrap((b) => changed({ path: makeFolder([b.parent, slugify(b.title ?? '')].filter(Boolean).join('/'), String(b.title ?? '').trim()) })),
 	'POST /api/edit': async (b) => (entry(b.path).isDeck ? editDeck(b.path, b) : editFolder(b.path, b)),
 	'POST /api/rename': async (b) => rename(b.path, b.name),

@@ -49,31 +49,50 @@ Moving, renaming or deleting refuses while that presentation is open in tldraw: 
 
 ## The command line
 
-Everything the studio does is also a command (`node bin/deck.mjs …` or `npm run deck -- …`):
+Everything the studio does is also a command, `pres` (`node bin/pres.mjs setup` puts it on your PATH;
+`npm run pres -- …` works too):
 
 ```bash
-deck list                                   # the tree
-deck new "Title" --in mono2micro            # make a presentation in a folder (tldraw not needed)
-deck new "Title" --in talks --description "one line" --name short-name
-deck folder weekly-presentations --title "Weekly presentations"
-deck move weekly-presentations/seeing-is-fixing talks     # "." is the top
-deck open seeing-is-fixing                  # open it in tldraw
-deck build seeing-is-fixing                 # redraw its code slides (slides/)
-deck cover seeing-is-fixing                 # save slide 1 as its cover (needs tldraw)
-deck check                                  # validate everything
+pres list                                   # the tree
+pres new "Title" --in mono2micro            # make a presentation in a folder (tldraw not needed)
+pres new "Title" --in talks --description "one line" --name short-name
+pres folder weekly-presentations --title "Weekly presentations"
+pres move weekly-presentations/seeing-is-fixing talks     # "." is the top
+pres open seeing-is-fixing                  # open it in tldraw
+pres build seeing-is-fixing                 # redraw its code slides (slides/)
+pres cover seeing-is-fixing                 # save slide 1 as its cover (needs tldraw)
+pres check                                  # validate everything
 ```
 
-A presentation can be named by its path or any unique part of it (`deck build seeing` works).
+A presentation can be named by its path or any unique part of it (`pres build seeing` works).
+
+## From another project
+
+A talk about a project can live in that project while you make it, so you and its agent work on just
+that one deck:
+
+```bash
+cd ~/some/project
+pres new "What we built" --here            # ./presentations/what-we-built/ (+ an AGENTS.md pointing to the guide)
+pres build what-we-built                   # after writing slides/*.js (or ask your agent: "run pres guide")
+pres shot what-we-built --all              # screenshots to check
+pres publish what-we-built --to talks      # onto the website, in decks/talks/
+```
+
+The first publish asks which folder (`--to`); it's remembered in its `deck.json`. Commit the
+`presentations/` folder in that project if you like; the website gets its own copy on each publish.
+[PRESENTATIONS.md](../PRESENTATIONS.md) is the full guide an agent follows.
 
 ## Editing a presentation
 
 - **Draw by hand**: open its `.tldraw` in tldraw Desktop and draw. The slide panel, **+ New slide**
   and layouts all work; **Appears: …** in the top bar makes a selection appear on a click.
 - **Draw with code** (the hand-drawn house style, or when an agent builds the slides): edit
-  `slides/*.js`, list them in `slides/manifest.json`, run `deck build <deck>` (tldraw opens it).
+  `slides/*.js`, list them in `slides/manifest.json`, run `pres build <deck>` (tldraw opens it).
   Rebuilding replaces only the code-drawn slides. See [drawing-slides.md](drawing-slides.md).
 - **Speaker notes**: **Notes** in tldraw's top bar, or the `notes` of a slide file.
-- Save in tldraw before you commit: the website is built from the saved file.
+- Save in tldraw before you commit: the website is built from the saved file (`pres build` and
+  `pres publish` save for you).
 
 ## Present
 
@@ -85,16 +104,22 @@ reveals, then the next slide; ← goes back; Esc exits; drag for a laser pointer
 `deck.json`:
 
 ```json
-{ "title": "Seeing is Fixing", "description": "One line for the card (optional).", "listed": true }
+{ "title": "Seeing is Fixing", "description": "One line for the card (optional).", "listed": true, "pack": 1 }
 ```
 
+`"pack"` is the template version the deck is frozen to (see [extending.md](extending.md#versions-old-decks-are-frozen));
+a deck from another project also records `"publish": { "folder": "talks" }`.
+
 `"listed": false` hides it from the website's folders (its link still works; `?all` shows it).
-`deck new` also records a `date`, used only to sort newest first.
+`pres new` also records a `date`, used only to sort newest first.
 
 `folder.json`: `{ "title": "Weekly presentations", "description": "" }`. It also keeps an empty
 folder in git.
 
 ## Publish
 
-Commit and push to `main` (the studio's **Save to GitHub**, or git). GitHub Actions exports the whole
-tree and rebuilds the site in about a minute. See [website.md](website.md).
+`pres publish <deck>` commits and pushes just that deck, from a clean temporary checkout, so other
+decks and unfinished work in your checkout never come along. Or commit and push to `main` yourself
+(the studio's **Save to GitHub**, or git). GitHub Actions exports the whole tree and rebuilds the site
+in about a minute; a deck that fails to export is left off with a warning instead of breaking the
+site. See [website.md](website.md).

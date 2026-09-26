@@ -1,35 +1,13 @@
 ---
 name: presentations
-description: Make, change, check and publish Aneesh's hand-drawn tldraw presentations in this repo (decks/<folders>/<deck>/, bin/deck.mjs, the studio). Use when asked to create a new presentation or talk, turn a paper into slides, add/edit/rebuild slides, fix a slide, add an interactive slide or animated scene, update covers, or publish decks to the website.
+description: Make, change, check and publish Aneesh's hand-drawn tldraw presentations, in this repo or inside any other project (./presentations/<name>/), with the `pres` tool. Use when asked to create a presentation or talk, turn a paper or project into slides, add/edit/rebuild slides, fix a slide, add an interactive slide, or publish a deck to the website.
 ---
 
 # Presentations
 
-Read `AGENTS.md` at the repo root first: it has the tool, the house style and the rules. The details
-are in `docs/`.
+Run `pres guide` (or `node <presentations repo>/bin/pres.mjs guide`) and follow it: it is the
+single, agent-agnostic guide, `PRESENTATIONS.md` in the presentations repo. It has the house
+style, the facts rules, the workflow (new → outline → draw → build → **look at the screenshots** →
+check → publish) and the slide kit. `pres guide --full` adds the complete kit reference.
 
-## Workflow for a new presentation
-
-1. **Source first.** Read the paper or material fully (PDF → text, look at the figures). Collect the
-   facts you'll use with their locations (§, Fig., Table). Nothing on a slide may be invented.
-2. **Make the deck.** `node bin/deck.mjs new "<Title>" --in <folder> --description "…"` (ask which folder if unclear)
-3. **Outline.** One idea per slide (more slides are fine): title → the problem → the idea → how it
-   works → results → limits/questions → closing → thank you. Write the order into
-   `decks/…/<deck>/slides/manifest.json`.
-4. **Draw.** One file per slide in `decks/…/<deck>/slides/`, using the kit (`docs/drawing-slides.md`).
-   Hand-made, minimal, ink on paper, one red accent, reveals on clicks (`beat` + `anim`), speaker notes
-   in the checklist format, a `source` line on data slides. Learn from `decks/weekly-presentations/seeing-is-fixing/slides/`.
-   For big decks, split the slide files across parallel helpers, each testing in its own deck copy.
-5. **Build and look.** `node bin/deck.mjs build <deck>`, then screenshot every slide through the
-   tldraw Desktop API and fix what you see (`--only` to rebuild one). Present through some clicks.
-6. **Finish.** `node bin/deck.mjs cover <deck>` and `node bin/deck.mjs check <deck>`. Commit and push
-   only when the user asks; the push publishes it to the website.
-
-## Changing an existing deck
-
-- Code slides: edit `decks/…/<deck>/slides/*.js` → `deck build <deck> --only <file>`.
-- Its own code (scenes, actions, templates): `decks/…/<deck>/ext/` → `deck install <deck>`.
-- Title, description, hidden: `deck.json` (keep it to those). Organising (folders, moving): `deck folder`, `deck move`, or the studio.
-- Every deck: `presentation-pack/` → `deck install` each deck.
-
-Keep `docs/` and `AGENTS.md` in step with any change to commands or conventions.
+Don't work from memory of an earlier version: the guide is the source of truth.

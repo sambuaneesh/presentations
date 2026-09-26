@@ -11,7 +11,7 @@ decks/…/<deck>/slides/
   02-the-problem.js
 ```
 
-`node bin/deck.mjs build <deck>` draws them all into the open deck. `--only 02-the-problem`
+`pres build <deck>` draws them all into the open deck. `--only 02-the-problem`
 rebuilds just one. Each build replaces that slide's earlier build and leaves every other slide alone.
 
 ## The style (keep it)
@@ -118,6 +118,6 @@ Interactive slides use `DO` (what to press or drag) instead of `CLICKS`.
 
 ## Check your work
 
-- `node bin/deck.mjs check <deck>` catches missing files, broken slide files and slides without notes.
+- `pres check <deck>` catches missing files, broken slide files and slides without notes.
 - Look at every slide once at its final state and present through the clicks. Agents do this with
   screenshots through the tldraw Desktop API (see [AGENTS.md](../AGENTS.md)).

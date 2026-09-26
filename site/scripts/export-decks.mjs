@@ -8,7 +8,7 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { walk } from '../../bin/deck.mjs'
+import { walk } from '../../bin/pres.mjs'
 import { readRecords } from '../../bin/lib/tldraw-file.mjs'
 
 const SITE = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
@@ -30,22 +30,33 @@ const { folders, decks } = walk()
 fs.rmSync(OUT, { recursive: true, force: true })
 fs.mkdirSync(OUT, { recursive: true })
 const index = { generated: new Date().toISOString(), folders: folders.map(({ path: p, folder, title, description }) => ({ path: p, folder, title, description })), decks: [] }
+// Pack versions the site bundles (see vite.config.js); a deck frozen to one that's missing can't show.
+const RELEASES = path.resolve(SITE, '../presentation-pack/releases')
+const versions = [...fs.readdirSync(RELEASES).filter((n) => /^\d+$/.test(n)).sort((a, b) => a - b), 'dev']
+const latest = versions.at(-2)
+let skipped = 0
 for (const d of decks) {
-	if (!d.hasFile) {
-		console.warn(`skip ${d.path}: no ${d.name}.tldraw`)
-		continue
+	// A deck that can't be exported is left off the site (with a warning) rather than taking the others down.
+	try {
+		if (d.metaError) throw new Error(d.metaError)
+		if (!d.hasFile) throw new Error(`no ${d.name}.tldraw`)
+		const pack = String(d.meta.pack ?? latest)
+		if (!versions.includes(pack)) throw new Error(`deck.json asks for pack ${pack}, which isn't in presentation-pack/releases/`)
+		const { snapshot, slides } = exportDeck(d.file)
+		const out = path.join(OUT, `${d.path}.json`)
+		fs.mkdirSync(path.dirname(out), { recursive: true })
+		fs.writeFileSync(out, JSON.stringify(snapshot))
+		let cover = null
+		if (d.cover) {
+			cover = `decks/${d.path}${path.extname(d.cover)}`
+			fs.copyFileSync(d.cover, path.join(SITE, 'public', cover))
+		}
+		index.decks.push({ path: d.path, folder: d.folder, title: d.meta.title ?? d.name, description: d.meta.description ?? '', date: d.meta.date ?? '', listed: d.meta.listed !== false, slides, cover, pack })
+		console.log(`exported ${d.path}: ${slides} slides, pack ${pack}${cover ? ', cover' : ''}`)
+	} catch (e) {
+		skipped++
+		console.warn(`SKIPPED ${d.path}: ${e.message}`)
 	}
-	const { snapshot, slides } = exportDeck(d.file)
-	const out = path.join(OUT, `${d.path}.json`)
-	fs.mkdirSync(path.dirname(out), { recursive: true })
-	fs.writeFileSync(out, JSON.stringify(snapshot))
-	let cover = null
-	if (d.cover) {
-		cover = `decks/${d.path}${path.extname(d.cover)}`
-		fs.copyFileSync(d.cover, path.join(SITE, 'public', cover))
-	}
-	index.decks.push({ path: d.path, folder: d.folder, title: d.meta.title ?? d.name, description: d.meta.description ?? '', date: d.meta.date ?? '', listed: d.meta.listed !== false, slides, cover })
-	console.log(`exported ${d.path}: ${slides} slides${cover ? ' + cover' : ''}`)
 }
 fs.writeFileSync(path.join(OUT, 'index.json'), JSON.stringify(index, null, 1))
-console.log(`${index.folders.length} folder(s), ${index.decks.length} deck(s) → ${path.relative(process.cwd(), OUT)}`)
+console.log(`${index.folders.length} folder(s), ${index.decks.length} deck(s)${skipped ? `, ${skipped} skipped` : ''} → ${path.relative(process.cwd(), OUT)}`)

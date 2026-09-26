@@ -5,8 +5,8 @@ Two places to put new things:
 - **A deck's `ext/` folder**: code only that deck needs (an animated scene, actions for its
   interactive slides, a template). It travels with the deck and never touches the others.
 - **The pack (`presentation-pack/`)**: things every deck should get (a new kit call, a new entrance
-  animation, a theme, a UI feature). Change it once; run `deck install <deck>` on each deck to update
-  its copy.
+  animation, a theme, a UI feature). Change it in `script/`, release it as a new version, and upgrade
+  the decks that should have it (below). Decks you don't upgrade keep working exactly as they were.
 
 ## A deck's extension (`decks/…/<deck>/ext/`)
 
@@ -25,12 +25,12 @@ export default {
 ```
 
 - **Import the pack as `@pack/…`**, e.g. `import { html, C, F, box } from '@pack/scenes/kit.js'`.
-  The desktop installer rewrites these to relative paths inside the deck's board script, and the
-  website resolves them with a Vite alias.
+  They mean the pack version the deck is pinned to: the desktop installer rewrites them to relative
+  paths inside the deck's board script, and the website resolves them per deck (`site/vite.config.js`).
 - **Other imports**: `tldraw` and `react` work everywhere. Files are plain ES modules (no JSX, no
   npm packages beyond those two).
-- **Put it into the deck**: `node bin/deck.mjs install <deck>`. The website picks up every deck's
-  `ext/` automatically at build time.
+- **Put it into the deck**: `pres install <deck>` (straight into the file when the deck is closed,
+  through tldraw when it's open). The website picks up every deck's `ext/` automatically.
 
 ### Scenes
 
@@ -73,7 +73,22 @@ server's schema, so also add the type's props to `sync-worker/src/TldrawDurableO
 | a canvas layout | `script/lib/layouts.js` |
 | presenting behaviour (steps, interactions) | `script/ui/presentTool.js` |
 | built-in actions | `script/lib/actions/index.js` |
-| starter slides for `deck new` | `paper/starter/` (`{{TITLE_JSON}}` etc. are filled in) |
+| starter slides for `pres new` | `paper/starter/` (`{{TITLE_JSON}}` etc. are filled in) |
 
-After changing the pack: `deck install <deck>` for each deck you want updated. The website always
-uses the current pack. The [pack README](../presentation-pack/README.md) describes its internals.
+### Versions: old decks are frozen
+
+Each deck runs the pack version in its `deck.json` (`"pack": 1`), on the desktop and on the website.
+`releases/<n>/` are frozen copies of `script/`; never edit them.
+
+```bash
+pres pack                          # versions, and which decks use each
+pres upgrade my-deck --to dev      # try the unreleased script/ on one deck (desktop and site preview)
+pres pack release                  # freeze script/ as the next version; new decks get it
+pres upgrade my-deck               # move a deck to the newest version, then look at it (pres shot --all)
+```
+
+The website bundles every version and loads the one a deck asks for. A version must keep exporting
+what `script/site-entry.js` lists. `paper/kit.exec.js` (the slide builder) isn't versioned: it only
+matters when you rebuild slides.
+
+The [pack README](../presentation-pack/README.md) describes its internals.

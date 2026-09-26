@@ -5,7 +5,7 @@
 	"description": "Aneesh S's presentations: hand-drawn tldraw decks, one website.",
 	"scripts": {
 		"studio": "node studio/server.mjs",
-		"deck": "node bin/deck.mjs",
+		"pres": "node bin/pres.mjs",
 		"site": "cd site && npm run dev",
 		"build": "cd site && npm run build"
 	}
