@@ -150,3 +150,17 @@ export function NotFound({ path }) {
 		</div>
 	)
 }
+
+// The deck is listed but couldn't be opened (a stale cached file after a publish, a network error…).
+export function LoadFailed({ path, error }) {
+	return (
+		<div className="g-center">
+			<style>{CSS}</style>
+			<div>Couldn’t open “{path}” just now.</div>
+			<div style={{ opacity: 0.6, fontSize: 14, margin: '6px 0 12px' }}>{String(error?.message ?? error)}</div>
+			<a href={location.href} onClick={(e) => (e.preventDefault(), location.reload())}>reload</a>
+			{' · '}
+			<a href="#/">see all presentations</a>
+		</div>
+	)
+}

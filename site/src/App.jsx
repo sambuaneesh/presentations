@@ -12,7 +12,7 @@ import 'tldraw/tldraw.css'
 import { loadPack } from './pack.js'
 import { SYNC_URL, roomId, hashPath, seedFromDeck, useLiveRoom, LiveBar, slideCount, roomStatus, connectUri, RoomClosed, roomUrl } from './live.jsx'
 import { ensureJoinSlide, hasJoinSlide } from './joinSlide.js'
-import { Gallery, NotFound, Loading } from './Gallery.jsx'
+import { Gallery, NotFound, LoadFailed, Loading } from './Gallery.jsx'
 
 // The deck's pack version (see pack.js), set up once it has loaded.
 let P = null // its site-entry
@@ -115,12 +115,13 @@ function DeckView({ entry }) {
 	useEffect(() => {
 		let gone = false
 		document.title = `${entry.title} · presentations`
-		const deck = fetch(`decks/${entry.path}.json`).then((r) => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`))))
+		// no-cache: GitHub Pages lets browsers keep files for 10 minutes; after a publish, ask again.
+		const deck = fetch(`decks/${entry.path}.json`, { cache: 'no-cache' }).then((r) => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`))))
 		Promise.all([deck, setUpPack(entry.pack)])
 			.then(([deck]) => !gone && setState({ deck, error: null }), (error) => (console.error(error), !gone && setState({ deck: null, error })))
 		return () => void (gone = true)
 	}, [entry.path])
-	if (state.error) return <NotFound path={entry.path} />
+	if (state.error) return <LoadFailed path={entry.path} error={state.error} />
 	if (!state.deck) return <Loading />
 	return roomId && SYNC_URL ? <LiveGate deck={state.deck} /> : <Solo deck={state.deck} />
 }
@@ -129,7 +130,7 @@ export default function App() {
 	const [index, setIndex] = useState(null)
 	const [route, setRoute] = useState(hashPath)
 	useEffect(() => {
-		fetch('decks/index.json').then((r) => r.json()).then(setIndex, () => setIndex({ folders: [], decks: [] }))
+		fetch('decks/index.json', { cache: 'no-cache' }).then((r) => r.json()).then(setIndex, () => setIndex({ folders: [], decks: [] }))
 	}, [])
 	const deckAt = (p) => index?.decks.find((d) => d.path === p)
 	// Between folders, just re-render. Into or out of a deck, reload: each deck (and room) starts clean.

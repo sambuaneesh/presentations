@@ -7,7 +7,10 @@ import PACKS from 'virtual:packs'
 export let pack = null // that version's site-entry.js, once loaded
 
 export async function loadPack(version) {
-	const load = PACKS[String(version)]
+	// A deck with no (or an unknown) version, e.g. from an index saved before versions existed:
+	// the newest release is the best guess.
+	const newest = Object.keys(PACKS).filter((v) => /^\d+$/.test(v)).sort((a, b) => a - b).at(-1)
+	const load = PACKS[String(version)] ?? PACKS[newest]
 	if (!load) throw new Error(`this site has no pack version ${version}`)
 	pack = await load()
 	return pack
