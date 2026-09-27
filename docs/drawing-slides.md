@@ -20,7 +20,8 @@ rebuilds just one. Each build replaces that slide's earlier build and leaves eve
 - **Hand-made and minimal**: ink on paper, lots of empty space, a short handwritten title (or none),
   one drawing, maybe one line of text. No dense bullet lists on the slide; they go in the notes.
 - **One accent colour**: red for emphasis and marks. Green only for "fixed/works". Grey for secondary.
-- **Build it up** on clicks (`beat`), with small stepped entrances (`anim`), like indie animation.
+- **Build it up** on clicks (`beat`), with small smooth entrances (`anim`). Keep motion eased, never
+  stepped.
 - **Facts from the source only.** Mark anything illustrative or schematic as such (a `source` line or
   small grey handwriting).
 

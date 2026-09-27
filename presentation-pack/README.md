@@ -28,7 +28,7 @@ slide your own name (not starting with a number) and it keeps that name.
 ## Build steps
 
 A slide builds up over clicks. Any shape with `meta.beat = n` stays hidden until step *n* (set it
-with **Appears:** in the top bar, or `beat` in a code-drawn slide); `meta.anim` picks its stepped
+with **Appears:** in the top bar, or `beat` in a code-drawn slide); `meta.anim` picks its smooth
 entrance (pop, wipe, drop, wiggle, fade, zoom). A `scene` shape (an animated drawing from a deck
 extension) declares how many steps it animates through. Slide changes stay instant cuts; steps are view
 state, so stepping never marks the deck unsaved, and in a live room viewers see the presenter's step.

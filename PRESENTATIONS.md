@@ -75,7 +75,8 @@ publish again.
   maybe one line of text. Bullet lists go in the notes, not on the slide.
 - **One accent colour, red**, for emphasis and marks. Green only for "fixed / works". Grey for
   anything secondary.
-- **Build up on clicks** with small stepped entrances (`beat`, `anim`), like indie animation.
+- **Build up on clicks** with small entrances (`beat`, `anim`). Motion is **smooth and eased**, never
+  choppy frame-stepping (no CSS `steps()`, no throttled counters).
 - **Slide changes are instant cuts.** Never add transitions between slides unless asked.
 - A creative visual metaphor per talk is welcome, but it must stay legible from the back of a room.
 
