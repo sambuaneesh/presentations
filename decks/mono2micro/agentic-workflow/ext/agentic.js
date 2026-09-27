@@ -41,9 +41,9 @@ const DEP_FIRST = {
 	DomainFoundationService: ['BaseEntity', 'NamedEntity', 'Person'],
 }
 const MOVES = [
-	{ cls: 'Vet', from: 'VetService', to: 'DomainFoundationService', cmod: 60.7, mf: 73.9 },
-	{ cls: 'Specialty', from: 'VetService', to: 'DomainFoundationService', cmod: 65.7, mf: 73.9 },
-	{ cls: 'Visit', from: 'OwnerPetVisitService', to: 'DomainFoundationService', cmod: 66.8, mf: 76.5 },
+	{ cls: 'Vet', from: 'VetService', to: 'DomainFoundationService', cmod: 60.7, mf: 73.9, largest: 10 },
+	{ cls: 'Specialty', from: 'VetService', to: 'DomainFoundationService', cmod: 65.7, mf: 73.9, largest: 10 },
+	{ cls: 'Visit', from: 'OwnerPetVisitService', to: 'DomainFoundationService', cmod: 66.8, mf: 76.5, largest: 9 },
 ]
 function partitionAfter(nMoves) {
 	const p = Object.fromEntries(Object.entries(DEP_FIRST).map(([k, v]) => [k, [...v]]))
@@ -347,7 +347,13 @@ function Info({ B, still }) {
 						<tbody>${rows.map(([n, a, b2, c, s, sel]) => html`<tr key=${n} style=${{ background: sel ? C.redGlow : 'transparent', fontWeight: sel ? 700 : 400 }}>
 							<td style=${{ padding: '6px 4px' }}>${n}</td><td style=${{ textAlign: 'center' }}>${a}</td><td style=${{ textAlign: 'center' }}>${b2}</td><td style=${{ textAlign: 'center' }}>${c}</td><td style=${{ textAlign: 'center' }}>${s}</td></tr>`)}</tbody>
 					</table>
-					${Small('score = weighted CMod (.3), CiD (.2) and migration feasibility (.2)', { marginTop: 10 })}
+					${Small('score = .3·CMod + .2·CiD + .2·MF (weights normalised)', { marginTop: 10, color: C.ink })}
+					<div style=${{ marginTop: 12, padding: '10px 12px', background: C.paper2, borderRadius: 10 }}>
+						<div style=${{ fontFamily: F.mono, fontSize: 17, color: C.ink }}>MF = 100·(1 − 0.6·s<sub>max</sub> − 0.4·s<sub>1</sub>)</div>
+						${Small(html`<b>s<sub>max</sub></b> share of classes in the largest service (dependency-first: 10/23)`, { marginTop: 6 })}
+						${Small(html`<b>s<sub>1</sub></b> share of services with only one class (here: 0)`)}
+						${Small('Migration feasibility penalises one giant service or many tiny ones: a size heuristic, not measured effort.', { marginTop: 4 })}
+					</div>
 					<div style=${{ marginTop: 18, padding: 12, border: `2px dashed ${C.red}`, borderRadius: 10 }}>
 						${Small('Domain-first agrees 100 % with the capability map it was built from. That agreement is recorded, not scored: otherwise the score would reward a candidate for following its own recipe.', { color: C.ink })}
 					</div>`,
@@ -363,7 +369,8 @@ function Info({ B, still }) {
 					${Small('12 single-class moves evaluated; accepted only if nothing gets worse and something improves (strict Pareto).', { marginBottom: 16 })}
 					<${Bar} label="CMod" from=${prev.cmod} to=${m.cmod} on=${true} still=${still} />
 					<${Bar} label="CiD" from=${100} to=${100} on=${true} still=${still} />
-					<${Bar} label="Migration feasibility" from=${prev.mf} to=${m.mf} on=${true} still=${still} />
+					<${Bar} label="Migration feasibility (MF)" from=${prev.mf} to=${m.mf} on=${true} still=${still} />
+					${Small(html`MF = 100·(1 − 0.6·s<sub>max</sub> − 0.4·s<sub>1</sub>): largest service now ${m.largest}/23 classes, no one-class services`, { marginTop: 2 })}
 					${Small('No LLM call. Deterministic and auditable.', { marginTop: 10 })}`,
 					{ left: RX, top: PANEL.y + 110, width: RW })}
 			</div>`

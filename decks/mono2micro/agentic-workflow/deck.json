@@ -4,5 +4,8 @@
 	"date": "2026-09-26",
 	"listed": true,
 	"pack": 2,
+	"publish": {
+		"folder": "mono2micro"
+	},
 	"home": "~/IIITH/Research/decomplab/presentations/agentic-workflow"
 }
