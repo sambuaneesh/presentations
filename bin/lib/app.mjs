@@ -223,6 +223,12 @@ async function homeScreen() {
 		items.push({ heading: true, label: related.length ? 'Everything else on the website' : `On the website · ${decks.length} presentation${decks.length === 1 ? '' : 's'}` })
 		const shownRelated = new Set(related.flatMap((f) => visible.filter((d) => d.folder === f.path || d.folder.startsWith(f.path + '/')).map((d) => d.dir)))
 		for (const d of visible) if (!shownRelated.has(d.dir)) items.push(deckItem(d, d.folder || 'top level'))
+		// Unpushed commits in the presentations repo: the website can't use them until they're sent.
+		const sync = repoSync()
+		if (sync.ahead) {
+			items.push({ heading: true, label: 'Not on GitHub yet' })
+			items.push({ label: `Send ${sync.ahead} change${sync.ahead === 1 ? '' : 's'} in the presentations repo to GitHub`, value: 'push', key: 's', hint: sync.behind ? `GitHub also has ${sync.behind} newer` : '', about: 'Template and tool changes (and anything committed there) only reach the website once they are on GitHub. Presentations that need them can’t be published until then.' })
+		}
 		items.push({ heading: true, label: 'More' })
 		items.push({ label: 'Open the website', value: 'site', key: 'w', hint: A.remoteSite() ?? '' })
 		items.push({ label: 'Folders on the website', value: 'folders', key: 'f', about: 'See the folders, rename their titles, make new ones.' })
@@ -255,6 +261,7 @@ async function homeScreen() {
 		else if (choice === 'pack') await packScreen()
 		else if (choice === 'studio') await studio()
 		else if (choice === 'guide') await guide()
+		else if (choice === 'push') await pushRepo()
 		else if (choice === 'setup') await pres(['Set up'], 'Setting up pres', ['setup', '--claude'])
 	}
 }
@@ -495,6 +502,22 @@ async function agentFlow(deck) {
 }
 
 // ---------- the rest ----------
+function repoSync() {
+	const r = A.git(['rev-list', '--left-right', '--count', '@{u}...HEAD'])
+	if (r.status !== 0) return { ahead: 0, behind: 0 }
+	const [behind, ahead] = r.stdout.trim().split(/\s+/).map(Number)
+	return { ahead, behind }
+}
+
+async function pushRepo() {
+	const crumbs = ['Send to GitHub']
+	const { ahead, behind } = repoSync()
+	const log = A.git(['log', '--oneline', '@{u}..HEAD']).stdout.trim().split('\n').map((l) => c.grey('  ' + l))
+	if (!(await confirm({ crumbs, question: `Send ${ahead} change${ahead === 1 ? '' : 's'} to GitHub?`, detail: [...log, '', behind ? `GitHub has ${behind} newer change${behind === 1 ? '' : 's'} (e.g. a publish); yours go on top of them.` : 'The website rebuilds in about a minute.'], yes: 'Yes, send them' }))) return
+	const script = `set -e\ncd ${JSON.stringify(A.ROOT)}\ngit pull --rebase --autostash origin main || { git rebase --abort 2>/dev/null; echo; echo "Your changes and GitHub's touch the same files; sort it out in ${A.ROOT} (git pull --rebase)."; exit 1; }\ngit push origin HEAD:main\necho; echo "Sent. The website updates in about a minute."`
+	await run({ crumbs, title: 'Sending to GitHub', cmd: 'sh', args: ['-c', script], cwd: A.ROOT })
+}
+
 async function foldersScreen() {
 	for (;;) {
 		const { folders, decks } = A.walk()

@@ -448,6 +448,15 @@ async function screenshots(deck, doc, { slides = null, step = null, size = 'larg
 	return results
 }
 
+// A website copy that's edited in a project stands for that project copy: work on (and publish) the
+// real one, never the copy the next publish would overwrite.
+function workingCopy(deck) {
+	const home = !deck.local && homeOf(deck)
+	if (!home || !fs.existsSync(home) || !isDeckDir(home)) return deck
+	console.log(`(${deck.label} is edited in ${tildePath(home)}: using that copy)`)
+	return deckAt(home)
+}
+
 function warnHome(deck) {
 	const home = homeOf(deck)
 	if (!deck.local && home && fs.existsSync(home)) console.log(`note: ${deck.label} is worked on in ${tildePath(home)}; changes made here are replaced the next time it's published from there`)
@@ -533,6 +542,11 @@ async function publishDeck(deck, { to, message }) {
 
 	const branch = gitOk(['rev-parse', '--abbrev-ref', 'HEAD']) === 'HEAD' ? 'main' : gitOk(['rev-parse', '--abbrev-ref', 'HEAD'])
 	gitOk(['fetch', '--quiet', 'origin', branch])
+	// The deck needs its template version on GitHub, or the website can't show it.
+	const pack = deck.meta.pack
+	if (pack === 'dev') die('it uses the unreleased template ("dev"): release it (pres pack release), pres upgrade it, then publish')
+	if (pack !== undefined && git(['cat-file', '-e', `origin/${branch}:presentation-pack/releases/${pack}/site-entry.js`]).status !== 0)
+		die(`it uses template version ${pack}, which isn't on GitHub yet: push this repo first (cd ${ROOT} && git push), then publish again`)
 	const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'pres-publish-'))
 	gitOk(['worktree', 'add', '--quiet', '--detach', tmp, `origin/${branch}`])
 	try {
@@ -591,7 +605,10 @@ function catchUpCheckout(deck, target) {
 	}
 	const ff = git(['merge', '--ff-only', '--quiet', '@{u}'])
 	if (stashed) git(['stash', ff.status === 0 ? 'drop' : 'pop', '--quiet'])
-	if (ff.status !== 0) console.log(`(your checkout at ${ROOT} has its own commits; run git pull --rebase there when convenient)`)
+	if (ff.status !== 0) {
+		const ahead = git(['rev-list', '--count', '@{u}..HEAD']).stdout.trim()
+		console.log(`(your checkout at ${ROOT} has ${ahead} commit${ahead === '1' ? '' : 's'} that aren't on GitHub yet; run git pull --rebase && git push there to send them)`)
+	}
 }
 
 function remoteSite() {
@@ -657,7 +674,7 @@ const commands = {
 	},
 
 	async open(args) {
-		const deck = findDeck(args._[0])
+		const deck = workingCopy(findDeck(args._[0]))
 		warnHome(deck)
 		const doc = await openDocFor(deck)
 		console.log(`${deck.label} is open (${doc.name})`)
@@ -670,11 +687,11 @@ const commands = {
 	},
 
 	async install(args) {
-		await installInto(findDeck(args._[0]))
+		await installInto(workingCopy(findDeck(args._[0])))
 	},
 
 	async upgrade(args) {
-		const deck = findDeck(args._[0])
+		const deck = workingCopy(findDeck(args._[0]))
 		if (deck.metaError) die(`${deck.label}: ${deck.metaError}`)
 		const to = checkPack(args.to ?? latestPack())
 		const from = deck.meta.pack
@@ -710,7 +727,7 @@ const commands = {
 	},
 
 	async build(args) {
-		const deck = findDeck(args._[0])
+		const deck = workingCopy(findDeck(args._[0]))
 		warnHome(deck)
 		if (!deck.hasSlides) die(`${deck.label} has no slides/manifest.json (it is drawn by hand, not from code).`)
 		const doc = await openDocFor(deck)
@@ -722,7 +739,7 @@ const commands = {
 	},
 
 	async shot(args) {
-		const deck = findDeck(args._[0])
+		const deck = workingCopy(findDeck(args._[0]))
 		const doc = await openDocFor(deck)
 		const slides = args.all ? null : args.slide !== undefined ? String(args.slide).split(',') : [1]
 		const step = args.steps ? 'all' : args.step !== undefined ? Number(args.step) : null
@@ -733,7 +750,7 @@ const commands = {
 	},
 
 	async cover(args) {
-		const deck = findDeck(args._[0])
+		const deck = workingCopy(findDeck(args._[0]))
 		await saveCover(deck, await openDocFor(deck))
 	},
 
@@ -745,7 +762,7 @@ const commands = {
 	},
 
 	async publish(args) {
-		const deck = findDeck(args._[0])
+		const deck = workingCopy(findDeck(args._[0]))
 		await publishDeck(deck, { to: args.to === true ? '' : args.to, message: typeof args.message === 'string' ? args.message : undefined })
 	},
 
