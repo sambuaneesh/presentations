@@ -44,6 +44,11 @@ Open a deck, click **● Go live**, enter the room password (and optionally a ro
 - A room starts as a copy of the published deck, and closes 2 minutes after the last person leaves.
   Its link then shows "This room isn't live", with a password box to start it again.
 - Interactive slides work in rooms: when the presenter drags or clicks, everyone sees it.
+- **Phones**: on a small screen held upright, a **⟲ Landscape** button appears (live or solo). It asks
+  the browser for fullscreen landscape; where that isn't allowed (iPhone Safari) it turns the deck 90° on
+  screen instead, so turning the phone sideways shows it full size. **⟳ Portrait** switches back
+  (`site/src/landscape.jsx`). In the on-screen rotation, pinching and panning may not follow the fingers;
+  following the presenter, the usual case for viewers, is unaffected.
 
 The room server (`sync-worker/`) runs on Cloudflare's free plan and serves every deck. One-time setup:
 

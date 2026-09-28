@@ -13,6 +13,7 @@ import { loadPack } from './pack.js'
 import { SYNC_URL, roomId, hashPath, seedFromDeck, useLiveRoom, LiveBar, slideCount, roomStatus, connectUri, RoomClosed, roomUrl } from './live.jsx'
 import { ensureJoinSlide, hasJoinSlide } from './joinSlide.js'
 import { Gallery, NotFound, LoadFailed, Loading } from './Gallery.jsx'
+import { useLandscape } from './landscape.jsx'
 
 // The deck's pack version (see pack.js), set up once it has loaded.
 let P = null // its site-entry
@@ -143,13 +144,18 @@ export default function App() {
 		window.addEventListener('hashchange', onHash)
 		return () => window.removeEventListener('hashchange', onHash)
 	}, [index, route])
+	const landscape = useLandscape()
 	if (!index) return <Loading />
 	const deck = deckAt(route)
+	// On a phone held upright, a button offers landscape (landscape.jsx), live or solo.
 	if (deck)
 		return (
-			<div style={{ position: 'fixed', inset: 0 }}>
-				<DeckView entry={deck} />
-			</div>
+			<>
+				<div style={landscape.style}>
+					<DeckView entry={deck} />
+				</div>
+				{landscape.button}
+			</>
 		)
 	if (route && !index.folders.some((f) => f.path === route)) return <NotFound path={route} />
 	return <Gallery index={index} folder={route} />
