@@ -46,7 +46,7 @@ Open a deck, click **● Go live**, enter the room password (and optionally a ro
 - Interactive slides work in rooms: when the presenter drags or clicks, everyone sees it.
 - **Phones**: on a small screen held upright, a **⟲ Landscape** button appears (live or solo). It asks
   the browser for fullscreen landscape; where that isn't allowed (iPhone Safari) it turns the deck 90° on
-  screen instead, so turning the phone sideways shows it full size. **⟳ Portrait** switches back
+  screen instead, so turning the phone sideways shows it full size. The phone's back button returns to portrait
   (`site/src/landscape.jsx`). In the on-screen rotation, pinching and panning may not follow the fingers;
   following the presenter, the usual case for viewers, is unaffected.
 

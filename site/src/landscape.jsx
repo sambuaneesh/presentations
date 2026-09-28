@@ -1,8 +1,9 @@
 // Landscape on small screens: a phone held upright shows a 16:9 deck as a thin strip. A floating
 // button switches to landscape: first the real thing (fullscreen + screen.orientation.lock, e.g.
 // Android Chrome), and where the browser refuses (iPhone Safari has no orientation lock) the deck is
-// rotated 90° on screen, so turning the phone sideways reads it full size. The button then offers the
-// way back. Turning the phone to landscape by hand undoes the on-screen rotation by itself.
+// rotated 90° on screen, so turning the phone sideways reads it full size. Once in landscape the button
+// goes away: the phone's back button returns (it leaves fullscreen, and for the on-screen rotation a
+// history entry is added so back undoes it). Turning the phone to landscape by hand also undoes it.
 import { useEffect, useState } from 'react'
 
 const small = () => Math.min(window.innerWidth, window.innerHeight) < 700
@@ -32,6 +33,13 @@ export function useLandscape() {
 		if (mode === 'locked' && !document.fullscreenElement) setMode(null) // left fullscreen (e.g. the back gesture)
 	})
 	useEffect(() => { refit() }, [mode]) // (an effect must not return the frame id: React would call it as a cleanup)
+	// Back undoes the on-screen rotation (its history entry changes neither the page nor the hash route).
+	useEffect(() => {
+		if (mode !== 'rotated') return
+		const onBack = () => setMode(null)
+		window.addEventListener('popstate', onBack)
+		return () => window.removeEventListener('popstate', onBack)
+	}, [mode])
 
 	const toLandscape = async () => {
 		try {
@@ -40,31 +48,18 @@ export function useLandscape() {
 			setMode('locked')
 		} catch {
 			if (document.fullscreenElement) document.exitFullscreen?.().catch(() => {})
+			history.pushState({ ppLandscape: true }, '')
 			setMode('rotated')
 		}
 	}
-	const back = () => {
-		if (mode === 'locked') {
-			try { screen.orientation.unlock() } catch {}
-			document.exitFullscreen?.().catch(() => {})
-		}
-		setMode(null)
-	}
-
 	const style =
 		mode === 'rotated'
 			? { position: 'fixed', top: 0, left: 0, width: '100vh', height: '100vw', transform: 'rotate(90deg) translateY(-100%)', transformOrigin: 'top left' }
 			: { position: 'fixed', inset: 0 }
-	const offer = mode === null ? (small() && portrait()) : true
+	const offer = mode === null && small() && portrait()
 	const button = offer ? (
-		<button
-			type="button"
-			className={`pp-landscape ${mode === 'rotated' ? 'is-rotated' : ''}`}
-			onPointerDown={(e) => e.stopPropagation()}
-			onClick={mode ? back : toLandscape}
-			title={mode ? 'Back to portrait' : 'View the slides in landscape'}
-		>
-			<span aria-hidden="true">{mode ? '⟳' : '⟲'}</span> {mode ? 'Portrait' : 'Landscape'}
+		<button type="button" className="pp-landscape" onPointerDown={(e) => e.stopPropagation()} onClick={toLandscape} title="View the slides in landscape (back returns)">
+			<span aria-hidden="true">⟲</span> Landscape
 			<style>{LANDSCAPE_CSS}</style>
 		</button>
 	) : null
@@ -77,7 +72,4 @@ const LANDSCAPE_CSS = `
 	font: 600 15px 'Shantell Sans', system-ui, sans-serif; box-shadow: 0 6px 18px rgba(43,38,33,.25); cursor: pointer; -webkit-tap-highlight-color: transparent; }
 .pp-landscape span { font-size: 18px; color: #d64533; }
 .pp-landscape:active { transform: scale(.97); }
-/* the deck is rotated 90° clockwise, so the phone is read turned anticlockwise: the screen's top-left corner
-   becomes the bottom-left one, and the button is turned with the deck so it reads upright */
-.pp-landscape.is-rotated { right: auto; bottom: auto; left: max(4px, env(safe-area-inset-left)); top: max(64px, env(safe-area-inset-top)); transform: rotate(90deg); transform-origin: center; }
 `
