@@ -9,6 +9,15 @@ import { BuysScene, LessonsScene, ImplicationsScene, ThreatsScene, ConclusionSce
 import { AgenticTrace, AGENTIC_BEATS } from './trace/agentic.js'
 import { SLIDES } from './deck.js'
 import { Compass } from './nav.js'
+import { useAnnotate } from './annotate.js'
+import { useRef } from 'react'
+
+// A slide's root: also lets the laser and highlighter draw over the deck's interactive parts.
+function SlideRoot({ children }) {
+	const ref = useRef(null)
+	useAnnotate(ref)
+	return html`<div ref=${ref} style=${{ position: 'absolute', inset: 0 }}>${children}</div>`
+}
 import { html, C, F, box, Stage, SlideCtx } from './ui.js'
 const MapScene = (props) => html`<${Stage} still=${props.still}><${MapInner} ...${props} /></${Stage}>`
 
@@ -17,12 +26,12 @@ const MapScene = (props) => html`<${Stage} still=${props.still}><${MapInner} ...
 function withHead(id, Scene) {
 	const i = SLIDES.findIndex((s) => s.scene === id)
 	const slide = SLIDES[i] ?? {}
-	return (props) => html`<${SlideCtx.Provider} value=${id}><div style=${{ position: 'absolute', inset: 0 }}>
+	return (props) => html`<${SlideCtx.Provider} value=${id}><${SlideRoot}>
 		${slide.kicker && html`<div style=${{ ...box(120, 58, 1680, 40), fontFamily: F.hand, fontSize: 26, color: C.red, whiteSpace: 'nowrap' }}>${slide.kicker}</div>`}
 		${slide.title && html`<div style=${{ ...box(120, 92, 1680, 96), fontFamily: F.hand, fontSize: 64, lineHeight: 1.25, color: C.ink, whiteSpace: 'nowrap' }}>${slide.title}</div>`}
 		<${Scene} ...${props} />
 		${i >= 0 && !props.frozen && html`<${Stage} still=${props.still} name="nav"><${Compass} index=${i} /></${Stage}>`}
-	</div></${SlideCtx.Provider}>`
+	</${SlideRoot}></${SlideCtx.Provider}>`
 }
 
 const SCENES = {
