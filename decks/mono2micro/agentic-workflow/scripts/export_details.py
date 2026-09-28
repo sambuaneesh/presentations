@@ -1,0 +1,102 @@
+#!/usr/bin/env python3
+"""Export the recorded prompts and stage artifacts behind the live-trace "details" panels into ext/detailsData.js.
+
+The traced run (final-benchmark-v1, agentic-final-v1b, Spring PetClinic, DeepSeek v4.1 Flash, s1 r1) replayed
+its three LLM stages from the agentic-final run of the same system and model (input/replay-source.json), so the
+five LLM calls come from that run's raw/llm-calls.jsonl; evaluation, refinement and blinded evaluation come
+from the traced run itself. Prompts and responses are copied verbatim, except that the absolute path prefix of
+the scoped source checkout is shortened to <scope>/ (it names a local home directory). Run from the repository root:
+
+    python3 presentations/agentic-workflow/scripts/export_details.py
+"""
+import json
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[3]
+OUT = Path(__file__).resolve().parents[1] / "ext/detailsData.js"
+RUNS = ROOT / "studies/final-benchmark-v1/runs"
+RUN = RUNS / "final-benchmark-v1-agentic-agentic-final-v1b-spring-petclinic-deepseek-v4-1-flash-s1-r1"
+replay = json.loads((RUN / "input/replay-source.json").read_text())
+SRC = ROOT / replay["source_path"]
+cfg = json.loads((RUN / "input/run-config.json").read_text())
+SCOPE = cfg["repo_path"].rstrip("/") + "/"
+load = lambda p: json.loads(p.read_text())
+
+
+def scrub(text):
+    return text.replace(SCOPE, "<scope>/")
+
+
+calls = []
+for line in (SRC / "raw/llm-calls.jsonl").read_text().splitlines():
+    if line.strip():
+        c = json.loads(line)
+        calls.append({k: c[k] for k in ("input_tokens", "output_tokens", "total_tokens", "latency_ms")}
+                     | {"system": scrub(c["system_prompt"]), "user": scrub(c["user_prompt"]),
+                        "response": scrub(c["response_text"]), "recordedUserChars": len(c["user_prompt"])})
+assert len(calls) == 5
+assert not any("/home/" in c["user"] + c["system"] + c["response"] for c in calls)
+
+# The pasted source code (the <<SOURCE_SUMMARY>> slot) is shown collapsed on the slides: record where it sits.
+summary = load(SRC / "stages/01-evidence/evidence-pack.json")["source_summary"]
+for i, raw in ((0, summary), (1, summary[:8000])):  # evidence: the whole summary; domain: its first 8,000 characters
+    piece = scrub(raw)
+    at = calls[i]["user"].find(piece)
+    assert at >= 0 and calls[i]["user"].count(piece) == 1, i
+    calls[i]["collapse"] = {"start": at, "end": at + len(piece), "slot": "<<SOURCE_SUMMARY>>",
+                            "files": piece.count("// ─── "), "chars": len(raw), "whole": i == 0}
+
+evidence = load(SRC / "stages/01-evidence/evidence-pack.json")
+cands = load(RUN / "evaluation/online/candidates.json")
+r2 = lambda v: None if v is None else round(v, 2)
+candidates = [{
+    "id": r["candidate_id"],
+    "score": r2(r["composite_score"]),
+    "status": r["recommendation"]["status"],
+    "gate": r["quality_gates"]["passes"],
+    "metrics": {k: r2(r["metrics"].get(k)) for k in ("CMod", "CiD", "migration_feasibility", "domain_v_measure")},
+    "diagnostics": [d["message"] for d in r["diagnostics"]],
+} for r in cands["candidate_results"]]
+
+rounds = []
+for n in range(1, 6):
+    p = RUN / f"stages/04-refinement/round-{n:02d}/neighborhood.json"
+    if not p.is_file():
+        break
+    nb = load(p)
+    rounds.append({
+        "round": n,
+        "parent": {k: r2(v) for k, v in nb["parent_metrics"].items()},
+        "selected": nb["selected_operation"]["class"] if nb["selected_operation"] else None,
+        "selectedTo": nb["selected_operation"]["to_service"] if nb["selected_operation"] else None,
+        "neighbors": [{
+            "cls": x["operation"]["class"], "from": x["operation"]["from_service"], "to": x["operation"]["to_service"],
+            "reason": x["operation"]["reason"], "gains": {k: r2(v) for k, v in x["gains"].items()},
+            "valid": x["valid"], "pareto": x["pareto_improves"],
+        } for x in nb["neighbors"]],
+    })
+
+final = load(RUN / "output/final-output.json")
+blinded = load(RUN / "evaluation/blinded-report.json")
+
+data = {
+    "run": RUN.name,
+    "replaySource": SRC.name,
+    "replaySha": replay["artifact_sha256"],
+    "decoding": {"temperature": cfg["llm_temperature"], "maxTokens": cfg["llm_max_tokens"], "think": cfg["llm_think"], "seed": cfg["seed"]},
+    "objectives": cfg["online_objectives"],
+    "constraints": cfg["constraints"],
+    "maxRounds": cfg["max_refinement_rounds"],
+    "summaryChars": len(evidence["source_summary"] or ""),
+    "sourceFiles": evidence["metadata"]["source_file_count"],
+    "calls": calls,
+    "candidates": candidates,
+    "rounds": rounds,
+    "refinementHistory": final["refinement_history"],
+    "stoppingReason": final["run_metadata"]["stopping_reason"],
+    "blinded": {k: r2(v) for k, v in blinded["metrics"].items() if "mojo" not in k.lower()},  # the paper reports C2C only
+    "blindedStatus": blinded["status"],
+}
+OUT.write_text("// Generated by scripts/export_details.py from the run artifacts; do not edit by hand.\n"
+               f"export const DETAILS = {json.dumps(data, ensure_ascii=False, indent=1)}\n")
+print(f"wrote {OUT} ({OUT.stat().st_size // 1024} KB)")

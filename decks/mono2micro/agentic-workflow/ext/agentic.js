@@ -11,6 +11,7 @@
 // physically travel from the inventory, into capability groups, into services, and between
 // services when the refiner moves them.
 import { html, C, F, EASE, box } from '@pack/scenes/kit.js'
+import { Details } from './details.js'
 
 // ------------------------------------------------------------------ the run's data
 const CLASSES = [
@@ -494,6 +495,8 @@ export function AgenticTrace({ b, still, frozen }) {
 			<div>• Valid by construction: 23/23 classes.</div>
 			<div>• The reference is used only after freezing.</div>
 		</div>`}
+
+		${panelOpen && !still && html`<${Details} B=${B} still=${still} />`}
 
 		<style>${`@keyframes aw-in { from { opacity: 0; transform: translateY(12px) } to { opacity: 1; transform: none } }`}</style>
 	</div>`
