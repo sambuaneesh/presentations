@@ -31,7 +31,7 @@ export function useLandscape() {
 		if (mode === 'rotated' && !portrait()) setMode(null) // turned by hand: no need to rotate any more
 		if (mode === 'locked' && !document.fullscreenElement) setMode(null) // left fullscreen (e.g. the back gesture)
 	})
-	useEffect(refit, [mode])
+	useEffect(() => { refit() }, [mode]) // (an effect must not return the frame id: React would call it as a cleanup)
 
 	const toLandscape = async () => {
 		try {
