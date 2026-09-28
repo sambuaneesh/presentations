@@ -1,0 +1,11 @@
+{
+	"title": "Agentic Journal Extension",
+	"description": "The TSE journal extension, explained end to end: interactive, with every term, citation and number one click away.",
+	"date": "2026-09-28",
+	"listed": true,
+	"pack": 2,
+	"publish": {
+		"folder": "mono2micro"
+	},
+	"home": "~/IIITH/Research/decomplab/presentations/tse-2026-paper"
+}
