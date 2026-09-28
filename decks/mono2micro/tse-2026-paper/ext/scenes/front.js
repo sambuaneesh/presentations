@@ -1,6 +1,7 @@
 // Front matter: the title, how to use the deck, and a clickable map of the paper.
 import { useMaybeEditor } from 'tldraw'
-import { html, C, F, box, EASE, Stage, Term, Cite, Inside, Card, SHIELD, P, H, List, Note, Code, rich, reveal, SubTabs, useStage } from '../ui.js'
+import { useContext } from 'react'
+import { html, C, F, box, EASE, Stage, Term, Cite, Inside, Card, SHIELD, P, H, List, Note, Code, rich, reveal, SubTabs, useStage, SlideCtx, registerDrawer } from '../ui.js'
 import { PAPER } from '../data/paper.js'
 import { PARTS, SLIDES } from '../deck.js'
 
@@ -96,6 +97,7 @@ const QUESTIONS = {
 export function MapScene({ still }) {
 	const go = useGo()
 	const { open } = useStage()
+	const slide = useContext(SlideCtx)
 	const parts = PARTS.filter((p) => p.id !== 'front')
 	const xs = parts.map((_, i) => 230 + i * 292)
 	const ys = parts.map((_, i) => 470 + (i % 2 ? 46 : -10))
@@ -121,6 +123,7 @@ export function MapScene({ still }) {
 					: P('These slides are still being made.', { color: C.dim })}
 					${built && P('While presenting, click a slide to jump there.', { fontSize: 17, color: C.dim, marginTop: 14 })}</div>` }],
 			}
+			registerDrawer(slide, { ...drawer, id: 'drawer:map-' + p.id })
 			return html`<div key=${p.id} style=${{ ...reveal(true, still, { delay: 90 * i }) }}>
 				<div ...${SHIELD} class="tp-btn" onClick=${(e) => { e.stopPropagation(); open({ id: 'drawer:map-' + p.id, kind: 'drawer', ...drawer }) }}
 					style=${{ ...box(xs[i] - 44, ys[i] - 44, 88, 88), pointerEvents: 'all', cursor: 'pointer', borderRadius: 44, border: `3.5px solid ${built ? C.ink : C.faint}`,

@@ -1,7 +1,6 @@
 // Part IV · results (paper §V). Numbers come from the paper's tables (Tables X–XV) and, for
 // drill-downs, from studies/final-benchmark-v1/analysis/final-benchmark-analysis.json.
-import { useState } from 'react'
-import { html, C, F, box, EASE, Stage, Term, Cite, Inside, SHIELD, P, H, List, Note, Code, Quote, Table, rich, reveal, SlideSource, Src } from '../ui.js'
+import { html, C, F, box, EASE, Stage, Term, Cite, Inside, SHIELD, P, H, List, Note, Code, Quote, Table, rich, reveal, SlideSource, Src, useShared } from '../ui.js'
 import { TABLES, ANALYSIS, RQ_ANSWERS, PROSE } from '../data/results.js'
 
 const ARM_COLOR = { '80k concat': '#6f675c', OpenCode: '#2f6fb5', Final: C.red }
@@ -23,7 +22,7 @@ const MAIN = TABLES.main.rows.map((r) => ({ model: (lastModel = r[0] || lastMode
 const MODELS = [...new Set(MAIN.map((r) => r.model))]
 export function Rq1MainScene({ b, still }) {
 	const B = still ? 1 : b
-	const [model, setModel] = useState(MODELS[0])
+	const [model, setModel] = useShared('rq1:model', MODELS[0])
 	const rows = MAIN.filter((r) => r.model === model)
 	const best = METRICS.map((_, j) => Math.max(...rows.map((r) => r.v[j])))
 	const drawer = {
@@ -71,7 +70,7 @@ export function Rq1MainScene({ b, still }) {
 
 // ------------------------------------------------------------------ RQ1 · paired comparison (Table XI)
 export function Rq1PairedScene({ b, still }) {
-	const [vs, setVs] = useState('vs 80k concat')
+	const [vs, setVs] = useShared('rq1:vs', 'vs 80k concat')
 	const off = vs === 'vs 80k concat' ? 1 : 5
 	const rows = TABLES.paired.rows.map((r) => ({ m: r[0], wtl: r[off].split('/').map(Number), d: num(r[off + 1]), p: num(r[off + 2]), delta: num(r[off + 3]) }))
 	const drawer = {

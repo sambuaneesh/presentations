@@ -11,11 +11,13 @@
 // the wheel natively at the overlay (tldraw listens natively), and keys in the capture phase on window
 // while an overlay is open. Overlays are local UI state: live-room followers do not see them.
 import { createContext, useContext, useState, useEffect, useRef, useCallback } from 'react'
+import { SlideCtx, useShared, useSharedScroll, registerDrawer, drawerFor } from './shared.js'
 import { html, C, F, box, EASE } from '@pack/scenes/kit.js'
 import { REFS, ORDER } from './data/refs.js'
 import { GLOSSARY } from './glossary.js'
 
 export { html, C, F, box, EASE }
+export { SlideCtx, useShared, useSharedScroll, registerDrawer } from './shared.js'
 export const INK = C.ink
 const stop = (e) => e.stopPropagation()
 export const SHIELD = { onPointerDown: stop, onPointerUp: stop, onPointerMove: stop, onDoubleClick: stop, onTouchStart: stop, onTouchEnd: stop }
@@ -25,12 +27,18 @@ const BY_NUMBER = Object.fromEntries(ORDER.map((k, i) => [i + 1, k]))
 const Ctx = createContext({ open: () => {}, still: true })
 export const useStage = () => useContext(Ctx)
 
-export function Stage({ still, children }) {
-	const [stack, setStack] = useState([])
-	const open = useCallback((item) => setStack((s) => (s.some((x) => x.id === item.id) ? s : [...s, item])), [])
-	const close = useCallback(() => setStack((s) => s.slice(0, -1)), [])
-	const closeOne = useCallback((id) => setStack((s) => s.filter((x) => x.id !== id)), [])
-	const closeAll = useCallback(() => setStack([]), [])
+export function Stage({ still, children, name = 'main' }) {
+	const slide = useContext(SlideCtx)
+	// The stack holds only serializable descriptors (drawers by id), so a live room can share it.
+	const [stack, setStack] = useShared(`stack:${name}`, [])
+	const open = useCallback((item) => {
+		if (item.kind === 'drawer') registerDrawer(slide, item)
+		const d = item.kind === 'drawer' ? { id: item.id, kind: 'drawer', tab: item.tab ?? null } : item.kind === 'cite' ? { id: item.id, kind: 'cite', keys: item.keys } : { id: item.id, kind: 'term', key: item.key }
+		setStack((s) => (s.some((x) => x.id === d.id) ? s : [...s, d]))
+	}, [slide, setStack])
+	const close = useCallback(() => setStack((s) => s.slice(0, -1)), [setStack])
+	const closeOne = useCallback((id) => setStack((s) => s.filter((x) => x.id !== id)), [setStack])
+	const closeAll = useCallback(() => setStack([]), [setStack])
 	return html`<${Ctx.Provider} value=${{ open, close, closeAll, still, depth: stack.length }}>
 		${children}
 		${stack.length > 0 && html`<${Layer} stack=${stack} close=${close} closeOne=${closeOne} closeAll=${closeAll} />`}
@@ -79,7 +87,11 @@ const CSS = `
 `
 
 function Overlay({ item, depth, top, close }) {
-	if (item.kind === 'drawer') return html`<${Drawer} item=${item} depth=${depth} top=${top} close=${close} />`
+	const slide = useContext(SlideCtx)
+	if (item.kind === 'drawer') {
+		const d = item.tabs ? item : { ...(drawerFor(slide, item.id) ?? {}), id: item.id, tab: item.tab }
+		return d.tabs ? html`<${Drawer} item=${d} depth=${depth} top=${top} close=${close} />` : null
+	}
 	return html`<${Sheet} item=${item} depth=${depth} top=${top} close=${close} />`
 }
 
@@ -91,7 +103,8 @@ function CloseButton({ onClose }) {
 // A drawer: header, tab list on the left, scrollable content; a tab can hold sub-tabs.
 function Drawer({ item, depth, top, close }) {
 	const tabs = item.tabs
-	const [active, setActive] = useState(item.tab ?? tabs[0].id)
+	const [active, setActive] = useShared(`tab:${item.id}`, item.tab ?? tabs[0].id)
+	const scroller = useSharedScroll(`drawer:${item.id}:${active}`)
 	const tab = tabs.find((t) => t.id === active) ?? tabs[0]
 	const inset = 60 + depth * 26
 	const accent = item.color ?? C.ink
@@ -109,7 +122,7 @@ function Drawer({ item, depth, top, close }) {
 					fontFamily: F.sans, fontSize: 20, fontWeight: t.id === tab.id ? 700 : 500, color: C.ink }}>${t.label}</button>`)}
 			${item.source && html`<div style=${{ margin: '16px 8px 0', fontFamily: F.sans, fontSize: 15, lineHeight: 1.45, color: C.dim }}>${item.source}</div>`}
 		</div>`}
-		<div key=${tab.id} data-scroll="body" class="tp-scroll" style=${{ ...box(tabs.length > 1 ? 320 : 0, 100, 1920 - 2 * inset - (tabs.length > 1 ? 320 : 0), 900 - depth * 18),
+		<div key=${tab.id} ref=${scroller} data-scroll="body" class="tp-scroll" style=${{ ...box(tabs.length > 1 ? 320 : 0, 100, 1920 - 2 * inset - (tabs.length > 1 ? 320 : 0), 900 - depth * 18),
 			overflowY: 'auto', padding: '26px 44px 70px', boxSizing: 'border-box', userSelect: 'text', overscrollBehavior: 'contain' }}>
 			${tab.tabs ? html`<${SubTabs} tabs=${tab.tabs} accent=${accent} intro=${tab.render} />` : tab.render()}
 			${tabs.length === 1 && item.source && html`<div style=${{ marginTop: 24, fontFamily: F.sans, fontSize: 15, color: C.dim }}>${item.source}</div>`}
@@ -119,7 +132,7 @@ function Drawer({ item, depth, top, close }) {
 
 // Nested tabs inside one drawer tab (a row of pills).
 export function SubTabs({ tabs, accent = C.ink, intro }) {
-	const [active, setActive] = useState(tabs[0].id)
+	const [active, setActive] = useShared(`sub:${tabs.map((t) => t.id).join(',')}`, tabs[0].id)
 	const tab = tabs.find((t) => t.id === active) ?? tabs[0]
 	return html`<div>
 		${intro && intro()}
@@ -137,7 +150,8 @@ export function SubTabs({ tabs, accent = C.ink, intro }) {
 function Sheet({ item, depth, top, close }) {
 	const w = 760, h = 1000 - depth * 14
 	const x0 = 1920 - w - 40 - depth * 18, y0 = 40 + depth * 14
-	const [off, setOff] = useState({ x: 0, y: 0 })
+	const [off, setOff] = useShared(`off:${item.id}`, { x: 0, y: 0 })
+	const scroller = useSharedScroll(`sheet:${item.id}`)
 	const drag = useRef(null)
 	const clamp = (o) => ({ x: Math.max(-x0 + 10, Math.min(1920 - w - 10 - x0, o.x)), y: Math.max(-y0 + 10, Math.min(1080 - 80 - y0, o.y)) })
 	const onDown = (e) => {
@@ -164,7 +178,7 @@ function Sheet({ item, depth, top, close }) {
 		</div>
 		<button type="button" title="Close" onPointerDown=${stop} onClick=${(e) => { e.stopPropagation(); close() }}
 			style=${{ position: 'absolute', right: 14, top: 8, width: 44, height: 44, borderRadius: 22, border: `2.5px solid ${C.ink}`, background: '#fffdf8', fontSize: 26, lineHeight: '38px', cursor: 'pointer', color: C.ink, padding: 0, zIndex: 3 }}>×</button>
-		<div data-scroll="sheet" class="tp-scroll" style=${{ ...box(0, 60, w, h - 60), overflowY: 'auto', padding: '20px 36px 60px', boxSizing: 'border-box', userSelect: 'text' }}>
+		<div ref=${scroller} data-scroll="sheet" class="tp-scroll" style=${{ ...box(0, 60, w, h - 60), overflowY: 'auto', padding: '20px 36px 60px', boxSizing: 'border-box', userSelect: 'text' }}>
 			${item.kind === 'cite' ? html`<${CiteBody} keys=${item.keys} />` : html`<${TermBody} k=${item.key} />`}
 		</div>
 	</div>`
@@ -244,8 +258,9 @@ export function rich(text) {
 // ------------------------------------------------------------------ the "Inside" button
 export function Inside({ x, y, w = 300, label = 'Inside', drawer, color = C.red, still, delay = 0, style }) {
 	const { open } = useStage()
+	registerDrawer(useContext(SlideCtx), { ...drawer, id: 'drawer:' + drawer.title })
 	globalThis.__TP_COLLECT?.push(drawer)
-	return html`<button type="button" class="tp-btn" ...${SHIELD} onClick=${(e) => { e.stopPropagation(); open({ id: 'drawer:' + drawer.title, kind: 'drawer', ...drawer }) }}
+	return html`<button type="button" class="tp-btn" ...${SHIELD} onClick=${(e) => { e.stopPropagation(); open({ ...drawer, id: 'drawer:' + drawer.title, kind: 'drawer' }) }}
 		style=${{ ...(x != null ? box(x, y, w, 50) : { position: 'relative', height: 50, padding: '0 22px' }), pointerEvents: 'all', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 10,
 			fontFamily: F.sans, fontSize: 20, fontWeight: 600, color, background: '#fffdf8', border: `2.5px solid ${color}`, borderRadius: 999,
 			boxShadow: '0 4px 12px rgba(43,38,33,0.12)', transition: 'all 150ms ease', animation: still ? 'none' : `tp-in 500ms ${EASE} ${delay}ms both`, ...style }}>
@@ -255,8 +270,9 @@ export function Inside({ x, y, w = 300, label = 'Inside', drawer, color = C.red,
 // A card that opens a drawer when clicked (for maps, timelines, grids of items).
 export function Card({ drawer, children, style, still, delay = 0, color = C.ink }) {
 	const { open } = useStage()
-	if (drawer) globalThis.__TP_COLLECT?.push(drawer)
-	return html`<div class="tp-btn" ...${SHIELD} onClick=${(e) => { e.stopPropagation(); if (drawer) open({ id: 'drawer:' + drawer.title, kind: 'drawer', ...drawer }) }}
+	const slide = useContext(SlideCtx)
+	if (drawer) { registerDrawer(slide, { ...drawer, id: 'drawer:' + drawer.title }); globalThis.__TP_COLLECT?.push(drawer) }
+	return html`<div class="tp-btn" ...${SHIELD} onClick=${(e) => { e.stopPropagation(); if (drawer) open({ ...drawer, id: 'drawer:' + drawer.title, kind: 'drawer' }) }}
 		style=${{ pointerEvents: drawer ? 'all' : 'none', cursor: drawer ? 'pointer' : 'default', position: 'absolute', background: '#fffdf8', border: `2.5px solid ${color}`, borderRadius: 16,
 			boxShadow: '0 3px 0 rgba(43,38,33,0.08)', transition: 'all 150ms ease', animation: still ? 'none' : `tp-in 550ms ${EASE} ${delay}ms both`, boxSizing: 'border-box', ...style }}>${children}</div>`
 }

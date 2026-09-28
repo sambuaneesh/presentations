@@ -1,6 +1,5 @@
 // Part II · how the workflow and the study are built (paper §III).
-import { useState } from 'react'
-import { html, C, F, box, EASE, Stage, Term, Cite, Inside, Card, SHIELD, P, H, List, Note, Code, Quote, Table, Formula, rich, reveal, SlideSource, Src } from '../ui.js'
+import { html, C, F, box, EASE, Stage, Term, Cite, Inside, Card, SHIELD, P, H, List, Note, Code, Quote, Table, Formula, rich, reveal, SlideSource, Src, useShared } from '../ui.js'
 import { SYSTEMS, PETCLINIC } from '../data/systems.js'
 import { PAPER, AGENTS_TABLE } from '../data/paper.js'
 import { TABLES } from '../data/results.js'
@@ -267,7 +266,7 @@ const FIN = PETCLINIC.final
 const REF = SYSTEMS['spring-petclinic'].reference
 export function C2cScene({ b, still }) {
 	const B = still ? 1 : b
-	const [pick, setPick] = useState(Object.keys(FIN)[0])
+	const [pick, setPick] = useShared('c2c:pick', Object.keys(FIN)[0])
 	const produced = FIN[pick]
 	const rows = Object.entries(REF).map(([g, cs]) => ({ g, cs, o: overlap(produced, cs), inter: produced.filter((c) => cs.includes(c)) }))
 	const best = Math.max(...rows.map((r) => r.o))

@@ -1,6 +1,5 @@
 // Part I · the problem and its background (paper §I–II).
-import { useState } from 'react'
-import { html, C, F, box, EASE, Stage, Term, Cite, Inside, Card, SHIELD, P, H, List, Note, Code, Quote, Table, Formula, rich, reveal, SlideSource, SubTabs, Src } from '../ui.js'
+import { html, C, F, box, EASE, Stage, Term, Cite, Inside, Card, SHIELD, P, H, List, Note, Code, Quote, Table, Formula, rich, reveal, SlideSource, SubTabs, Src, useShared } from '../ui.js'
 import { SYSTEMS, PETCLINIC } from '../data/systems.js'
 import { PAPER, POSITIONING, SYSTEMS_TABLE, LABELS } from '../data/paper.js'
 import { cmod, cid, c2c, mf, labelPurity } from '../metrics.js'
@@ -229,8 +228,8 @@ function allMetrics(dec) {
 }
 export function MetricsScene({ b, still }) {
 	const B = still ? 1 : b
-	const [dec, setDec] = useState(PETCLINIC.final)
-	const untouched = dec === PETCLINIC.final
+	const [dec, setDec] = useShared('calc:dec', PETCLINIC.final)
+	const untouched = JSON.stringify(dec) === JSON.stringify(PETCLINIC.final)
 	const m = allMetrics(dec)
 	const move = (c) => {
 		const from = SERVICES.find((s) => dec[s].includes(c))

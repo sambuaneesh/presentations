@@ -3,7 +3,8 @@
 // its LLM calls (from the run's call log, via scripts/export_details.py → detailsData.js), and, for
 // the deterministic components, the rules they apply (from packages/decomplab-agentic) with the
 // run's recorded numbers. The panel is local to this viewer (it never writes to the document).
-import { useState, useEffect, useRef } from 'react'
+import { useEffect, useRef } from 'react'
+import { useShared, useSharedScroll } from '../shared.js'
 import { html, C, F, box } from '@pack/scenes/kit.js'
 import { DETAILS as D } from './detailsData.js'
 
@@ -43,7 +44,7 @@ function Pre(text) {
 }
 // A prompt whose pasted source code is folded into one placeholder block (click to expand).
 function CollapsedPrompt({ c }) {
-	const [open, setOpen] = useState(false)
+	const [open, setOpen] = useShared(`trace:fold:${c.collapse.start}:${c.collapse.chars}`, false)
 	const { start, end, slot, files, chars, whole } = c.collapse
 	const what = whole ? `all ${files} Java files of the scoped source, concatenated` : `the first ${n(chars)} characters of the concatenated source (${files} Java files begin in it)`
 	const pre = { margin: 0, fontFamily: F.mono, fontSize: 17, lineHeight: 1.5, whiteSpace: 'pre-wrap', wordBreak: 'break-word', color: C.ink, userSelect: 'text' }
@@ -280,9 +281,9 @@ export function DetailsButton({ onOpen, still }) {
 
 export function DetailsPanel({ comp, tab, onClose }) {
 	const c = COMPONENTS[comp]
-	const [active, setActive] = useState(tab && c.sections.some((s) => s.id === tab) ? tab : c.sections[0].id)
+	const [active, setActive] = useShared(`trace:tab:${comp}`, tab && c.sections.some((s) => s.id === tab) ? tab : c.sections[0].id)
 	const rootRef = useRef(null)
-	const scrollRef = useRef(null)
+	const scrollRef = useSharedScroll(`trace:${comp}`)
 
 	useEffect(() => {
 		const root = rootRef.current
@@ -340,7 +341,7 @@ export function DetailsPanel({ comp, tab, onClose }) {
 // Owns the open/closed state for one trace step; closes itself when the step changes.
 export function Details({ B, still }) {
 	const target = detailFor(B)
-	const [open, setOpen] = useState(null)
+	const [open, setOpen] = useShared('trace:open', null)
 	useEffect(() => setOpen(null), [B])
 	if (!target) return null
 	return html`<div>

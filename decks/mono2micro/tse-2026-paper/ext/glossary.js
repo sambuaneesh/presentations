@@ -1,8 +1,7 @@
 // The deck's glossary: every technical term a reader can click. Each entry says what the term means in
 // this paper, gives a formula and a worked example where one helps, and names its source (paper section,
 // cited work, or the code that implements it). Worked-example numbers are computed here, not typed.
-import { useState } from 'react'
-import { html, C, F, P, H, Code, Formula, Note, List, Table, Term, Cite } from './ui.js'
+import { html, C, F, P, H, Code, Formula, Note, List, Table, Term, Cite, useShared } from './ui.js'
 import { clippedEntropy, cmod, cid, c2c, mf, overlap } from './metrics.js'
 
 const f1 = (v) => (v == null ? '—' : (Math.round(v * 10) / 10).toFixed(1))
@@ -18,7 +17,7 @@ const TOY_SPLITS = {
 	'one service': { All: ['Order', 'OrderItem', 'Customer', 'Invoice', 'Product', 'Stock'] },
 }
 function ToyMetric({ metric }) {
-	const [pick, setPick] = useState('two services')
+	const [pick, setPick] = useShared(`toy:split:${metric}`, 'two services')
 	const dec = TOY_SPLITS[pick]
 	const r = metric === 'cmod' ? cmod(dec, TOY_EDGES) : metric === 'cid' ? cid(dec, TOY_EDGES) : mf(dec)
 	return html`<div>
@@ -38,7 +37,7 @@ function ToyMetric({ metric }) {
 function ToyEntropy({ kind }) {
 	// Illustrative: how the classes touching one table (DTP) or one use case (DI) spread over services.
 	const cases = { 'all in one service': [4], 'split 3 + 1': [3, 1], 'split 2 + 2': [2, 2], 'split 2 + 1 + 1': [2, 1, 1] }
-	const [pick, setPick] = useState('split 3 + 1')
+	const [pick, setPick] = useShared(`toy:entropy:${kind}`, 'split 3 + 1')
 	const counts = cases[pick]
 	const raw = -counts.reduce((s, c) => s + (c / 4) * Math.log(c / 4), 0)
 	return html`<div>
@@ -80,7 +79,7 @@ function wilcoxon(d) {
 }
 function ToyWilcoxon() {
 	const sets = { 'mostly positive': [4.1, 2.0, 6.3, -1.2, 3.5, 5.0, 0, 2.2], 'mixed': [4.1, -2.0, 1.3, -3.2, 0.5, 2.0, -1.1, 0], 'all positive': [1.1, 2.4, 0.8, 3.0, 1.9, 2.6, 0.4, 1.5] }
-	const [pick, setPick] = useState('mostly positive')
+	const [pick, setPick] = useShared('toy:wilcoxon', 'mostly positive')
 	const r = wilcoxon(sets[pick])
 	return html`<div>
 		${P('Illustrative differences (arm A − arm B) for eight paired cells. Pick a pattern:', { fontSize: 19 })}
@@ -101,7 +100,7 @@ function cliffsDelta(x, y) {
 }
 function ToyCliff() {
 	const sets = { 'A clearly higher': [[70, 72, 75, 78], [60, 62, 64, 71]], 'overlapping': [[60, 66, 70, 74], [58, 65, 71, 73]], 'identical': [[60, 65, 70], [60, 65, 70]] }
-	const [pick, setPick] = useState('A clearly higher')
+	const [pick, setPick] = useShared('toy:cliff', 'A clearly higher')
 	const [x, y] = sets[pick]
 	const r = cliffsDelta(x, y)
 	return html`<div>
@@ -114,7 +113,7 @@ function ToyCliff() {
 }
 
 function ToyBonferroni() {
-	const [m, setM] = useState(8)
+	const [m, setM] = useShared('toy:bonferroni', 8)
 	const alpha = 0.05
 	const ps = [['CMod', 0.0007], ['DI', 0.0013], ['C2C-50', 0.028], ['CiD', 0.052]]
 	return html`<div>

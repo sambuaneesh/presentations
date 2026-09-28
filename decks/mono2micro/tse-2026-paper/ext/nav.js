@@ -4,7 +4,7 @@
 // match open their definition in place; "back" returns to where the last jump started.
 import { useState, useEffect, useRef } from 'react'
 import { useMaybeEditor } from 'tldraw'
-import { html, C, F, box, EASE, SHIELD, Term, useStage } from './ui.js'
+import { html, C, F, box, EASE, SHIELD, Term, useStage, useShared, useSharedScroll } from './ui.js'
 import { PARTS, SLIDES } from './deck.js'
 import { GLOSSARY } from './glossary.js'
 
@@ -40,8 +40,8 @@ function matches(q) {
 const ICON = { front: '⌂', p1: 'I', p2: 'III', p3: 'IV', p4: 'V', p5: 'VI', p6: 'A' }
 function Dock({ index, onMap }) {
 	const jump = useJump()
-	const [near, setNear] = useState(false)
-	const [tip, setTip] = useState(null)
+	const [near, setNear] = useShared('dock:near', false)
+	const [tip, setTip] = useShared('dock:tip', null)
 	const here = SLIDES[index].part
 	const parts = PARTS.map((p) => ({ ...p, idx: SLIDES.map((s, i) => i).filter((i) => SLIDES[i].part === p.id) }))
 	const X = 18, W = 58, Y = 210, H = 660
@@ -68,7 +68,7 @@ function Dock({ index, onMap }) {
 }
 
 export function Compass({ index }) {
-	const [open, setOpen] = useState(false)
+	const [open, setOpen] = useShared('map:open', false)
 	const host = useRef(null)
 	// G opens the compass of the slide that is on screen (the one whose area holds the window centre).
 	useEffect(() => {
@@ -110,8 +110,9 @@ const TINT = { front: '#f3ece2', p1: '#efe7f6', p2: '#e6f1ea', p3: '#fbeee2', p4
 export function Panel({ index, close }) {
 	const jump = useJump()
 	const { open: openSheet } = useStage()
-	const [q, setQ] = useState('')
-	const [pick, setPick] = useState(null)
+	const [q, setQ, viewer] = useShared('map:q', '')
+	const [pick, setPick] = useShared('map:pick', null)
+	const scroller = useSharedScroll('map')
 	const { slides, terms } = matches(q)
 	const searching = q.trim().length > 0
 	const list = searching ? slides : SLIDES.map((s, i) => i)
@@ -165,7 +166,7 @@ export function Panel({ index, close }) {
 		<div style=${{ ...box(60, 40, 1800, 1000), background: C.paper, borderRadius: 30, boxShadow: '0 40px 90px rgba(40,25,10,0.4)', overflow: 'hidden', animation: `tp-in 260ms ${EASE} both` }}>
 			<div style=${{ ...box(40, 30, 1720, 70), display: 'flex', alignItems: 'flex-end', gap: 30 }}>
 				<div style=${{ fontFamily: F.hand, fontSize: 44, color: C.ink, whiteSpace: 'nowrap', lineHeight: 1 }}>the map <span style=${{ color: C.red }}>⌖</span></div>
-				<input ref=${input} value=${q} placeholder="search a slide, a word, a number, or a term" onInput=${(e) => setQ(e.target.value)} onPointerDown=${(e) => e.stopPropagation()}
+				<input ref=${input} value=${q} readOnly=${viewer} placeholder=${viewer ? 'the presenter is searching…' : 'search a slide, a word, a number, or a term'} onInput=${(e) => setQ(e.target.value)} onPointerDown=${(e) => e.stopPropagation()}
 					style=${{ flex: 1, height: 52, boxSizing: 'border-box', padding: '0 6px', border: 'none', borderBottom: `2.5px solid ${C.ink}`, background: 'transparent', fontFamily: F.hand, fontSize: 30, color: C.ink, outline: 'none', pointerEvents: 'all' }} />
 				<button type="button" ...${SHIELD} onClick=${(e) => { e.stopPropagation(); close() }} title="Close (Ctrl+K)"
 					style=${{ pointerEvents: 'all', flex: 'none', width: 52, height: 52, borderRadius: 26, border: `2.5px solid ${C.ink}`, background: '#fffdf8', fontSize: 26, cursor: 'pointer', padding: 0 }}>×</button>
