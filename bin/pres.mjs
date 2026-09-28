@@ -594,21 +594,46 @@ async function publishDeck(deck, { to, message }) {
 	if (site) console.log(`link: ${site}#/${target}`)
 }
 
-// Bring your own checkout of the repo up to date with what was just pushed, when that is safe.
+// Bring your own checkout of the repo up to date with what was just pushed. Commits of yours that
+// weren't on GitHub yet (template or tool changes) go on top of it and are sent too, so the checkout
+// and GitHub end up the same and nothing is left waiting.
 function catchUpCheckout(deck, target) {
+	const branch = git(['rev-parse', '--abbrev-ref', 'HEAD']).stdout.trim() || 'main'
 	git(['fetch', '--quiet', 'origin'])
-	const paths = [path.join('decks', ...target.split('/'))]
+	const deckPath = path.join('decks', ...target.split('/'))
+	// Untracked files that are exactly what was just published would block updating: they're
+	// in the new commit already.
+	for (const f of git(['ls-files', '--others', '--', deckPath]).stdout.split('\n').filter(Boolean)) {
+		const theirs = git(['rev-parse', '--verify', '--quiet', `@{u}:${f}`]).stdout.trim()
+		if (theirs && theirs === git(['hash-object', f]).stdout.trim()) fs.rmSync(path.join(ROOT, f))
+	}
+	removeEmptyDirs(path.join(ROOT, deckPath))
 	let stashed = false
-	if (paths.length && git(['status', '--porcelain', '--', ...paths]).stdout.trim()) {
-		// The published deck's files are in the new commit already; set your copy aside while fast-forwarding.
-		stashed = git(['stash', 'push', '--include-untracked', '--quiet', '-m', 'pres publish', '--', ...paths]).status === 0
+	if (git(['status', '--porcelain', '--', deckPath]).stdout.trim()) {
+		// Your local copy of the published deck is replaced by what was published: set it aside.
+		stashed = git(['stash', 'push', '--include-untracked', '--quiet', '-m', 'pres publish', '--', deckPath]).status === 0
 	}
-	const ff = git(['merge', '--ff-only', '--quiet', '@{u}'])
-	if (stashed) git(['stash', ff.status === 0 ? 'drop' : 'pop', '--quiet'])
-	if (ff.status !== 0) {
-		const ahead = git(['rev-list', '--count', '@{u}..HEAD']).stdout.trim()
-		console.log(`(your checkout at ${ROOT} has ${ahead} commit${ahead === '1' ? '' : 's'} that aren't on GitHub yet; run git pull --rebase && git push there to send them)`)
+	let ok = git(['merge', '--ff-only', '--quiet', '@{u}']).status === 0
+	if (!ok) {
+		const ahead = Number(git(['rev-list', '--count', '@{u}..HEAD']).stdout.trim())
+		const those = `${ahead} other commit${ahead === 1 ? '' : 's'}`
+		if (git(['pull', '--rebase', '--autostash', '--quiet', 'origin', branch]).status !== 0) {
+			git(['rebase', '--abort'])
+			console.log(`(your checkout at ${tildePath(ROOT)} has ${those} that change the same files as GitHub's; sort them out there with git pull --rebase, then git push)`)
+		} else if (git(['push', '--quiet', 'origin', `HEAD:${branch}`]).status !== 0) {
+			console.log(`(couldn't send the ${those} waiting in ${tildePath(ROOT)}; run git push there)`)
+		} else {
+			ok = true
+			console.log(`also sent the ${those} that were waiting in ${tildePath(ROOT)}`)
+		}
 	}
+	if (stashed) git(['stash', ok ? 'drop' : 'pop', '--quiet'])
+}
+
+function removeEmptyDirs(dir) {
+	if (!fs.existsSync(dir) || !fs.statSync(dir).isDirectory()) return
+	for (const e of fs.readdirSync(dir)) removeEmptyDirs(path.join(dir, e))
+	if (!fs.readdirSync(dir).length) fs.rmdirSync(dir)
 }
 
 function remoteSite() {
