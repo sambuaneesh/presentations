@@ -19,32 +19,31 @@ const KEYWORD_TERMS = { 'Microservices': 'microservice', 'monolith decomposition
 
 export function TitleScene({ still }) {
 	const abstract = {
-		title: 'Abstract', kicker: 'the paper in 250 words',
+		title: 'Summary of the work so far', kicker: 'where the work stands',
 		tabs: PAPER.abstract.map((a) => ({ id: a.head, label: a.head, render: () => P(rich(a.text), { fontSize: 24, lineHeight: 1.6 }) })),
-		source: 'Source: the abstract of the TSE draft (papers/tse-2026/manuscript/sections/0.abstract.tex).',
+		source: 'Source: the summary of the current write-up (papers/tse-2026/manuscript/sections/0.abstract.tex).',
 	}
 	const about = {
-		title: 'Authors and context', kicker: 'who and where',
+		title: 'Findings so far, contributions, study questions', kicker: 'the current work',
 		tabs: [
-			{ id: 'authors', label: 'Authors', render: () => html`<div>${List(PAPER.authors)}${PAPER.affiliations.map((a, i) => P(rich(a), { fontSize: 19, color: C.dim, key: i }))}</div>` },
-			{ id: 'findings', label: 'Main findings', render: () => List(PAPER.findings.map(rich), { ordered: true }) },
+			{ id: 'findings', label: 'Findings so far', render: () => List(PAPER.findings.map(rich), { ordered: true }) },
 			{ id: 'contrib', label: 'Contributions', render: () => List(PAPER.contributions.map(rich), { ordered: true }) },
-			{ id: 'rqs', label: 'Research questions', render: () => List(PAPER.rqs.map(rich)) },
+			{ id: 'rqs', label: 'Study questions', render: () => List(PAPER.rqs.map((t) => rich(t.replace(/^RQ(\d)/, 'Q$1')))) },
 		],
-		source: 'Source: §I of the TSE draft.',
+		source: 'Source: §I of the current write-up.',
 	}
 	return html`<${Stage} still=${still}>
 		<div style=${{ ...box(140, 190, 1640, 400), animation: still ? 'none' : `tp-in 800ms ${EASE} both` }}>
-			<div style=${{ fontFamily: F.hand, fontSize: 30, color: C.red, marginBottom: 18 }}>IEEE TSE journal extension · draft</div>
+			<div style=${{ fontFamily: F.hand, fontSize: 30, color: C.red, marginBottom: 18 }}>Research experiments so far</div>
 			<div style=${{ fontFamily: F.hand, fontSize: 76, lineHeight: 1.08, color: C.ink }}>Agentic LLM Workflows for Monolith-to-Microservice Decomposition</div>
 			<div style=${{ fontFamily: F.hand, fontSize: 40, lineHeight: 1.2, color: C.dim, marginTop: 18 }}>An Empirical Study of Quality, Validity, and Cost</div>
 		</div>
-		<div style=${{ ...box(140, 640, 1640, 60), fontFamily: F.sans, fontSize: 26, color: C.ink, ...reveal(true, still, { delay: 300 }) }}>${PAPER.authors.join(' · ')}</div>
+		<div style=${{ ...box(140, 640, 1640, 60), fontFamily: F.hand, fontSize: 40, color: C.ink, ...reveal(true, still, { delay: 300 }) }}>Aneesh</div>
 		<div style=${{ ...box(140, 700, 1640, 50), fontFamily: F.sans, fontSize: 21, color: C.dim, ...reveal(true, still, { delay: 400 }) }}>
-			IIIT Hyderabad · University of L'Aquila · University of Groningen · extends our ICSA 2026 paper <${Cite} k="sambu2026icsa" /></div>
+			building on our ICSA 2026 study <${Cite} k="sambu2026icsa" /></div>
 		<div style=${{ ...box(140, 790, 1640, 60), display: 'flex', gap: 18, ...reveal(true, still, { delay: 500 }) }}>
-			<${Inside} label="Read the abstract" drawer=${abstract} still=${still} />
-			<${Inside} label="Findings, contributions, RQs" drawer=${about} still=${still} color=${C.ink} />
+			<${Inside} label="Summary of the work so far" drawer=${abstract} still=${still} />
+			<${Inside} label="Findings so far, contributions, questions" drawer=${about} still=${still} color=${C.ink} />
 		</div>
 		<div style=${{ ...box(140, 890, 1640, 60), fontFamily: F.sans, fontSize: 20, color: C.dim, ...reveal(true, still, { delay: 600 }) }}>
 			<span style=${{ color: C.red, fontWeight: 600 }}>Press Ctrl+K (⌘K) anytime for the map of the deck: search any slide or term, Enter to go.</span><br />
@@ -58,7 +57,7 @@ export function HowtoScene({ still }) {
 		title: 'A drawer', kicker: 'try it',
 		tabs: [
 			{ id: 'what', label: 'What drawers hold', render: () => html`<div>
-				${P('Drawers hold the detail a slide leaves out: tables, verbatim prompts, derivations, the paper\'s exact wording, and where each number comes from.')}
+				${P('Drawers hold the detail a slide leaves out: tables, verbatim prompts, derivations, the exact wording of the current write-up, and where each number comes from.')}
 				${P(html`Terms stay clickable in here too: <${Term} k="partition" />, <${Term} k="c2c" />. Sheets stack on top of drawers; × closes one.`)}</div>` },
 			{ id: 'nested', label: 'Nested tabs', tabs: [
 				{ id: 'a', label: 'A sub-tab', render: () => P('Some tabs split again into sub-tabs, like this one.') },
@@ -76,10 +75,10 @@ export function HowtoScene({ still }) {
 			<div style=${{ fontFamily: F.sans, fontSize: 22, color: C.dim, marginTop: 6, lineHeight: 1.4 }}>${what}</div></div></div>`
 	return html`<${Stage} still=${still}>
 		${row(250, 'a dotted word is a term', 'Click it for the definition, a formula, a worked example you can play with, and where it comes from.', html`a <${Term} k="monolith" />`, 100)}
-		${row(430, 'a blue number is a citation', 'Click it for the full reference, every place the paper cites it, and a link.', html`a benchmark <${Cite} k="wang2024comparison" />`, 250)}
+		${row(430, 'a blue number is a citation', 'Click it for the full reference, where the current write-up cites it, and a link.', html`a benchmark <${Cite} k="wang2024comparison" />`, 250)}
 		${row(610, 'a red button opens a drawer', 'Tabs on the left, sometimes sub-tabs inside. Scroll with the wheel or keys.', html`<${Inside} label="Try a drawer" drawer=${demo} still=${still} />`, 400)}
 		<div style=${{ ...box(200, 820, 1520, 120), fontFamily: F.sans, fontSize: 22, color: C.dim, lineHeight: 1.5, textAlign: 'center', ...reveal(true, still, { delay: 550 }) }}>
-			Every number is generated from the paper and the study's run files, and each slide says where its content comes from (bottom right).<br />
+			Every number is generated from the current write-up and the study's run files, and each slide says where its content comes from (bottom right).<br />
 			Interactive calculators recompute the study's metrics with the same formulas as its code.<br /><b style=${{ color: C.red }}>⌖</b> bottom left, or press <b>G</b>, <b>/</b> or <b>Ctrl+K</b>: the map of the deck; type to search, Enter to jump.</div>
 	</${Stage}>`
 }
@@ -89,9 +88,9 @@ const QUESTIONS = {
 	p1: 'What is the problem, and what already exists?',
 	p2: 'How does the workflow work, and how is it tested?',
 	p3: 'Which design experiments shaped it?',
-	p4: 'Quality, reliability, cost, design: RQ1–RQ4',
+	p4: 'Quality, reliability, cost, design: Q1–Q4',
 	p5: 'What it buys, what it does not, and what could be wrong',
-	p6: 'The studies and trials behind the paper',
+	p6: 'The studies and trials behind this work',
 }
 
 export function MapScene({ still }) {
@@ -136,6 +135,6 @@ export function MapScene({ still }) {
 				</div>
 			</div>`
 		})}
-		<div style=${{ ...box(120, 250, 1680, 50), fontFamily: F.hand, fontSize: 30, color: C.dim, ...reveal(true, still) }}>the deck follows the paper, section by section · click a stop for its slides</div>
+		<div style=${{ ...box(120, 250, 1680, 50), fontFamily: F.hand, fontSize: 30, color: C.dim, ...reveal(true, still) }}>the deck follows the current write-up, section by section · click a stop for its slides</div>
 	</div>`
 }

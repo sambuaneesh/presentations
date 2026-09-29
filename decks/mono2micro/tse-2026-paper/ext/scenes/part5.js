@@ -14,7 +14,7 @@ export function BuysScene({ b, still }) {
 	const B = still ? 2 : b
 	const yes = [html`a complete assignment, guaranteed <${Term} k="repair">by construction</${Term}>`, 'lower and more predictable cost', 'up to three explicit alternatives (often only one or two distinct)', 'a complete audit trail from evidence to decision']
 	const no = ['designs better than a well-prompted single call', 'more repeatable results']
-	const drawer = { title: 'What the agentic organisation buys', kicker: '§VI-A', tabs: [{ id: 'text', label: 'The paper\'s argument', render: () => html`<div>${body('sc:disc-buys')}</div>` }], source: 'Source: §VI-A.' }
+	const drawer = { title: 'What the agentic organisation buys', kicker: '§VI-A', tabs: [{ id: 'text', label: 'The argument', render: () => html`<div>${body('sc:disc-buys')}</div>` }], source: 'Source: §VI-A.' }
 	return html`<${Stage} still=${still}>
 		<div style=${{ ...box(110, 260, 820, 560) }}>
 			<div style=${{ fontFamily: F.hand, fontSize: 44, color: C.fix }}>process benefits ✓</div>
@@ -41,7 +41,7 @@ const LESSONS = [
 export function LessonsScene({ b, still }) {
 	return html`<${Stage} still=${still}>
 		${LESSONS.map(([label, t, s], i) => {
-			const drawer = { title: t, kicker: `§${LABELS[label]}`, tabs: [{ id: 'text', label: 'The paper', render: () => html`<div>${body(label)}</div>` }], source: `Source: §${LABELS[label]}.` }
+			const drawer = { title: t, kicker: `§${LABELS[label]}`, tabs: [{ id: 'text', label: 'The current write-up', render: () => html`<div>${body(label)}</div>` }], source: `Source: §${LABELS[label]}.` }
 			return html`<${Card} key=${label} drawer=${drawer} still=${still} delay=${i * 120} style=${{ left: 110 + (i % 2) * 865, top: 260 + Math.floor(i / 2) * 350, width: 835, height: 320, padding: '22px 28px' }}>
 				<div style=${{ fontFamily: F.hand, fontSize: 26, color: C.red }}>§${LABELS[label]}</div>
 				<div style=${{ fontFamily: F.hand, fontSize: 40, lineHeight: 1.15, margin: '6px 0 14px' }}>${t}</div>
@@ -80,7 +80,7 @@ export function ThreatsScene({ still }) {
 	const items = paras('sc:threats').filter((e) => e.head)
 	return html`<${Stage} still=${still}>
 		${items.map((e, i) => {
-			const drawer = { title: e.head.replace(/\.$/, ''), kicker: 'threats to validity · §VII', tabs: [{ id: 't', label: 'The paper', render: () => P(rich(e.text)) }], source: 'Source: §VII.' }
+			const drawer = { title: e.head.replace(/\.$/, ''), kicker: 'threats to validity · §VII', tabs: [{ id: 't', label: 'The current write-up', render: () => P(rich(e.text)) }], source: 'Source: §VII.' }
 			const x = 110 + (i % 3) * 575, y = 260 + Math.floor(i / 3) * 340
 			return html`<${Card} key=${e.head} drawer=${drawer} still=${still} delay=${i * 100} style=${{ left: x, top: y, width: 545, height: 310, padding: '20px 26px' }}>
 				<div style=${{ fontFamily: F.hand, fontSize: 38 }}>${e.head.replace(/\.$/, '').replace(' validity', '')}</div>
@@ -96,7 +96,7 @@ export function ThreatsScene({ still }) {
 export function ConclusionScene({ b, still }) {
 	const B = still ? 2 : b
 	const c = paras('sc:conclusion')
-	const drawer = { title: 'Conclusion', kicker: '§VIII', tabs: [{ id: 'c', label: 'The paper', render: () => html`<div>${body('sc:conclusion')}</div>` }], source: 'Source: §VIII.' }
+	const drawer = { title: 'Conclusion', kicker: '§VIII', tabs: [{ id: 'c', label: 'The current write-up', render: () => html`<div>${body('sc:conclusion')}</div>` }], source: 'Source: §VIII.' }
 	const future = ['instantiate the Quality Agent for stakeholder constraints', 'replace LLM-inferred ownership links with source-verified evidence', 'add explicit refactoring operations, such as replicating shared classes', 'evaluate on larger, less-exposed systems, together with practising architects']
 	return html`<${Stage} still=${still}>
 		<div style=${{ ...box(110, 270, 1700, 300), display: 'flex', gap: 40, alignItems: 'center' }}>
@@ -127,7 +127,7 @@ const STUDIES = [
 	{ id: 'matched-ollama-deepseek-v1', t: 'Matched DeepSeek campaign', role: 'baseline choice', what: 'All eight treatments with DeepSeek v4.1 Flash (32 runs, all valid). The evidence for choosing 80k concat and OpenCode baseline-3; its first 80k and OpenCode runs are reused in the benchmark.', status: 'archived' },
 	{ id: 'agentic-improvement-lab-v1', t: 'Improvement lab', role: 'design experiments', what: 'One change at a time on DeepSeek (trials T000–T008): the source of the design experiments in Table VII.', status: 'archived' },
 	{ id: 'agentic-development-loop-v1', t: 'Development loop', role: 'selection tests', what: 'Replayed the recorded LLM outputs to test selection and refinement changes cheaply; it produced the final version (v1b), checked once on GLM-5.2 as a hold-out (2 of 5 design metrics better there).', status: 'kept' },
-	{ id: 'final-benchmark-v1', t: 'Final benchmark', role: 'the paper\'s data', what: 'Four models × four systems × three arms, five DeepSeek repetitions: the 96 observations behind every result, plus the earlier workflow version kept for the ablation.', status: 'the paper' },
+	{ id: 'final-benchmark-v1', t: 'Final benchmark', role: 'the current results', what: 'Four models × four systems × three arms, five DeepSeek repetitions: the 96 observations behind every result, plus the earlier workflow version kept for the ablation.', status: 'current' },
 ]
 export function StudiesScene({ still }) {
 	return html`<${Stage} still=${still}>
@@ -135,7 +135,7 @@ export function StudiesScene({ still }) {
 		${STUDIES.map((s, i) => {
 			const drawer = { title: s.t, kicker: `studies/${s.id} · ${s.status}`, tabs: [{ id: 'w', label: 'What it was', render: () => html`<div>${P(s.what, { fontSize: 23 })}${Src(`studies/${s.id}/README.md`)}</div>` }] }
 			const x = 110 + (i % 3) * 575, y = 300 + Math.floor(i / 3) * 215
-			const hot = s.status === 'the paper'
+			const hot = s.status === 'current'
 			return html`<${Card} key=${s.id} drawer=${drawer} still=${still} delay=${i * 60} color=${hot ? C.red : s.status === 'archived' || s.status === 'superseded' ? C.faint : C.ink} style=${{ left: x, top: y, width: 545, height: 196, padding: '14px 22px' }}>
 				<div style=${{ fontFamily: F.sans, fontSize: 15, color: hot ? C.red : C.dim, fontWeight: 700, letterSpacing: 0.4 }}>${i + 1} · ${s.role.toUpperCase()} · ${s.status}</div>
 				<div style=${{ fontFamily: F.hand, fontSize: 32, marginTop: 2, lineHeight: 1.15 }}>${s.t}</div>
@@ -172,7 +172,7 @@ export function ReproduceScene({ still }) {
 		['every run is a folder', 'studies/final-benchmark-v1/runs/<run-id>: inputs, all LLM calls, artifacts, blinded report, manifest'],
 		['every number is recomputed', 'tools/analyze_final_benchmark.py reads the runs and writes analysis/final-benchmark-analysis.json, without calling a model'],
 		['every prompt and protocol is versioned', 'protocols/campaigns/*.yaml and protocols/decomposer-configs/*: a protocol is never changed after it has produced observations'],
-		['the paper links it all', html`the replication package <${Cite} k="sambu2026replication" />, to be archived before submission`],
+		['a replication package links it all', html`the replication package <${Cite} k="sambu2026replication" />, to be archived before submission`],
 	]
 	return html`<${Stage} still=${still}>
 		${steps.map(([t, s], i) => html`<div key=${i} style=${{ ...box(110, 260 + i * 150, 1300, 135), ...reveal(true, still, { delay: 120 * i }) }}>
@@ -206,7 +206,7 @@ export function RefsScene({ still }) {
 			<span style=${{ fontFamily: F.serif, fontSize: 19, lineHeight: 1.4 }}><b>${r.title}</b><br /><span style=${{ color: C.dim, fontSize: 16 }}>${r.authors} · ${r.venue} · ${r.year}</span></span></div>`)}</div>` })),
 	}
 	return html`<${Stage} still=${still}>
-		<div style=${{ ...box(110, 250, 1700, 60), fontFamily: F.hand, fontSize: 32, color: C.dim }}>numbered as in the paper · click any number for the full reference and where it is cited</div>
+		<div style=${{ ...box(110, 250, 1700, 60), fontFamily: F.hand, fontSize: 32, color: C.dim }}>numbered as in the current write-up · click any number for the full reference and where it is cited</div>
 		<div style=${{ ...box(110, 320, 1700, 580), display: 'flex', flexWrap: 'wrap', alignContent: 'flex-start', gap: '12px 14px' }}>
 			${ORDER.filter((k) => !REFS[k].hidden).map((k) => html`<span key=${k} style=${{ fontFamily: F.sans, fontSize: 30 }}><${Cite} k=${k} /></span>`)}
 		</div>

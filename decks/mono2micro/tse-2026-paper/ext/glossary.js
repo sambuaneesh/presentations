@@ -120,8 +120,8 @@ function ToyBonferroni() {
 		${P('Testing many metrics at α = 0.05 makes a false positive likely somewhere. Bonferroni divides α by the number of tests m.', { fontSize: 19 })}
 		<div>${[1, 4, 8].map((k) => html`<${Btn} key=${k} on=${k === m} onClick=${() => setM(k)}>m = ${k}</${Btn}>`)}</div>
 		${Formula(html`threshold = α / m = 0.05 / ${m} = <b>${(alpha / m).toFixed(5)}</b>`)}
-		${Table(['ablation metric (paper §V-D)', 'p', `significant at ${(alpha / m).toFixed(4)}?`], ps.map(([k, p]) => [k, p.toFixed(4), p < alpha / m ? 'yes' : 'no']), { size: 18 })}
-		${P('With m = 8 (the eight metrics of the ablation), CMod and DI stay significant and C2C-50 does not, as the paper states.', { fontSize: 19 })}
+		${Table(['ablation metric (§V-D)', 'p', `significant at ${(alpha / m).toFixed(4)}?`], ps.map(([k, p]) => [k, p.toFixed(4), p < alpha / m ? 'yes' : 'no']), { size: 18 })}
+		${P('With m = 8 (the eight metrics of the ablation), CMod and DI stay significant and C2C-50 does not, as the current write-up reports.', { fontSize: 19 })}
 	</div>`
 }
 
@@ -149,7 +149,7 @@ export const GLOSSARY = {
 	decomposition: {
 		term: 'Decomposition', family: 'the task',
 		short: 'An assignment of the monolith\'s program elements (here: classes) to candidate microservices.',
-		body: () => html`<div>${P(html`This paper works at class level, like the benchmark. A decomposition is a <${Term} k="partition" />: every class belongs to exactly one named service.`)}
+		body: () => html`<div>${P(html`This work is at class level, like the benchmark. A decomposition is a <${Term} k="partition" />: every class belongs to exactly one named service.`)}
 			${P('Method-level and mixed-granularity approaches exist but are out of scope.')}</div>`,
 		source: '§II-A', see: ['partition', 'reference', 'validity'],
 	},
@@ -220,7 +220,7 @@ export const GLOSSARY = {
 	'similarity-metric': {
 		term: 'Similarity metric', family: 'metrics',
 		short: 'Compares a produced decomposition with the reference decomposition. Computed only after the answer is frozen.',
-		body: () => P(html`This paper uses <${Term} k="c2c" /> at three thresholds.`),
+		body: () => P(html`This work uses <${Term} k="c2c" /> at three thresholds.`),
 		source: '§II-B, §III-D', see: ['c2c', 'blinded-evaluation'],
 	},
 	cmod: {
@@ -276,7 +276,7 @@ export const GLOSSARY = {
 	coarse: {
 		term: 'Coarse-partition inflation', family: 'metrics',
 		short: 'Several design metrics look better when classes are lumped into few services, in the extreme a single one.',
-		body: () => P('CMod is maximal when there are few inter-service dependencies; CiD, DI and BCP also reward concentrating classes. That is why the paper reports the number of services next to every result, and why the workflow adds migration feasibility and a three-service minimum.'),
+		body: () => P('CMod is maximal when there are few inter-service dependencies; CiD, DI and BCP also reward concentrating classes. That is why this work reports the number of services next to every result, and why the workflow adds migration feasibility and a three-service minimum.'),
 		example: () => html`<${ToyMetric} metric="cmod" />`,
 		source: '§II-B, §VII', see: ['cmod', 'cid', 'mf'],
 	},
@@ -304,8 +304,8 @@ export const GLOSSARY = {
 	token: {
 		term: 'Token', family: 'LLMs',
 		short: 'The unit an LLM reads and writes, roughly three to four characters of English or code. Cost is counted in input plus output tokens.',
-		body: () => P('The study reports total input and output tokens per system for each run (RQ3).'),
-		source: '§III-A RQ3', see: ['llm'],
+		body: () => P('The study reports total input and output tokens per system for each run (Q3).'),
+		source: '§III-A, Q3', see: ['llm'],
 	},
 	temperature: {
 		term: 'Temperature', family: 'LLMs',
@@ -348,7 +348,7 @@ export const GLOSSARY = {
 		source: '§II-C, §III-B (1)', see: ['evidence-pack', '80k'],
 	},
 	agent: {
-		term: 'Agent (in this paper)', family: 'agents',
+		term: 'Agent (in this work)', family: 'agents',
 		short: 'A role-specialised component of the workflow with one responsibility, talking to the others only through validated artifacts, whether or not it calls an LLM.',
 		body: () => P('Each is an LLM agent, a tool agent (deterministic) or a hybrid.'),
 		source: '§II-D, §III-B', see: ['agentic-workflow', 'autonomous-agent'],
@@ -380,7 +380,7 @@ export const GLOSSARY = {
 	'reward-hacking': {
 		term: 'Reward hacking', family: 'agents',
 		short: 'Optimisation raises the evaluator\'s score while true quality stagnates, often because generator and evaluator share a model or signal.',
-		body: () => P(html`<${Cite} k="pan2024rewardhacking" />; LLM judges also prefer their own generations <${Cite} keys=${['panickssery2024selfpreference', 'zheng2023judging']} />. The paper's self-referential scoring finding (RQ4) is an instance of this trap.`),
+		body: () => P(html`<${Cite} k="pan2024rewardhacking" />; LLM judges also prefer their own generations <${Cite} keys=${['panickssery2024selfpreference', 'zheng2023judging']} />. This work's self-referential scoring finding (Q4) is an instance of this trap.`),
 		source: '§II-D, §V-D', see: ['self-referential', 'self-correction'],
 	},
 
@@ -430,7 +430,7 @@ export const GLOSSARY = {
 	'v-measure': {
 		term: 'V-measure', family: 'workflow diagnostic',
 		short: 'How well a candidate agrees with the capability map: the harmonic mean of homogeneity (each service holds one capability) and completeness (each capability sits in one service).',
-		body: () => P(html`<${Cite} k="rosenberg2007vmeasure" />. Recorded as a diagnostic but not optimised: scoring it rewarded the candidate built from that same map (RQ4).`),
+		body: () => P(html`<${Cite} k="rosenberg2007vmeasure" />. Recorded as a diagnostic but not optimised: scoring it rewarded the candidate built from that same map (Q4).`),
 		source: '§III-B (4), §V-D', see: ['self-referential', 'capability-map'],
 	},
 	'self-referential': {
@@ -502,7 +502,7 @@ export const GLOSSARY = {
 	'p-value': {
 		term: 'p-value', family: 'statistics',
 		short: 'If there were truly no difference, how likely would a result at least this extreme be? Small p (below α = 0.05 here) counts as significant.',
-		body: () => P('A non-significant p is not evidence of equivalence, especially with few pairs: the paper reads such results as "no evidence of a difference".'),
+		body: () => P('A non-significant p is not evidence of equivalence, especially with few pairs: this work reads such results as "no evidence of a difference".'),
 		source: '§III-C Analysis', see: ['wilcoxon', 'power', 'bonferroni'],
 	},
 	wilcoxon: {
@@ -522,7 +522,7 @@ export const GLOSSARY = {
 	},
 	'effect-size': {
 		term: 'Effect size', family: 'statistics',
-		short: 'How big a difference is, separate from whether it is significant. The paper reports Cliff\'s δ; all cross-model effects were small (|δ| ≤ 0.28).',
+		short: 'How big a difference is, separate from whether it is significant. This work reports Cliff\'s δ; all cross-model effects were small (|δ| ≤ 0.28).',
 		source: '§V-A', see: ['cliffs-delta', 'p-value'],
 	},
 	bonferroni: {

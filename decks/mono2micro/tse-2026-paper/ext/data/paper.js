@@ -126,7 +126,7 @@ export const POSITIONING = {
   "Tools [6]",
   "ICSA [1]",
   "MicroAgent [15]",
-  "This paper"
+  "This work"
  ],
  "rows": [
   [

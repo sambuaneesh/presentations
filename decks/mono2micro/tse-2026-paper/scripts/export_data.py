@@ -185,7 +185,7 @@ pos = table_rows("positioning")
 pos_body = pos_tex[pos_tex.index("\\midrule") + 8:pos_tex.index("\\bottomrule")]
 pos["rows"] = [[detex(c) if i == 0 else ("✓" if "cmark" in c else "✗" if "xmark" in c else detex(c)) + ("ᵃ" if "{a}" in c else "")
                 for i, c in enumerate(re.split(r"(?<!\\)&", r))] for r in re.split(r"\\\\", pos_body) if r.strip()]
-pos["head"] = ["", "Tools [%d]" % NUM["wang2024comparison"], "ICSA [%d]" % NUM["sambu2026icsa"], "MicroAgent [%d]" % NUM["su2026microagent"], "This paper"]
+pos["head"] = ["", "Tools [%d]" % NUM["wang2024comparison"], "ICSA [%d]" % NUM["sambu2026icsa"], "MicroAgent [%d]" % NUM["su2026microagent"], "This work"]
 
 systems = table_rows("systems")
 metrics_table = table_rows("metrics")

@@ -19,7 +19,7 @@ export function GqmScene({ b, still }) {
 	const B = still ? 1 : b
 	const go = useGo()
 	const facets = [['analyze', 'an agentic LLM workflow for monolith-to-microservice decomposition'], ['for the purpose of', 'evaluating whether it produces sound, valid and affordable decompositions'], ['with respect to', 'design quality, reference similarity, validity, stability, token cost'], ['from the viewpoint of', 'software architects and researchers'], ['in the context of', 'four open-source Java monoliths and four LLMs']]
-	const rqs = PAPER.rqs.map((t) => { const m = t.match(/^(RQ\d) \(([^)]+)\): (.*)$/); return { id: m[1], name: m[2], q: m[3] } })
+	const rqs = PAPER.rqs.map((t) => { const m = t.match(/^(RQ\d) \(([^)]+)\): (.*)$/); return { id: m[1], label: m[1].replace('RQ', 'Q'), name: m[2], q: m[3] } })
 	return html`<${Stage} still=${still}>
 		<div style=${{ ...box(110, 245, 1700, 330) }}>
 			<div style=${{ fontFamily: F.hand, fontSize: 30, color: C.red, marginBottom: 10 }}>the goal, in <${Term} k="gqm">GQM</${Term}> form <${Cite} k="basili1994gqm" /></div>
@@ -30,7 +30,7 @@ export function GqmScene({ b, still }) {
 		<div style=${{ ...box(110, 610, 1700, 330), display: 'flex', gap: 22, ...reveal(B >= 1, still) }}>
 			${rqs.map((r) => html`<div key=${r.id} ...${SHIELD} class="tp-btn" onClick=${(e) => { e.stopPropagation(); if (idx(RQ_SLIDES[r.id]) >= 0) go(idx(RQ_SLIDES[r.id])) }}
 				style=${{ flex: 1, pointerEvents: 'all', cursor: 'pointer', border: `2.5px solid ${C.ink}`, borderRadius: 18, padding: '16px 20px', background: '#fffdf8', position: 'relative' }}>
-				<div style=${{ fontFamily: F.hand, fontSize: 40, color: C.red }}>${r.id} · ${r.name}</div>
+				<div style=${{ fontFamily: F.hand, fontSize: 40, color: C.red }}>${r.label} · ${r.name}</div>
 				<div style=${{ fontFamily: F.sans, fontSize: 19, lineHeight: 1.45, marginTop: 6 }}>${r.q}</div>
 				<div style=${{ position: 'absolute', bottom: 12, right: 18, fontFamily: F.sans, fontSize: 15, color: C.dim }}>${idx(RQ_SLIDES[r.id]) >= 0 ? `answer: slide ${idx(RQ_SLIDES[r.id]) + 1} →` : ''}</div></div>`)}
 		</div>
@@ -75,7 +75,7 @@ export function RolesScene({ still }) {
 				<div style=${{ width: 560, fontFamily: F.sans, fontSize: 18, lineHeight: 1.35 }}>${r[3]}</div>
 				<div style=${{ flex: 1, fontFamily: F.sans, fontSize: 17, color: C.dim, lineHeight: 1.35 }}>${r[4]}</div></div>`
 		})}
-		<div style=${{ ...box(110, 935, 1400, 66), fontFamily: F.sans, fontSize: 18, lineHeight: 1.4, color: C.dim }}>Each component has one responsibility and talks to the others only through validated artifacts: an <${Term} k="agent" /> in this paper's sense. The order is fixed, so this is an <${Term} k="agentic-workflow" />.</div>
+		<div style=${{ ...box(110, 935, 1400, 66), fontFamily: F.sans, fontSize: 18, lineHeight: 1.4, color: C.dim }}>Each component has one responsibility and talks to the others only through validated artifacts: an <${Term} k="agent" /> in this work's sense. The order is fixed, so this is an <${Term} k="agentic-workflow" />.</div>
 		<${SlideSource}>Table III · §III-B</${SlideSource}>
 	</${Stage}>`
 }

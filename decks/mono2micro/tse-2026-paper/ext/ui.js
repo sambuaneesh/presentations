@@ -233,7 +233,7 @@ function CiteBody({ keys }) {
 			${(r.url || r.search) && html`<a href=${r.url ?? r.search} target="_blank" rel="noopener noreferrer" ...${SHIELD} onClick=${stop}
 				style=${{ pointerEvents: 'all', display: 'inline-block', padding: '8px 16px', borderRadius: 999, border: `2px solid ${C.blue}`, color: C.blue, fontFamily: F.sans, fontSize: 18, fontWeight: 600, textDecoration: 'none' }}>
 				${r.url ? (r.doi ? `DOI ${r.doi} ↗` : 'Open ↗') : 'Search on Google Scholar ↗ (no DOI or URL in the bibliography)'}</a>`}
-			${r.contexts.length > 0 && html`<div>${H('Where the paper cites it')}
+			${r.contexts.length > 0 && html`<div>${H('Where the current write-up cites it')}
 				${r.contexts.map((c, j) => html`<div key=${j} style=${{ margin: '0 0 12px', padding: '10px 14px', borderLeft: `4px solid ${C.blue}55`, background: C.paper2 + '88', borderRadius: 6 }}>
 					<div style=${{ fontFamily: F.sans, fontSize: 15, fontWeight: 700, color: C.dim, marginBottom: 4 }}>§${c.sec}</div>
 					<div style=${{ fontFamily: F.serif, fontSize: 18, lineHeight: 1.45 }}>${c.text}</div></div>`)}</div>`}

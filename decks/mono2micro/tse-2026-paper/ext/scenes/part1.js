@@ -85,7 +85,7 @@ export function PartitionScene({ b, still }) {
 		title: 'Why this study produces partitions', kicker: '§III-D',
 		tabs: [
 			{ id: 'reasons', label: 'Three reasons', render: () => html`<div>
-				${P('Letting the workflow copy shared classes, as the references do, looks natural. The paper deliberately does not, for three reasons:')}
+				${P('Letting the workflow copy shared classes, as the references do, looks natural. This work deliberately does not, for three reasons:')}
 				${List([
 					html`<b>Comparability.</b> The traditional tools, the single-shot pipeline and the autonomous agent all produce partitions; allowing copies in one arm alone would confound approach with output format.`,
 					html`<b>Measurability.</b> The design metrics assume one service per class. With copies it is ambiguous which copy a dependency ends at, and copying can lower measured coupling without changing any boundary: in design experiment E7, explicit replication cut cross-service dependency weight by 3–33 % on three systems, a gain the metrics cannot tell apart from a better design.`,
@@ -148,7 +148,7 @@ export function TechniquesScene({ b, still }) {
 				${P(html`Business-oriented approaches infer functionality groups <${Cite} k="agarwal2021businessfunction" /> or mine processes <${Cite} k="taibi2019processmining" />.`)}</div>` },
 			{ id: 'finding', label: 'What a comparison found', render: () => html`<div>
 				${Quote(rich('An independent comparison of such tools on common benchmarks found that their results vary widely across systems and metrics and depend on configuration choices [6].'), '§I')}
-				${P('The tools measured there (DataCentric, HyDec, Mono2Micro in two configurations, Log2MS) are this paper\'s traditional-tool context. Tools that need a target number of services were given the reference\'s number, which favours them.')}</div>` },
+				${P('The tools measured there (DataCentric, HyDec, Mono2Micro in two configurations, Log2MS) are this work\'s traditional-tool context. Tools that need a target number of services were given the reference\'s number, which favours them.')}</div>` },
 		],
 		source: 'Source: §I, §II-A, §III-C, §VII.',
 	}
@@ -292,7 +292,7 @@ export function IcsaScene({ b, still }) {
 		<div style=${{ position: 'absolute', left: 26, top: 84, right: 20, fontFamily: F.sans, fontSize: 20, lineHeight: 1.45, color: C.dim }}>${sub}</div></div>`
 	const problems = [['No guarantee', html`nothing ensures a <${Term} k="validity">valid</${Term}> answer, e.g. every class assigned exactly once`], ['No alternatives', 'only one candidate is ever considered: no visible trade-offs'], ['No cost control', 'cost grows with the context placed in the prompt']]
 	const drawer = {
-		title: 'Our ICSA 2026 study', kicker: 'the conference paper this extends',
+		title: 'Our ICSA 2026 study', kicker: 'the conference paper this work builds on',
 		tabs: [
 			{ id: 'pipeline', label: 'The pipeline', render: () => html`<div>
 				${List(['Phase 1 · summarise: ingest the code base at a fixed commit and summarise it with one of seven strategies', 'Phase 2 · views: generate architectural views A1–A5 from the summary, plus the static dependency graph A6', 'Phase 3 · decide: one model call synthesises the decomposition from the views'], { ordered: true })}
@@ -303,12 +303,12 @@ export function IcsaScene({ b, still }) {
 			{ id: 'models', label: 'Models', render: () => P('GPT-5, Gemini-2.5 Pro, GLM-4.6 and DeepSeek-3.2 Terminus, on the same four benchmark systems (ICSA 2026, §IV).') },
 			{ id: 'found', label: 'What it found', render: () => html`<div>
 				${List(['decompositions were structurally clean: in particular few cyclic dependencies between services, and competitive with traditional tools on several design metrics', 'summarisation strategy had no significant effect on quality', 'hierarchical summarisation cost several times more tokens'])}
-				${Src('§I and §II-C of the TSE draft')}</div>` },
+				${Src('§I and §II-C of the current write-up')}</div>` },
 			{ id: 'open', label: 'What it left open', render: () => html`<div>
 				${Quote('The pipeline, however, relied on a single, centralized reasoning step: one model call had to interpret heterogeneous evidence and produce the final answer.', '§I')}
 				${List(problems.map(([a, bb]) => html`<b>${a}</b>: ${bb}`))}</div>` },
 		],
-		source: 'Source: §I, §II-C of the TSE draft; papers/icsa-2026/manuscript §III–IV.',
+		source: 'Source: §I, §II-C of the current write-up; papers/icsa-2026/manuscript §III–IV.',
 	}
 	return html`<${Stage} still=${still}>
 		${phase(110, 1, 'Summarise', 'the code base, with one of seven strategies', 0)}
@@ -341,8 +341,8 @@ export function LlmScene({ b, still }) {
 			{ id: 'what', label: 'What it does', render: () => html`<div>
 				${P(html`Decomposes monoliths with five specialised LLM agents and analytical tools, and reports higher similarity to reference decompositions than zero-shot prompting and traditional tools on ten Java systems that include our four <${Cite} k="su2026microagent" />.`)}
 				${P('Its Common Class Agent deliberately assigns shared classes to several services, mirroring the overlapping references, and it evaluates similarity with C2C.')}</div>` },
-			{ id: 'diff', label: 'How this paper differs', render: () => html`<div>
-				${Table(['', 'MicroAgent', 'this paper'], [['target number of services', 'given, taken from the reference (as the benchmark did for tools)', 'never: no reference-derived information before freezing'], ['repeated runs', 'none reported (temperature 0)', 'five DeepSeek repetitions'], ['also measured', 'similarity', 'validity, cost, run-to-run variation']], { align: ['left', 'left', 'left'] })}</div>` },
+			{ id: 'diff', label: 'How this work differs', render: () => html`<div>
+				${Table(['', 'MicroAgent', 'this work'], [['target number of services', 'given, taken from the reference (as the benchmark did for tools)', 'never: no reference-derived information before freezing'], ['repeated runs', 'none reported (temperature 0)', 'five DeepSeek repetitions'], ['also measured', 'similarity', 'validity, cost, run-to-run variation']], { align: ['left', 'left', 'left'] })}</div>` },
 			{ id: 'more', label: 'Other signals', render: () => P(html`Recent work questions whether LLM-generated decompositions respect the code's dependencies <${Cite} k="silva2026structural" />, and surveys map the growing use of LLMs in software architecture <${Cite} keys=${['bucaioni2025aisa', 'schmid2025slr']} />.`) },
 		],
 		source: 'Source: §II-C.',
@@ -376,7 +376,7 @@ export function AgentsScene({ b, still }) {
 				${P(html`LLM agents interleave reasoning with actions such as tool calls <${Cite} k="yao2023react" />. In software engineering, autonomous agents navigate repositories, edit files and run tests <${Cite} k="yang2024sweagent" />; surveys catalogue their growth <${Cite} k="liu2024agentsurvey" />.`)}
 				${P(html`A useful distinction separates agents, where the LLM directs its own process, from workflows, where calls and tools follow predefined code paths <${Cite} k="anthropic2024agents" />. On repository-level issue resolution, a fixed three-phase pipeline beat open-source autonomous agents at a fraction of their cost <${Cite} k="xia2024agentless" />.`)}
 				${P(html`For architecture, agentic AI raises the question of which decisions can be delegated and which must stay with humans <${Cite} k="vaidhyanathan2025agentic" />.`)}
-				${Note(html`In this paper, the <${Term} k="agentic-workflow" /> is the approach, <${Term} k="opencode" /> is a baseline, and <${Term} k="agent" /> means a role-specialised component of the workflow.`, C.faint)}</div>` },
+				${Note(html`In this work, the <${Term} k="agentic-workflow" /> is the approach, <${Term} k="opencode" /> is a baseline, and <${Term} k="agent" /> means a role-specialised component of the workflow.`, C.faint)}</div>` },
 			{ id: 'self', label: 'Self-correction', tabs: [
 				{ id: 'refine', label: 'Self-Refine', render: () => P(html`Reported gains from iterative self-feedback across several tasks <${Cite} k="madaan2023selfrefine" />.`) },
 				{ id: 'cannot', label: 'Cannot self-correct', render: () => P(html`LLMs struggle to correct their own reasoning without external feedback <${Cite} k="huang2024cannot" />.`) },
@@ -397,7 +397,7 @@ export function AgentsScene({ b, still }) {
 		${pts.map(([t, s, k, x], i) => html`<div key=${t} style=${{ ...box(x - 250, 290, 500, 110), textAlign: 'center', fontFamily: F.hand, fontSize: 40, color: i === 1 ? C.red : C.ink, ...reveal(true, still, { delay: i * 120 }) }}><${Term} k=${k}>${t}</${Term}></div>`)}
 		${pts.map(([t, s, , x], i) => html`<div key=${t + 's'} style=${{ ...box(x - 250, 480, 500, 110), textAlign: 'center', fontFamily: F.sans, fontSize: 21, color: C.dim, lineHeight: 1.4, ...reveal(true, still, { delay: 200 + i * 120 }) }}>${s}</div>`)}
 		<div style=${{ ...box(220, 610, 1480, 60), display: 'flex', justifyContent: 'space-between', fontFamily: F.hand, fontSize: 28, color: C.dim, ...reveal(B >= 1, still) }}>
-			<span>← predictable</span><span>this paper's approach · OpenCode is the baseline on the right</span><span>flexible →</span></div>
+			<span>← predictable</span><span>this work's approach · OpenCode is the baseline on the right</span><span>flexible →</span></div>
 		<div style=${{ ...box(220, 720, 1480, 180), ...reveal(B >= 2, still) }}>
 			<div style=${{ fontFamily: F.hand, fontSize: 34, textAlign: 'center', lineHeight: 1.35 }}>
 				LLMs rarely fix their own output without external feedback <${Cite} keys=${['huang2024cannot', 'kamoi2024selfcorrection']} /><br />→ let code do the checking, scoring and improving</div>

@@ -12,7 +12,7 @@ const Toggle = ({ options, value, onChange }) => html`<div style=${{ display: 'f
 	${options.map((o) => html`<button key=${o} type="button" ...${SHIELD} onClick=${(e) => { e.stopPropagation(); onChange(o) }}
 		style=${{ pointerEvents: 'all', cursor: 'pointer', height: 44, padding: '0 18px', borderRadius: 999, border: `2.5px solid ${o === value ? C.red : C.ink}`, background: o === value ? C.red : '#fffdf8', color: o === value ? '#fff' : C.ink, fontFamily: F.sans, fontSize: 17, fontWeight: 600 }}>${o}</button>`)}</div>`
 const Answer = ({ rq, still, on }) => html`<div style=${{ ...box(110, 905, 1700, 90), display: 'flex', gap: 18, alignItems: 'flex-start', padding: '10px 18px', border: `2.5px solid ${C.red}`, borderRadius: 16, background: '#fffdf8', boxSizing: 'border-box', ...reveal(on, still) }}>
-	<div style=${{ fontFamily: F.hand, fontSize: 28, color: C.red, whiteSpace: 'nowrap' }}>${rq} answer</div>
+	<div style=${{ fontFamily: F.hand, fontSize: 28, color: C.red, whiteSpace: 'nowrap' }}>${rq.replace('RQ', 'Q')} · where it stands</div>
 	<div style=${{ fontFamily: F.sans, fontSize: 17, lineHeight: 1.4 }}>${rich(RQ_ANSWERS[rq])}</div></div>`
 
 // ------------------------------------------------------------------ RQ1 · per model (Table X, Fig. 3)
@@ -26,7 +26,7 @@ export function Rq1MainScene({ b, still }) {
 	const rows = MAIN.filter((r) => r.model === model)
 	const best = METRICS.map((_, j) => Math.max(...rows.map((r) => r.v[j])))
 	const drawer = {
-		title: 'RQ1 in the paper\'s words', kicker: '§V-A',
+		title: 'Q1 in the current write-up', kicker: '§V-A',
 		tabs: [
 			{ id: 'per', label: 'Design quality per model', render: () => P(rich(prose('sc:results-rq1', 'Design quality per model.'))) },
 			{ id: 'table', label: 'Table X (all models)', render: () => html`<div>
@@ -62,7 +62,7 @@ export function Rq1MainScene({ b, still }) {
 			</div>
 		</div>
 		<${Answer} rq="RQ1" still=${still} on=${B >= 1} />
-		<${Inside} x=${1560} y=${196} w=${300} label="RQ1 in detail" drawer=${drawer} still=${still} />
+		<${Inside} x=${1560} y=${196} w=${300} label="Q1 in detail" drawer=${drawer} still=${still} />
 		<style>${`@keyframes tp-in { from { opacity: 0; transform: translateY(10px) } to { opacity: 1; transform: none } }`}</style>
 		<${SlideSource}>Table X · Fig. 3</${SlideSource}>
 	</${Stage}>`
@@ -76,7 +76,7 @@ export function Rq1PairedScene({ b, still }) {
 	const drawer = {
 		title: 'Reading the paired comparison', kicker: '§V-A',
 		tabs: [
-			{ id: 'paper', label: 'The paper\'s reading', render: () => P(rich(prose('sc:results-rq1', 'Paired comparison across models.'))) },
+			{ id: 'paper', label: 'The current reading', render: () => P(rich(prose('sc:results-rq1', 'Paired comparison across models.'))) },
 			{ id: 'cols', label: 'The columns', render: () => List([html`<b>W/T/L</b>: in how many of the 16 (model, system) cells the workflow was better, equal, worse (<${Term} k="win-tie-loss" />)`, html`<b>Δ</b>: mean difference, workflow minus the other arm`, html`<b>p</b>: two-sided <${Term} k="wilcoxon">Wilcoxon signed-rank</${Term}> test (<${Term} k="p-value" />)`, html`<b>δ</b>: <${Term} k="cliffs-delta">Cliff's δ</${Term}>, an <${Term} k="effect-size" />`]) },
 			{ id: 'table', label: 'Table XI', render: () => html`<div>${Table(['metric', 'W/T/L', 'Δ', 'p', 'δ', 'W/T/L', 'Δ', 'p', 'δ'], TABLES.paired.rows, { size: 17 })}${P('Left four columns: vs 80k concat (16 pairs); right four: vs OpenCode (14 pairs with valid OpenCode output).', { fontSize: 17, color: C.dim })}</div>` },
 		],
@@ -152,7 +152,7 @@ export function Rq2Scene({ b, still }) {
 	const val = TABLES.validity.rows
 	const stab = TABLES.stability.rows
 	const drawer = {
-		title: 'RQ2 in the paper\'s words', kicker: '§V-B',
+		title: 'Q2 in the current write-up', kicker: '§V-B',
 		tabs: [
 			{ id: 'validity', label: 'Validity', render: () => P(rich(prose('sc:results-rq2', 'Validity.'))) },
 			{ id: 'why', label: 'Why always valid', render: () => P(rich(prose('sc:results-rq2', 'Why the workflow was always valid.'))) },
@@ -183,7 +183,7 @@ export function Rq2Scene({ b, still }) {
 			<div style=${{ fontFamily: F.hand, fontSize: 30, marginTop: 16 }}>No arm is stable. Several candidates plus refinement does not, by itself, make the outcome repeatable.</div>
 		</div>
 		<${Answer} rq="RQ2" still=${still} on=${B >= 2} />
-		<${Inside} x=${1560} y=${196} w=${300} label="RQ2 in detail" drawer=${drawer} still=${still} />
+		<${Inside} x=${1560} y=${196} w=${300} label="Q2 in detail" drawer=${drawer} still=${still} />
 		<${SlideSource}>Tables XIII–XIV · §V-B</${SlideSource}>
 	</${Stage}>`
 }
@@ -195,7 +195,7 @@ export function Rq3Scene({ b, still }) {
 	const shares = [['evidence', st.evidence.share], ['domain', st.domain.share], ['3 candidates', st.candidate_generation.share]]
 	const max = Math.max(...MAIN.map((r) => r.tokens))
 	const drawer = {
-		title: 'RQ3 in the paper\'s words', kicker: '§V-C',
+		title: 'Q3 in the current write-up', kicker: '§V-C',
 		tabs: [
 			{ id: 'tokens', label: 'Tokens per system', render: () => P(rich(prose('sc:results-rq3', 'Tokens per system.'))) },
 			{ id: 'where', label: 'Where the workflow spends', render: () => html`<div>${P(rich(prose('sc:results-rq3', 'Where the workflow spends tokens.')))}
@@ -225,7 +225,7 @@ export function Rq3Scene({ b, still }) {
 			<div style=${{ fontFamily: F.sans, fontSize: 17, color: C.dim, marginTop: 12, lineHeight: 1.45 }}>selection, refinement and evaluation: 0 tokens (no LLM calls)</div>
 		</div>
 		<${Answer} rq="RQ3" still=${still} on=${B >= 2} />
-		<${Inside} x=${1560} y=${196} w=${300} label="RQ3 in detail" drawer=${drawer} still=${still} />
+		<${Inside} x=${1560} y=${196} w=${300} label="Q3 in detail" drawer=${drawer} still=${still} />
 		<${SlideSource}>Fig. 4 · §V-C</${SlideSource}>
 	</${Stage}>`
 }
@@ -238,7 +238,7 @@ export function Rq4Scene({ b, still }) {
 	const drawer = {
 		title: 'The ablation, explained', kicker: '§V-D',
 		tabs: [
-			{ id: 'paper', label: 'The paper\'s words', render: () => P(rich(prose('sc:results-rq4', 'Self-referential scoring.'))) },
+			{ id: 'paper', label: 'The current write-up', render: () => P(rich(prose('sc:results-rq4', 'Self-referential scoring.'))) },
 			{ id: 'why', label: 'Why it is a clean test', render: () => html`<div>
 				${P(html`The earlier version scored candidates partly by <${Term} k="v-measure" /> against the capability map (weight 0.3). The domain-first candidate is generated from that map, so it agrees with it almost by construction and tends to win whatever its structure: <${Term} k="self-referential" />, like <${Term} k="reward-hacking" /> <${Cite} k="pan2024rewardhacking" />.`)}
 				${P('Both versions use identical LLM outputs (replayed), so any difference comes from selection and refinement alone: a paired ablation.')}</div>` },

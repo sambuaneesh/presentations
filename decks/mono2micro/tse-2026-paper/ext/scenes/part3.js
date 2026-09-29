@@ -26,7 +26,7 @@ const KEY = [
 		${P('How the change was checked before adoption (development loop, recorded LLM outputs of the 20 DeepSeek runs replayed):')}
 		${List(['with the circular term, the refiner accepted 0 moves in all 20 runs', 'without it, the refiner accepted 36 moves across the 20 runs', 'on the development runs the change beat 80k concat on four of five design metrics (CMod, CiD, DI, BCP) and lost on DTP'])}
 		${Src('studies/agentic-development-loop-v1/loop-log.jsonl (v0-control, v1b-no-domain-selection); docs/research-notes/final-architecture-and-benchmark-design-2026-09-25.md')}
-		${Note(html`Adopted as the final workflow. Its effect is measured by the paired ablation of RQ4. The analysis was prompted by a blinded outcome (E8), so the paper treats the size of that effect as possibly optimistic.`, C.faint)}</div>` },
+		${Note(html`Adopted as the final workflow. Its effect is measured by the paired ablation of Q4. The analysis was prompted by a blinded outcome (E8), so the current write-up treats the size of that effect as possibly optimistic.`, C.faint)}</div>` },
 ]
 export function EvolutionScene({ b, still }) {
 	const B = still ? 4 : b
@@ -92,7 +92,7 @@ export function BaselinesScene({ b, still }) {
 				'reliability: baseline-3 produced a valid decomposition in all eight matched runs (four with DeepSeek, four with the pilot model), as did baseline-2; baseline-1, baseline-4 and baseline-5 each failed once with the pilot model',
 				'strength: with DeepSeek and across the four agents of the earlier study, baseline-3 is second only to baseline-5; with the pilot model it is mid-range',
 			]) },
-			{ id: 'cost', label: 'The cost of fairness', render: () => P('Choosing baseline-3 rather than the highest-scoring baseline-5 makes the OpenCode baseline somewhat weaker in reference similarity. The paper accepts this, because baseline-5\'s advantage comes from knowing how it will be evaluated.') },
+			{ id: 'cost', label: 'The cost of fairness', render: () => P('Choosing baseline-3 rather than the highest-scoring baseline-5 makes the OpenCode baseline somewhat weaker in reference similarity. This work accepts this, because baseline-5\'s advantage comes from knowing how it will be evaluated.') },
 			{ id: 'table', label: 'Table VIII', render: () => html`<div>
 				${Table(['variant', 'prompt content', 'DeepSeek', 'pilot (valid)', '4 harnesses (valid)'], oc, { align: ['left', 'left', 'right', 'right', 'right'], hi: (j) => j === 2 })}
 				${P(rich(TABLES.opencode.caption), { fontSize: 17, color: C.dim })}</div>` },
@@ -165,7 +165,7 @@ export function ExecutionScene({ b, still }) {
 		<div style=${{ ...box(1260, 320, 550, 560), ...reveal(B >= 1, still) }}>
 			<div style=${{ fontFamily: F.hand, fontSize: 32, color: C.red }}>inside each folder</div>
 			${List(['frozen inputs + scope fingerprint', 'every LLM call and its tokens', 'every intermediate artifact', 'validation + blinded report', 'a manifest with content hashes'], { size: 21 })}
-			<div style=${{ fontFamily: F.sans, fontSize: 18, color: C.dim, marginTop: 8 }}>Every number in the paper is recomputed from these files by a script, without calling a model.</div>
+			<div style=${{ fontFamily: F.sans, fontSize: 18, color: C.dim, marginTop: 8 }}>Every reported number is recomputed from these files by a script, without calling a model.</div>
 			<div style=${{ marginTop: 20 }}><${Inside} label="Open one run" drawer=${drawer} still=${still} /></div>
 		</div>
 		<${SlideSource}>§IV-C</${SlideSource}>
