@@ -1,7 +1,7 @@
 // The ablation (Table III) as two light switches the presenter flips. Actions: ../ext/ablation.js.
 export default {
 	name: 'Two switches',
-	kicker: 'IV · results · ablation',
+	kicker: 'III · results · RQ2',
 	title: 'Two switches',
 	source: 'Table III · §V-B · SWE-bench M test, GPT-4o',
 	notes: "COVER (interactive · Table III, GPT-4o, of 517)\n• Both off (agentless base): 136 · $0.08\n• Image2Code: 146 (+10) · $0.10\n• Code2Image alone: 148 (+12) · $0.27, ~3× cost; only helps where repro code exists (~17%)\n• Both: 157 (+21, +15.44%) · $0.29; neither half gets there alone\nDO\n• press Image2Code · swap to Code2Image alone · then both · reset\nREF · Table III · §V-B",

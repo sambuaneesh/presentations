@@ -9,9 +9,20 @@ function styleArrows(k, styles) {
 	})
 }
 
+// A picture from the paper, taped onto the slide like a print: a white mat, two strips of tape, a caption.
+function taped(k, x, y, w, h, name, o = {}) {
+	const { caption, alt, ...on } = o
+	k.box(x - 14, y - 14, w + 28, h + 28, { fill: 'solid', color: 'white', size: 's', ...on })
+	k.image(x, y, w, h, name, { alt: alt ?? name, ...on })
+	k.box(x - 34, y - 28, 110, 34, { fill: 'solid', color: 'yellow', size: 's', dash: 'solid', rot: -10, opacity: 0.65, ...on })
+	k.box(x + w - 76, y - 28, 110, 34, { fill: 'solid', color: 'yellow', size: 's', dash: 'solid', rot: 9, opacity: 0.65, ...on })
+	const cw = Math.max(w + 80, 460)
+	if (caption) k.text(x + w / 2 - cw / 2, y + h + 26, caption, { size: 'm', scale: 1.05, color: 'grey', w: cw, align: 'middle', ...on })
+}
+
 export default {
 	name: 'The idea',
-	kicker: 'II · the idea',
+	kicker: 'II · the method · the idea',
 	title: 'Read it both ways',
 	source: '§I · §III',
 	notes: "COVER\n• The idea: translate both ways between picture and code\n• Image2Code: docs + generated repro code → understand and localize\n• Code2Image: render each patch → validate by looking\nCLICKS\n1 · red arrow, Image2Code · 2 · green arrow, Code2Image\nREF · §I · §III",
@@ -26,6 +37,9 @@ export default {
 		k.box(1270, 440, 420, 300, { fill: 'solid', color: 'white', size: 'm', rot: 1.5, id: 'code' })
 		k.text(1310, 480, 'function draw() {\n  bar.radius = …\n  if (v === 0)\n    skip(…)\n}', { font: 'mono', size: 'm', color: 'blue', rot: 1.5, id: 'code-t' })
 		k.text(1270, 770, 'the code', { size: 'l', color: 'grey', align: 'middle', w: 420, id: 'code-lbl' })
+		// GUIRepair's own mascot (Fig. 4), between the two halves
+		k.text(1062, 575, 'meet\nGUIRepair', { size: 'm', color: 'grey', rot: -4 })
+		taped(k, 878, 500, 164, 246, 'mascot.webp', { alt: "GUIRepair's mascot: a husky at a laptop" })
 		// click 1: Image2Code, a big swoop over the top
 		k.arrow('pic', 'code', { color: 'red', size: 'xl', bend: -190, beat: 1, anim: 'fade', id: 'i2c' })
 		k.text(560, 250, 'Image2Code', { size: 'xl', color: 'red', align: 'middle', w: 800, beat: 1, id: 'i2c-t' })

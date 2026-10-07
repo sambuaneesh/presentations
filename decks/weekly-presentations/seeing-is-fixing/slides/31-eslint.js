@@ -1,7 +1,7 @@
 // eslint-15243 as a detective's corkboard: sticky notes pinned up, red string (real bound arrows) between them.
 export default {
 	name: 'eslint-15243',
-	kicker: 'III · a case · eslint-15243',
+	kicker: 'III · results · RQ2 · eslint-15243',
 	title: 'Why the docs matter',
 	source: '§V-B2 · Fig. 9 (GUIRepair base vs. GUIRepair I2C)',
 	notes: "COVER\n• A case Image2Code alone solved: \"Support async formatter\"\n• Without docs, the base never looks at lib/cli.js → fix fails\n• architecture.md says lib/cli.js is the heart of the CLI → found → patch matches the developer's\n• Note: not visual; the gain is the mined project knowledge\nCLICKS\n1 · base's guesses · 2 · the architecture.md note · 3 · lib/cli.js + the await patch\nREF · §V-B2 · Fig. 9",

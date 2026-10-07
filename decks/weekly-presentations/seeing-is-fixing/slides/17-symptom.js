@@ -13,7 +13,8 @@ const DAYS = [
 
 export default {
 	name: 'Symptom',
-	kicker: 'II · the method · ❷ repro generation',
+	kicker: 'II · the method · step 2 · repro generation',
+	step: 2,
 	title: 'next-1509, as the reporter saw it',
 	source: 'next-1509 · redrawn from Fig. 6a · §III-A2',
 	notes: "COVER\n• Step 2, repro generation, shown on next-1509\n• Issue: \"The popupContainer configuration on ConfigProvider does not take effect on Dialog\"\n• Symptom: the calendar opens beneath the dialog, so it can't be used\nCLICKS\n1 · the hidden calendar outlined\nREF · §III-A2 · Fig. 6a · [43]",

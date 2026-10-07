@@ -1,7 +1,8 @@
 // Step 6, GUI rendering: each candidate patch goes through a browser and comes out as a print.
 export default {
 	name: 'Render each',
-	kicker: 'III · Code2Image · step 6',
+	kicker: 'II · the method · step 6 · GUI rendering',
+	step: 6,
 	title: 'Now look at every one',
 	source: '§III-D1 · §IV-D',
 	notes: "COVER\n• Step 6, GUI rendering: the repro code becomes a runnable front-end project\n• For each patch: apply → rebuild → run the repro in a browser (Playwright) → capture\n• Result: one bug image + one image per patch\n• Honest footnote: environments were set up by hand\nCLICKS\n1 · the browser · 2 · the print · 3 · \"set up by hand\"\nREF · §III-D1 · §IV-D",

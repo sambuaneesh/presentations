@@ -32,7 +32,8 @@ const CH = 13.6 // approx. width of one handwritten character at size s × 1.25
 
 export default {
 	name: 'Docs tree',
-	kicker: 'II · the method · ❶ knowledge mining',
+	kicker: 'II · the method · step 1 · knowledge mining',
+	step: 1,
 	title: 'first, only the names',
 	source: '§III-A1 · §IV-D · names as drawn in Fig. 4 · picks illustrative',
 	notes: "COVER\n• Step 1, knowledge mining, part 1\n• Docs say which components exist and how they're used\n• The whole docs folder won't fit, so the chat model sees only the directory tree (filenames)\n• It picks the Top-6 by name and names the key directories\nCLICKS\n1 · picks circled · 2 · key directories underlined\nREF · §III-A1 · §IV-D · names from Fig. 4 (picks illustrative)",

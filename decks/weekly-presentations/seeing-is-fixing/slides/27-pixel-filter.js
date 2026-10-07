@@ -26,7 +26,8 @@ function print(k, x, y, w, h, bars, o = {}) {
 }
 export default {
 	name: 'Pixel filter',
-	kicker: 'III · Code2Image · step 7',
+	kicker: 'II · the method · step 7 · patch selection',
+	step: 7,
 	title: 'Same pixels? Out.',
 	source: '§III-D2 · schematic (which prints fall is illustrative)',
 	notes: "COVER\n• Step 7 starts with a pixel comparison against the bug image\n• No visual change → the patch is ineffective → filtered out\n• The filter can't tell good changes from bad ones (next slide)\nCLICKS\n1 · changed prints stay on the sieve · 2 · identical ones fall through\nREF · §III-D2 (schematic)",

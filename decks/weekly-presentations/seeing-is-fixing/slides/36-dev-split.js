@@ -1,7 +1,7 @@
 // Table IV: SWE-bench M dev (102 tasks, five other repositories) as a pencil tally.
 export default {
 	name: 'Dev split',
-	kicker: 'IV · results · generalization',
+	kicker: 'III · results · RQ3',
 	title: 'Five new repos, 102 tasks',
 	source: 'Table IV · §V-C · SWE-bench M dev, all GPT-4o',
 	notes: "COVER\n• SWE-bench M dev: 102 tasks from five other repositories, all GPT-4o\n• GUIRepair full 14 · RAG 11 · base 10 · SWE-agent M 10 · Agentless JS 1\n• Evidence it carries over to other projects (small numbers: 102 tasks)\nCLICKS\n1 · GUIRepair full's 14\nREF · Table IV · §V-C",

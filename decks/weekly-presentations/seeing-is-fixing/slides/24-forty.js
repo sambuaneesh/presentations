@@ -13,7 +13,8 @@ function card(k, x, y, w, h, fix, opts = {}) {
 
 export default {
 	name: 'Forty',
-	kicker: 'II · the method · step 5',
+	kicker: 'II · the method · step 5 · patch generation',
+	step: 5,
 	title: 'Not one patch: a handful',
 	source: '§III-C · §IV-D (1 greedy at T = 0, 39 sampled at T = 1) · Pass@1: §II-B, §III-D',
 	draw(k) {

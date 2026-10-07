@@ -6,7 +6,8 @@ const FILES = [
 
 export default {
 	name: 'Hunks',
-	kicker: 'II · the method · step 4',
+	kicker: 'II · the method · step 4 · hunk localization',
+	step: 4,
 	title: 'Which functions?',
 	source: '§III-B2 · §IV-D · elements as drawn in Fig. 4',
 	notes: "COVER\n• Step 4, hunk localization: full contents of the key files now\n• Localize at class/function level; each suspect element is extracted whole\n• A bug outside any function gets a 500-line window\nCLICKS\n1 · suspect functions circled · 2 · the 500-line note\nREF · §III-B2 · §IV-D · elements from Fig. 4",

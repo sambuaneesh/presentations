@@ -5,7 +5,8 @@ const FIX = String.raw`/([:\-,[{]\s*(?:![^\s]+)?[ \t]*)("|\')(?:(?!\2)[^\\\r\n]|
 
 export default {
 	name: 'Search / Replace',
-	kicker: 'II · the method · step 5',
+	kicker: 'II · the method · step 5 · patch generation',
+	step: 5,
 	title: 'Write the edit',
 	source: '§III-C · prism-1602 fix, Fig. 7a',
 	notes: "COVER\n• New example from here on: prism-1602, in Prism (a syntax highlighter): YAML strings fail to highlight when a comment appears on the same line (§III-D2)\n• Step 5, patch generation, in Agentless's Search/Replace format\n• Search = the buggy code, Replace = the fix (the real prism-1602 regex)\n• Applied to the source, then written out with git diff\nCLICKS\n1 · the replace card · 2 · the added # circled · 3 · \"then a git diff\"\nREF · §III-C · Fig. 7a",

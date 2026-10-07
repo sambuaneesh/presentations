@@ -9,7 +9,8 @@ const COLORS = {
 const PIECES = [['hello', 0, 0, 'hello'], ['colon', 5, 0, ':'], ['d1', 2, 1, '-'], ['w1', 4, 1, '"world"'], ['cmt', 12, 1, '# test'], ['d2', 2, 2, '-'], ['w2', 4, 2, '"world"']]
 export default {
 	name: 'Three prints',
-	kicker: 'III · Code2Image · prism-1602',
+	kicker: 'II · the method · step 7 · prism-1602',
+	step: 7,
 	title: 'Three prints of one line',
 	source: '§III-D2 · Fig. 7b (prints reconstructed)',
 	notes: "COVER\n• The paper's own example: bug, patch 1, patch 2\n• Patch 1 changes pixels (passes the filter) but kills all highlighting\n• Patch 2 restores highlighting: the model keeps patch 2\nCLICKS\n1 · cross on patch 1 · 2 · box on patch 2\nREF · §III-D2 · Fig. 7 (prints reconstructed)",

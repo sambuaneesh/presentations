@@ -11,7 +11,8 @@ const PATHS = [
 
 export default {
 	name: 'File funnel',
-	kicker: 'II · the method · step 3',
+	kicker: 'II · the method · step 3 · file localization',
+	step: 3,
 	title: 'Which files?',
 	source: '§III-B1 · §IV-D · paths as drawn in Fig. 4',
 	notes: "COVER\n• Step 3, file localization\n• Chat model reads the repo structure (Agentless format) + embedding Top-4 in the key directories; merged\n• Too many files? The model keeps the Top-4 key bug files\nCLICKS\n1 · suspicious paths come out · 2 · keep the Top-4\nREF · §III-B1 · §IV-D · paths from Fig. 4",

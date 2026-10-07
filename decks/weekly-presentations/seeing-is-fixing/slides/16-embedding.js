@@ -36,7 +36,8 @@ const MERGED = ['axes/_common_ticks.md', 'charts/line.md', 'configuration/locale
 
 export default {
 	name: 'Embedding',
-	kicker: 'II · the method · ❶ knowledge mining',
+	kicker: 'II · the method · step 1 · knowledge mining',
+	step: 1,
 	title: '…then read the pages',
 	source: '§III-A1 · §IV-D · schematic: dots are not real chunks',
 	notes: "COVER\n• Step 1, part 2: names can miss content, so also search the text (RAG-style)\n• text-embedding-3-small · 512-token chunks, no overlap · only in the key directories · Top-6\n• Both sets merged = Related Docs, injected as domain knowledge\nCLICKS\n1 · arrows to the six nearest chunks · 2 · the Related Docs note\nREF · §III-A1 · §IV-D · Fig. 5b (schematic dots)",

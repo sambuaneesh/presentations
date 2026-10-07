@@ -11,7 +11,8 @@ function print(k, x, y, w, h, bars, o = {}) {
 }
 export default {
 	name: 'The judge',
-	kicker: 'III · Code2Image · step 7',
+	kicker: 'II · the method · step 7 · patch selection',
+	step: 7,
 	title: 'Stops at the first yes',
 	source: '§III-D2 · §IV-D · schematic (frame numbers illustrative)',
 	notes: "COVER\n• Survivors go to the LLM one at a time, judged against the issue\n• First \"yes\" → stop; only that Top-1 patch is submitted\n• The rest are never looked at\nCLICKS\n1–3 · crosses · 4 · the box on frame 08 (echoes next-4182's Patch 8)\nREF · §III-D2 · §IV-D (frame numbers illustrative)",

@@ -7,7 +7,8 @@ const LABEL = { imp: 'imports', cmt: 'comments', hdr: 'headers', var: 'variables
 
 export default {
 	name: 'Skeleton',
-	kicker: 'II · the method · step 3',
+	kicker: 'II · the method · step 3 · file localization',
+	step: 3,
 	title: 'Read it as a skeleton',
 	source: '§III-B1 · schematic file',
 	notes: "COVER\n• To choose the Top-4 without overflowing the context, each file is read as a skeleton\n• Kept: imports (GUIRepair's addition), class/function headers, comments\n• Dropped: variable declarations; bodies folded away\nCLICKS\n1 · bodies scribbled out, variables struck · 2 · what's left\nREF · §III-B1 (schematic file)",

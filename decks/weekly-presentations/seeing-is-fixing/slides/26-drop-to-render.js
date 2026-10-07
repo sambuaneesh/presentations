@@ -2,7 +2,8 @@
 // The YAML is separate mono text shapes tagged y-*; actions in ../ext/dropRender.js recolour them.
 export default {
 	name: 'Drop to render',
-	kicker: 'III · Code2Image · prism-1602',
+	kicker: 'II · the method · step 6 · try it: prism-1602',
+	step: 6,
 	title: 'Drop a patch in, see what it does',
 	titleScale: 1.3,
 	source: '§III-D2 · Fig. 7 (render reconstructed)',

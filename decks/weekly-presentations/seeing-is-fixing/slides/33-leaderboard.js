@@ -1,7 +1,7 @@
 // Table I as a handwritten list with hatched bars; GUIRepair is drawn last and passes the dashed Globant line.
 export default {
 	name: 'Leaderboard',
-	kicker: 'IV · results',
+	kicker: 'III · results · RQ1',
 	title: 'Against the leaderboard',
 	source: 'top of Table I · SWE-bench M test, resolved of 517 · May 2025',
 	notes: "COVER\n• Top of Table I (SWE-bench M test, May 2025) + SWE-agent Multimodal for reference\n• GUIRepair (GPT-4o) 157 = 30.37%\n• +4 over Globant (153, best commercial), +17 over Zencoder, +26 over Agentless Lite (best open source)\n• Closed systems don't report model or cost: not like for like\nCLICKS\n1 · GUIRepair's bar · 2 · \"+4 over the best commercial system\"\nREF · Table I · §V-A",
@@ -35,5 +35,7 @@ export default {
 		const oy = TOP + ROWS.length * P + BH / 2
 		k.loop(gx + 6, oy, 34, 46, { beat: 2, anim: 'wipe' })
 		k.text(gx - 620, oy + 58, '+4 over the best commercial system', { size: 'm', scale: 1.15, color: 'red', beat: 2, rot: -1.5, align: 'end', w: 660 })
+		// the fair comparison: same model as Agentless Lite (GPT-4o)
+		k.text(1655, TOP + 3 * P - 18, 'same model:\n+30', { size: 'm', scale: 1.1, color: 'red', rot: -3, beat: 2, anim: 'fade' })
 	},
 }

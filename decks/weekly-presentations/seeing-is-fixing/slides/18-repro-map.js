@@ -59,7 +59,8 @@ const SK = { x: 1080, y: 250, w: 700, h: 420 }
 
 export default {
 	name: 'Repro map',
-	kicker: 'II · the method · ❷ repro generation',
+	kicker: 'II · the method · step 2 · repro generation',
+	step: 2,
 	title: 'the picture, written as code',
 	source: 'next-1509 · code as in Fig. 6b · sketch redrawn from Fig. 6a · §III-A2',
 	notes: "COVER\n• With the Related Docs in the prompt, the model writes code that reproduces the scene\n• Lines 1–2: which components are involved (Button, Dialog, DatePicker)\n• Lines 4–47: how they're arranged to trigger it (ConfigProvider popupContainer + scrolling div)\nCLICKS\n1–3 · Button, Dialog, DatePicker linked to the sketch · 4 · lines 4–47 bracketed\nREF · §III-A2 · Fig. 6b",

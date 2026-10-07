@@ -1,16 +1,28 @@
 // next-4182 as a hand-drawn vertical timeline: steps 1, 2, 3, 7, ending at Patch 8 (Fig. 10).
+
+// A picture from the paper, taped onto the slide like a print: a white mat, two strips of tape, a caption.
+function taped(k, x, y, w, h, name, o = {}) {
+	const { caption, alt, ...on } = o
+	k.box(x - 14, y - 14, w + 28, h + 28, { fill: 'solid', color: 'white', size: 's', ...on })
+	k.image(x, y, w, h, name, { alt: alt ?? name, ...on })
+	k.box(x - 34, y - 28, 110, 34, { fill: 'solid', color: 'yellow', size: 's', dash: 'solid', rot: -10, opacity: 0.65, ...on })
+	k.box(x + w - 76, y - 28, 110, 34, { fill: 'solid', color: 'yellow', size: 's', dash: 'solid', rot: 9, opacity: 0.65, ...on })
+	const cw = Math.max(w + 80, 460)
+	if (caption) k.text(x + w / 2 - cw / 2, y + h + 26, caption, { size: 'm', scale: 1.05, color: 'grey', w: cw, align: 'middle', ...on })
+}
+
 export default {
 	name: 'next-4182',
-	kicker: 'III · a case · next-4182',
+	kicker: 'III · results · RQ2 · next-4182',
 	title: 'Only the full pipeline solved it',
 	titleScale: 1.3,
 	source: '§V-B4 · Fig. 10',
 	notes: "COVER\n• A case only the full pipeline solved\n• Issue: \"[CascaderSelect] Enabling popup v2 will report an error\"; snippet + screenshot, no complete repro\n• Code2Image alone had nothing to replay; Image2Code alone wrote a repro nobody replayed\nCLICKS\n1 · docs + bug scenario (TypeError … 'getInstance') · 2 · repro code · 3 · cascader-select.jsx · 4 · replays to Patch 8: \"This patch has solved the bug scenario.\"\nREF · §V-B4 · Fig. 10",
 	draw(k) {
 		// the issue, as a sticky note on the right
-		k.note(1340, 300, '[CascaderSelect]\nEnabling\npopup v2 will\nreport an error', { color: 'yellow', scale: 1.8, rot: 2, size: 's' })
-		k.text(1360, 720, 'a snippet + a screenshot,\nno complete repro code', { size: 'm', color: 'grey', rot: 2 })
-		k.text(1360, 250, 'issue #3992', { size: 's', color: 'grey', rot: 2 })
+		k.text(1220, 215, 'issue #3992: “[CascaderSelect] Enabling popup v2 will report an error”', { size: 's', scale: 1.05, color: 'grey', w: 600 })
+		taped(k, 1250, 345, 540, 359, 'next4182-screenshot.webp', { alt: 'the screenshot attached to next-4182: code and a red error panel' })
+		k.text(1250, 750, 'a snippet + a screenshot,\nno complete repro code', { size: 'm', color: 'grey' })
 
 		// the timeline spine
 		const X = 230, YS = [300, 460, 620, 790]

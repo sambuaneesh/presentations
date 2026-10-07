@@ -5,7 +5,7 @@ const REPOS = [
 ]
 export default {
 	name: 'By repository',
-	kicker: 'IV · results',
+	kicker: 'III · results · RQ1',
 	title: 'Where it works, where it doesn\'t',
 	titleScale: 1.25,
 	source: 'Table II · §V-A · GUIRepair (GPT-4o), resolved / tasks',

@@ -1,7 +1,7 @@
 // Table V: the same pipeline on three base models, base → full, against Globant's 153.
 export default {
 	name: 'Other models',
-	kicker: 'IV · results · generalization',
+	kicker: 'III · results · RQ3',
 	title: 'Better eyes, same pipeline',
 	source: 'Table V · §V-C · SWE-bench M test, resolved of 517',
 	notes: "COVER\n• Same pipeline, three base models (base → full)\n• GPT-4o 136 → 157 · GPT-4.1 148 → 161 · o4-mini 160 → 175\n• 175 with o4-mini = 22 more than Globant; benefits from stronger reasoning\nCLICKS\n1 · GPT-4.1 · 2 · o4-mini · 3 · the 175 circled\nREF · Table V · §V-C",

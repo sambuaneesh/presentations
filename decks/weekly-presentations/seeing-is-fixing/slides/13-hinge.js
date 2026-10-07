@@ -25,7 +25,7 @@ function print(k, x, y, o = {}) {
 
 export default {
 	name: 'The hinge',
-	kicker: 'II · the idea',
+	kicker: 'II · the method · the idea',
 	title: 'The hinge',
 	source: '§III-D1 · §IV-D · §V-B4',
 	draw(k) {

@@ -4,7 +4,8 @@ const H = 250
 
 export default {
 	name: 'Issue Report+',
-	kicker: 'II · the method · ❷ repro generation',
+	kicker: 'II · the method · step 2 · repro generation',
+	step: 2,
 	title: 'the report, plus',
 	source: '§III-A2 · §III (Fig. 4)',
 	notes: "COVER\n• Output of Image2Code: description + image + repro code = Issue Report+\n• Every later step reads Issue Report+\n• Only the JS is generated; the HTML/CSS around it is static\n• Small mismatches (button sizes, colours) are fine: what matters is the code behaviour\nCLICKS\n1 · + repro code · 2 · = Issue Report+ · 3 · the mismatch note\nREF · §III-A2 · Fig. 4",

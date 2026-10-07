@@ -2,7 +2,7 @@
 // only the unique counts and the five-way core. Click 2 circles the two 12s and says what they mean.
 export default {
 	name: 'Unique fixes',
-	kicker: 'IV · results',
+	kicker: 'III · results · RQ1',
 	title: 'Different eyes see different bugs',
 	titleScale: 1.25,
 	source: 'Fig. 8 · §V-A · only unique fixes and the five-way core shown',
