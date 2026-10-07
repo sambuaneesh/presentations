@@ -1,4 +1,7 @@
-// The hinge (§V-B4): the repro code is what Image2Code writes and Code2Image replays.
+// The hinge, told with a twist. Click 1: the clean story (Image2Code writes the repro code, Code2Image
+// replays it, a fixed picture). Click 2: the catch: the same code on the same library gives the same bug.
+// Click 3: the truth: each candidate patch goes into the library, it's rebuilt, and the same repro code
+// runs again: one render per patched build. The code never changes, only the library under it (§III-D1).
 // Workaround: helpers.createArrowBetweenShapes drops color/size/dash, so restyle bound arrows by tag
 // right after the kit creates them (a microtask queued here runs once buildSlide has finished).
 function styleArrows(k, styles) {
@@ -9,40 +12,62 @@ function styleArrows(k, styles) {
 	})
 }
 
+// A little print of the picture: mountain, plus a sun (the bug as reported) or nothing.
+function print(k, x, y, o = {}) {
+	const { sun = true, rot = 0, ...rest } = o
+	k.box(x, y, 360, 260, { fill: 'solid', color: 'white', size: 'm', rot, ...rest, id: rest.id })
+	const id = rest.id ? { id: undefined } : {}
+	const pass = { ...rest, ...id }
+	delete pass.id
+	k.pen([[x + 35, y + 225], [x + 120, y + 120], [x + 170, y + 175], [x + 235, y + 95], [x + 330, y + 225]], { size: 'l', wob: 3, ...pass })
+	if (sun) k.circle(x + 290, y + 70, 26, { size: 'm', ...pass })
+}
+
 export default {
 	name: 'The hinge',
 	kicker: 'II · the idea',
 	title: 'The hinge',
-	source: '§III · §V-B4 (next-4182)',
-	notes: "COVER\n• Both halves pass through one artefact: the reproduction code\n• Image2Code writes it; Code2Image replays it on each patched build\n• Most reports lack repro code, so you need both halves\nCLICKS\n1 · Image2Code writes it · 2 · Code2Image replays it · 3 · the paper's quote\nREF · §III-A · §III-D · §V-B4",
+	source: '§III-D1 · §IV-D · §V-B4',
 	draw(k) {
-		// the screenshot
-		k.box(150, 400, 360, 260, { fill: 'solid', color: 'white', size: 'm', rot: -2, id: 'pic' })
-		k.pen([[185, 625], [270, 520], [320, 575], [385, 495], [480, 625]], { size: 'l', wob: 3, id: 'mtn' })
-		k.circle(440, 470, 26, { size: 'm', id: 'sun' })
-		k.text(150, 690, 'the bug, as seen', { size: 'l', color: 'grey', align: 'middle', w: 360, id: 'pic-lbl' })
-		// the repro code, in the middle
+		// the bug, as reported, and the repro code with its hinge doodle
+		print(k, 150, 400, { rot: -2, id: 'pic' })
+		k.text(150, 690, 'the bug, as seen', { size: 'l', color: 'grey', align: 'middle', w: 360 })
 		k.box(760, 360, 400, 340, { fill: 'solid', color: 'white', size: 'l', id: 'code' })
-		k.text(800, 400, '<script>\n  render(\n    <Bug />\n  )\n</script>', { font: 'mono', size: 'm', scale: 1.1, color: 'blue', id: 'code-t' })
-		k.text(760, 730, 'repro code', { size: 'xl', align: 'middle', w: 400, id: 'code-lbl' })
-		// a doodled hinge on the sheet's corner
-		k.box(1030, 560, 44, 110, { size: 's', id: 'h1' })
-		k.box(1084, 560, 44, 110, { size: 's', id: 'h2' })
-		k.pen([[1079, 548], [1079, 684]], { size: 'l', id: 'pin' })
-		for (const [x, y] of [[1052, 585], [1052, 645], [1106, 585], [1106, 645]]) k.circle(x, y, 5, { size: 's', fill: 'fill', color: 'black', id: `screw-${x}-${y}` })
-		// the print of a patched build
-		k.box(1410, 400, 360, 260, { fill: 'solid', color: 'white', size: 'm', rot: 2, beat: 2, anim: 'drop', id: 'print' })
-		k.pen([[1445, 625], [1530, 520], [1580, 575], [1645, 495], [1740, 625]], { size: 'l', wob: 3, beat: 2, anim: 'fade', id: 'mtn3' })
-		k.tick(1680, 440, 50, { beat: 2, id: 'ok' })
-		k.text(1410, 690, 'each patch, rendered', { size: 'l', color: 'grey', align: 'middle', w: 360, beat: 2, id: 'print-lbl' })
-		// the two arrows through it
-		k.arrow('pic', 'code', { beat: 1, anim: 'fade', id: 'i2c', bend: -60 })
-		k.text(470, 280, 'Image2Code writes it', { size: 'l', color: 'red', align: 'middle', w: 440, rot: -3, beat: 1, id: 'i2c-t' })
-		k.arrow('code', 'print', { beat: 2, anim: 'fade', id: 'c2i', bend: -60 })
-		k.text(1030, 280, 'Code2Image replays it', { size: 'l', color: 'green', align: 'middle', w: 440, rot: 3, beat: 2, id: 'c2i-t' })
-		styleArrows(k, { i2c: { color: 'red', size: 'xl' }, c2i: { color: 'green', size: 'xl' } })
-		// the paper's words
-		k.text(260, 850, '"… tightly linking the Image2Code and Code2Image components"', { size: 'l', align: 'middle', w: 1400, beat: 3, id: 'quote' })
-		k.text(260, 910, '§V-B4', { size: 'm', color: 'grey', align: 'middle', w: 1400, beat: 3, id: 'quote-src' })
+		k.text(800, 400, '<script>\n  render(\n    <Bug />\n  )\n</script>', { font: 'mono', size: 'm', scale: 1.1, color: 'blue' })
+		k.text(760, 730, 'repro code', { size: 'xl', align: 'middle', w: 400 })
+		k.box(1030, 560, 44, 110, { size: 's' })
+		k.box(1084, 560, 44, 110, { size: 's' })
+		k.pen([[1079, 548], [1079, 684]], { size: 'l' })
+		for (const [x, y] of [[1052, 585], [1052, 645], [1106, 585], [1106, 645]]) k.circle(x, y, 5, { size: 's', fill: 'fill', color: 'black' })
+
+		// click 1: the clean story
+		const one = { beat: 1, anim: 'fade' }
+		k.arrow('pic', 'code', { ...one, id: 'i2c', bend: -60 })
+		k.text(470, 280, 'Image2Code writes it', { size: 'l', color: 'red', align: 'middle', w: 440, rot: -3, ...one })
+		k.arrow([1175, 520], [1395, 520], { ...one, id: 'c2i', color: 'green', size: 'xl', bend: -40 })
+		k.text(1030, 280, 'Code2Image replays it', { size: 'l', color: 'green', align: 'middle', w: 440, rot: 3, ...one, until: 3 })
+		print(k, 1410, 400, { sun: false, rot: 2, beat: 1, anim: 'drop', until: 2 })
+		k.tick(1680, 430, 50, { beat: 1, until: 2 })
+		k.text(1410, 690, 'the fix, rendered', { size: 'l', color: 'grey', align: 'middle', w: 360, beat: 1, until: 2 })
+
+		// click 2: the catch: same code, same library, same bug
+		print(k, 1410, 400, { rot: 2, beat: 2, anim: 'pop', until: 3 })
+		k.text(1330, 690, 'same code + same library\n= same bug', { size: 'l', color: 'red', align: 'middle', w: 520, rot: -2, beat: 2, anim: 'fade', until: 3 })
+
+		// click 3: the truth: a patch goes in, the library is rebuilt, the same code runs again, per patch
+		const three = { beat: 3, anim: 'fade' }
+		k.text(980, 250, 'Code2Image re-runs it\non each patched build', { size: 'l', color: 'green', align: 'middle', w: 600, rot: 3, ...three })
+		k.box(1205, 600, 190, 130, { fill: 'solid', color: 'white', size: 's', rot: -3, beat: 3, anim: 'drop' })
+		k.text(1225, 610, 'a patch', { size: 'm', rot: -3, ...three })
+		k.text(1228, 655, '- old', { font: 'mono', size: 'm', color: 'red', rot: -3, ...three })
+		k.text(1228, 688, '+ new', { font: 'mono', size: 'm', color: 'green', rot: -3, ...three })
+		k.arrow([1300, 595], [1300, 535], { size: 'm', ...three })
+		print(k, 1450, 360, { sun: false, rot: 4, beat: 3, anim: 'drop' })
+		print(k, 1430, 380, { rot: -1, beat: 3, anim: 'drop' })
+		print(k, 1410, 400, { sun: false, rot: 2, beat: 3, anim: 'drop' })
+		k.text(1390, 690, 'one render\nper patched build', { size: 'l', color: 'grey', align: 'middle', w: 400, ...three })
+		k.text(160, 860, 'the code never changes; only the library under it does', { size: 'xl', align: 'middle', w: 1600, ...three })
+
+		styleArrows(k, { i2c: { color: 'red', size: 'xl' } })
 	},
 }

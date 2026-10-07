@@ -2,7 +2,7 @@
 export default {
 	name: 'By hand',
 	kicker: 'V · honest light',
-	title: 'The hand in the darkroom',
+	title: 'Still done by hand',
 	source: '§III-D1',
 	notes: "COVER\n• What's still manual: step 6's environments\n• Automating dependency setup is error-prone for LLMs, so the authors did it by hand (following SWE-bench M)\n• Install deps per contributor guide · build and import the package into the repro HTML · small path fixes\nCLICKS\n1 · the hand · 2 · the list · 3 · \"a practical compromise\"\nREF · §III-D1",
 	draw(k) {

@@ -8,10 +8,11 @@ export default {
 	kicker: 'II · the method · step 5',
 	title: 'Write the edit',
 	source: '§III-C · prism-1602 fix, Fig. 7a',
-	notes: "COVER\n• Step 5, patch generation, in Agentless's Search/Replace format\n• Search = the buggy code, Replace = the fix (the real prism-1602 regex)\n• Applied to the source, then written out with git diff\nCLICKS\n1 · the replace card · 2 · the added # circled · 3 · \"then a git diff\"\nREF · §III-C · Fig. 7a",
+	notes: "COVER\n• New example from here on: prism-1602, in Prism (a syntax highlighter): YAML strings fail to highlight when a comment appears on the same line (§III-D2)\n• Step 5, patch generation, in Agentless's Search/Replace format\n• Search = the buggy code, Replace = the fix (the real prism-1602 regex)\n• Applied to the source, then written out with git diff\nCLICKS\n1 · the replace card · 2 · the added # circled · 3 · \"then a git diff\"\nREF · §III-C · Fig. 7a",
 	draw(k) {
 		const s = 1.4
 		k.text(200, 250, 'components/prism-yaml.js', { size: 's', scale: 1.2, font: 'mono', color: 'grey' })
+		k.text(700, 250, 'prism-1602: a YAML string loses its colour when a comment follows it', { size: 's', scale: 1.2, color: 'grey' })
 		k.box(170, 300, 1580, 190, { fill: 'solid', color: 'white', size: 's', rot: -0.8, id: 'search' })
 		k.text(200, 318, 'SEARCH', { size: 'l', color: 'red', rot: -0.8 })
 		k.text(210, 400, PRE + BUG, { size: 's', scale: s, font: 'mono', rot: -0.8 })

@@ -1,7 +1,7 @@
-// Title: the name, hand-lettered; a print of the fixed YAML drying on a line; and a finger that comes out of the screen at the presenter.
+// Title: the name, hand-lettered; a little robot squinting through a magnifier at a broken page; and a finger that comes out of the screen at the presenter.
 export default {
 	name: 'Title',
-	notes: "COVER\n• Paper: Seeing is Fixing (Huang, Zhang, Xie, Chen · TUM, NTU, SMU · arXiv 2506.16136, 2025)\n• One line: GUIRepair fixes bugs in GUI libraries by looking at them\n• The frame for the talk: a darkroom (develop → fix)\n• Say who you are\nCLICKS\n1 · the finger pops out of the screen at you: \"presented by me\"\nREF · title page",
+	notes: "COVER\n• Paper: Seeing is Fixing (Huang, Zhang, Xie, Chen · TUM, NTU, SMU · arXiv 2506.16136, 2025)\n• One line: GUIRepair fixes bugs in GUI libraries by looking at them\n• Say who you are\nCLICKS\n1 · the finger pops out of the screen at you: \"presented by me\"\nREF · title page",
 	draw(k) {
 		k.text(160, 330, 'Seeing is Fixing', { size: 'xl', scale: 2.6 })
 		k.underline(170, 520, 900, { color: 'red' })
@@ -9,19 +9,27 @@ export default {
 		k.text(166, 760, 'Kai Huang · Jian Zhang · Xiaofei Xie · Chunyang Chen', { size: 'm', scale: 1.1 })
 		k.text(166, 810, 'arXiv 2506.16136 · June 2025', { size: 's', scale: 1.2, color: 'grey' })
 
-		// a drying line with one print pegged to it
-		k.pen([[1200, 262], [1360, 282], [1520, 290], [1680, 284], [1820, 268]], { wob: 2, size: 's', color: 'grey' })
-		const px = 1330, py = 300, pw = 380, ph = 250
-		k.box(px, py, pw, ph, { fill: 'solid', color: 'grey', size: 's', id: 'print' })
-		k.box(px + 22, py + 22, pw - 44, ph - 44, { fill: 'none', color: 'grey', size: 's', dash: 'dotted' })
-		// the fixed render (Patch 2, Fig. 7b): mono m, ~14px per character
-		const cw = 14.1, lx = px + 50, ly = py + 60, lh = 44
-		const tok = (row, col, s, color) => k.text(lx + col * cw, ly + row * lh, s, { font: 'mono', size: 'm', color })
-		tok(0, 0, 'hello', 'blue'); tok(0, 5, ':', 'grey')
-		tok(1, 2, '-', 'grey'); tok(1, 4, '"world"', 'green'); tok(1, 12, '# test', 'grey')
-		tok(2, 2, '-', 'grey'); tok(2, 4, '"world"', 'green')
-		// two wooden pegs
-		for (const x of [px + 60, px + pw - 80]) k.box(x, py - 34, 20, 58, { fill: 'solid', color: 'orange', size: 's', rot: -4 })
+		// a little robot squinting through a magnifying glass at a browser whose button has slid off the edge
+		const wx = 1440, wy = 240, ww = 400, wh = 270
+		k.box(wx, wy, ww, wh, { fill: 'solid', color: 'white', size: 'm', rot: 1 })
+		k.pen([[wx + 4, wy + 48], [wx + ww - 4, wy + 50]], { size: 's', color: 'grey' })
+		for (let i = 0; i < 3; i++) k.circle(wx + 30 + i * 26, wy + 25, 8, { size: 's', color: 'grey', fill: 'solid' })
+		for (const [dy, w] of [[95, 230], [135, 290], [175, 180]]) k.pen([[wx + 40, wy + dy], [wx + 40 + w, wy + dy + 2]], { size: 's', color: 'grey', wob: 1 })
+		k.box(wx + 300, wy + 205, 170, 62, { text: 'Submit', size: 's', fill: 'solid', color: 'blue', rot: 14 })
+		k.text(wx + 330, wy + 300, 'oops', { size: 's', color: 'red', rot: -8 })
+		// the robot
+		const rx = 1215, ry = 300
+		k.pen([[rx + 60, ry - 10], [rx + 62, ry - 50]], { size: 's' })
+		k.circle(rx + 62, ry - 60, 10, { size: 's', color: 'red', fill: 'solid' })
+		k.box(rx, ry - 10, 125, 100, { geo: 'rectangle', size: 'm', fill: 'semi', color: 'grey' })
+		k.circle(rx + 38, ry + 32, 11, { size: 's', fill: 'fill', color: 'black' })
+		k.box(rx + 70, ry + 30, 34, 8, { size: 's', fill: 'fill', color: 'black', rot: -6 })
+		k.pen([[rx + 40, ry + 68], [rx + 62, ry + 74], [rx + 86, ry + 66]], { size: 's' })
+		k.box(rx + 15, ry + 95, 95, 120, { geo: 'rectangle', size: 'm', fill: 'semi', color: 'grey' })
+		// its arm, holding the magnifier up to the screen
+		k.pen([[rx + 105, ry + 130], [rx + 165, ry + 115], [rx + 215, ry + 95]], { size: 'm' })
+		k.pen([[rx + 215, ry + 95], [rx + 250, ry + 70]], { size: 'l', color: 'black' })
+		k.circle(wx + 50, wy + 120, 62, { size: 'm', fill: 'semi', color: 'light-blue' })
 
 		// presented by… and a finger that comes out of the screen, pointing at the presenter
 		k.text(166, 862, 'presented by', { size: 'm', scale: 1.1, color: 'grey' })

@@ -1,4 +1,4 @@
-// The same 517 circles; 63 fill in red, in three strokes of the grease pencil.
+// The 517 SWE-bench M test issues, one circle each; one click fills the 63 SWE-agent resolves.
 function pick(n, m, seed) {
 	let a = seed >>> 0
 	const r = () => {
@@ -16,19 +16,20 @@ function pick(n, m, seed) {
 	return idx.slice(0, m)
 }
 export default {
-	name: '63',
+	name: '63 of 517',
 	kicker: 'I · the problem',
-	title: 'A strong agent, handed the pictures',
-	source: 'Table I · dot positions illustrative',
-	notes: "COVER\n• A strong agent (SWE-agent Multimodal, GPT-4o) resolves 63 of 517 = 12.19%\n• SWE-agent is strong on text-only SWE-bench, yet ~12% here\n• Dot positions are illustrative; only the count is data\nCLICKS\n1–3 · the 63 fill in, 21 at a time; count on 3\nREF · Table I · §I",
+	title: 'Strong on SWE-bench, 12% here',
+	source: '§I · Table I · SWE-bench M test (§IV-B) · dot positions illustrative',
+	notes: "COVER\n• The SWE-bench M test split: 517 visual issues, one circle each\n• SWE-agent \"performs strongly on SWE-bench\" (§I), the text-only benchmark\n• Here it resolves 63 of 517 = 12.19% (Claude 3.5; 62 with GPT-4o)\n• Which dots are red is illustrative; only the count is data\nCLICKS\n1 · the 63 light up, all at once\nREF · §I · Table I · §IV-B",
 	draw(k) {
 		const X = 165, Y = 300, P = 34, S = 22, C = 47
 		k.grid(X, Y, C, 517, P, S, { color: 'grey', each: () => ({ rot: (k.rand() - 0.5) * 20 }) })
-		const lit = pick(517, 63, 1602)
-		lit.forEach((i, j) => {
-			k.box(X + (i % C) * P, Y + Math.floor(i / C) * P, S, S, { geo: 'ellipse', size: 's', color: 'red', fill: 'fill', beat: 1 + Math.floor(j / 21), anim: 'pop' })
-		})
-		k.text(170, 760, 'resolves 63', { size: 'xl', scale: 1.5, color: 'red', beat: 3 })
-		k.text(620, 790, 'SWE-agent Multimodal · GPT-4o · 12.19%', { size: 'l', scale: 1.1, beat: 3, anim: 'fade' })
+		k.text(170, 690, '517 visual issues · one circle each', { size: 'm', scale: 1.2, color: 'grey' })
+		for (const i of pick(517, 63, 1602)) {
+			k.box(X + (i % C) * P, Y + Math.floor(i / C) * P, S, S, { geo: 'ellipse', size: 's', color: 'red', fill: 'fill', beat: 1, anim: 'pop' })
+		}
+		k.text(170, 770, 'SWE-agent: 63 of 517', { size: 'xl', scale: 1.5, color: 'red', beat: 1, anim: 'fade' })
+		k.text(172, 900, 'the same agent that does well on SWE-bench (text only)', { size: 'm', scale: 1.2, color: 'grey', beat: 1, anim: 'fade' })
+		k.text(1250, 800, '12%', { size: 'xl', scale: 2.4, color: 'red', rot: -3, beat: 1, anim: 'fade' })
 	},
 }
