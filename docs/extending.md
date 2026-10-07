@@ -63,6 +63,26 @@ title (see `presentation-pack/script/lib/layouts.js`).
 server's schema, so also add the type's props to `sync-worker/src/TldrawDurableObject.ts` (like
 `scene`) and redeploy the worker.
 
+## A deck's colours (pack 7 on)
+
+Slides use tldraw's colour names (`black`, `grey`, `red`, `green`, `yellow`, …). A deck repaints them
+with a palette in its document meta, `pp.palette` (`presentation-pack/script/lib/palette.js` applies it
+through `editor.updateThemes`, per editor, so other decks keep their colours). Set it in tldraw (or with
+`exec` through the local API) with `updateDeck(editor, { palette })` semantics:
+
+```js
+{
+  paper: '#ffffff',      // what light tints are mixed towards
+  solid: '#ffffff',      // tldraw's base fill: the slide paper (fill 'semi' uses it)
+  background: '#f3f5f8', // the canvas around the slides
+  black: '#364f6b',      // a plain hex: its semi/pattern/note tints are mixed from it
+  red: { solid: '#e8436f', pattern: '#fc5185', semi: '#fde0e7', noteFill: '#fdc9d6' }, // or set variants
+}
+```
+
+Note tldraw's fill names: `fill: 'solid'` paints a colour's `semi` tint, `fill: 'semi'` paints the
+theme's `solid`. Only light mode is repainted. Seeing is Fixing has the full example.
+
 ## The pack (`presentation-pack/`)
 
 | Want | Where |

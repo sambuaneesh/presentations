@@ -74,7 +74,10 @@ publish again.
 - **Minimal**: ink on paper, lots of empty space, a short handwritten title (or none), one drawing,
   maybe one line of text. No bullet lists on the slide.
 - **One accent colour, red**, for emphasis and marks. Green only for "fixed / works". Grey for
-  anything secondary.
+  anything secondary. Write slides with tldraw's colour *names*; a deck can repaint them with its own
+  palette (see below). Keep the paper **white**, like a real canvas, and stay away from orange and
+  warm, generic "AI deck" palettes: pick a fresh one (e.g. from colorhunt.co). Seeing is Fixing uses
+  navy ink, pink for red, aqua for green.
 - **Build up on clicks** with small entrances (`beat`, `anim`). Motion is **smooth and eased**, never
   choppy frame-stepping (no CSS `steps()`, no throttled counters).
 - **Slide changes are instant cuts.** Never add transitions between slides unless asked.
@@ -154,6 +157,13 @@ made with, `"pack"` in deck.json, so template changes never break old talks, on 
 website. `pres pack` shows the versions and which decks use them. Changes to the template are made in
 `{{REPO}}/presentation-pack/script/` and become a version with `pres pack release`. A deck moves to a
 newer version only with `pres upgrade <deck>` (look at it afterwards).
+
+**A deck's own colours** (version 7 on): store a palette in the deck's document meta, `pp.palette`,
+mapping tldraw colour names to hex, plus `solid` (the slide paper; keep it white), `background` (the
+canvas around the slides) and `paper` (what light tints are mixed towards). A plain hex gets its tints
+mixed for you; an object sets variants (`solid`, `semi`, `pattern`, `noteFill`). It travels in the
+.tldraw file and shows on the desktop, the website and in live rooms. Details:
+`{{REPO}}/docs/extending.md`.
 
 ## Rules
 
