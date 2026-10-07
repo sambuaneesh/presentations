@@ -50,7 +50,6 @@ export class PresentTool extends StateNode {
 
 	onExit() {
 		const editor = this.editor
-		clearTimeout(this.advanceTimer)
 		document.removeEventListener('fullscreenchange', this.onFullscreenChange)
 		if (document.fullscreenElement) document.exitFullscreen?.().catch(() => {})
 		if (!this.follower) live.get()?.onPresent(null)
@@ -81,7 +80,6 @@ export class PresentTool extends StateNode {
 	// build step has reached, that shape: the latest such step wins. `animate` glides there.
 	show(animate = false) {
 		const editor = this.editor
-		clearTimeout(this.advanceTimer)
 		const slide = getSlides(editor)[presentIndex.get()]
 		if (!slide) return
 		const beat = presentBeat.get()
@@ -94,10 +92,6 @@ export class PresentTool extends StateNode {
 		const opts = { insets: NO_INSETS, animate: animate ? 900 : false }
 		if (target) fitBounds(editor, editor.getShapePageBounds(target.id), opts)
 		else fitSlide(editor, slide.id, opts)
-		// meta.advance on the camera step: once the glide has landed, carry on to the next slide by
-		// itself. Only when we got here going forward, and only the presenter (viewers follow).
-		if (target && animate && this.forward && !this.follower && editor.getShape(target.id)?.meta?.advance && target.f === beat)
-			this.advanceTimer = setTimeout(() => editor.getCurrentToolId() === 'present' && this.next(), 1100)
 	}
 
 	// Refit whenever the window size changes (entering fullscreen, resizing).
@@ -120,7 +114,6 @@ export class PresentTool extends StateNode {
 
 	// One step forward: the slide's next build step, else the next slide.
 	next() {
-		this.forward = true
 		const i = presentIndex.get()
 		const slide = getSlides(this.editor)[i]
 		if (slide && presentBeat.get() < slideBeats(this.editor, slide.id)) return this.go(i, presentBeat.get() + 1)
@@ -129,7 +122,6 @@ export class PresentTool extends StateNode {
 
 	// One step back: the previous build step, else the previous slide with all its steps shown.
 	prev() {
-		this.forward = false
 		const i = presentIndex.get()
 		if (presentBeat.get() > 0) return this.go(i, presentBeat.get() - 1)
 		if (i > 0) this.go(i - 1, 'end')

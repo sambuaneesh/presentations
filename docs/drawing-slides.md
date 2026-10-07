@@ -34,6 +34,8 @@ export default {
 	kicker: 'I · the problem',         // optional: small red line above the title
 	title: 'Words are not enough',     // optional: short, handwritten
 	source: 'Table II · §4',           // optional: small grey citation, bottom right
+	step: 3,                           // optional: draws a strip of numbered boxes top right (done hatched,
+	                                   // this one red); `steps: 7` sets how many (default 7)
 	notes: 'COVER\n• …\nCLICKS\n1 · …\nREF · …',   // speaker notes (format below)
 	draw(k) {
 		k.note(300, 380, 'a bug report\nin words', { color: 'yellow', id: 'words' })
@@ -75,6 +77,8 @@ Common options on every call:
 | `beat` | the click that reveals it (1, 2, …). Omit to show it with the slide |
 | `until` | the click that takes it away (it disappears from then on), e.g. a figure that gets replaced. Needs template version 3 or newer |
 | `delay` | milliseconds before its entrance plays, so one click can cascade (e.g. notes popping in one by one). Needs template version 4 or newer |
+| `advance` | with `focus`: once the glide lands, the talk carries on to the next slide by itself (only when arriving going forward; template 6+) |
+| `focus` | a camera step: from that click on, the presenting view glides to fit this shape (often an invisible box, `opacity: 0`, drawn just for it). Going back a click glides back; slide changes stay instant cuts. Needs template version 5 or newer |
 | `anim` | its entrance: `pop` (default), `wipe` (looks drawn; good for pen strokes), `drop`, `wiggle`, `fade`, `zoom` (comes out of the screen), `none` |
 | `origin` | `[x, y]`: a shared centre, so several shapes animate as one drawing (e.g. a hand that zooms in) |
 | `meta` | extra shape meta: interactive controls, below |

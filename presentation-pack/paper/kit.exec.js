@@ -45,6 +45,8 @@ function makeKit(frameId, key) {
 		...(typeof o.beat === 'number' && { beat: o.beat }),
 		...(typeof o.until === 'number' && { until: o.until }), // gone from that click on (needs template 3+)
 		...(typeof o.delay === 'number' && { delay: o.delay }), // ms before its entrance plays (needs template 4+)
+		...(typeof o.focus === 'number' && { focus: o.focus }), // camera step: the view glides to it at that click (template 5+)
+		...(o.advance && { advance: true }), // with focus: once the glide lands, go on to the next slide (template 6+)
 		...(o.anim && { anim: o.anim }),
 		...(o.origin && { origin: o.origin }), // a shared zoom/pop centre (frame-local [x, y]) for multi-shape drawings
 		...(o.meta ?? {}),
@@ -187,6 +189,20 @@ async function buildSlide(SLIDE, key, index, deckMeta) {
 		{ id: createShapeId(`${key}-footer`), type: 'text', parentId: frameId, x: 120, y: H - 76, props: { richText: toRichText(''), size: 's', scale: 1.3, color: 'grey', font: 'draw', autoSize: false, w: 1100 / 1.3 }, meta: role('footer') },
 		{ id: createShapeId(`${key}-number`), type: 'text', parentId: frameId, x: W - 360, y: H - 76, props: { richText: toRichText(''), size: 's', scale: 1.3, color: 'grey', font: 'draw', autoSize: false, w: 240 / 1.3, textAlign: 'end' }, meta: role('number') },
 	)
+	// Where we are in a multi-step method: SLIDE.step = n (and SLIDE.steps, default 7) draws a small
+	// strip of numbered boxes top right: steps done hatched, the current one solid red, the rest outlined.
+	if (typeof SLIDE.step === 'number') {
+		const N = SLIDE.steps ?? 7, bw = 44, bh = 34, gap = 8
+		const x0 = W - 120 - (N * bw + (N - 1) * gap)
+		for (let i = 1; i <= N; i++) {
+			const done = i < SLIDE.step, now = i === SLIDE.step
+			chrome.push({
+				id: createShapeId(`${key}-progress-${i}`), type: 'geo', parentId: frameId, x: x0 + (i - 1) * (bw + gap), y: 52, isLocked: true,
+				props: { geo: 'rectangle', w: bw, h: bh, color: now ? 'red' : 'grey', fill: now ? 'fill' : done ? 'pattern' : 'none', dash: 'draw', size: 's', font: 'draw', richText: toRichText(String(i)), labelColor: now ? 'white' : 'grey', align: 'middle', verticalAlign: 'middle' },
+				meta: role('progress'),
+			})
+		}
+	}
 	if (SLIDE.source) chrome.push({ id: createShapeId(`${key}-source`), type: 'text', parentId: frameId, x: 860, y: H - 70, props: { richText: toRichText(SLIDE.source), size: 's', scale: 0.95, color: 'grey', font: 'draw', autoSize: false, w: 820 / 0.95, textAlign: 'end' }, meta: role('source') })
 
 	SLIDE.draw(k)
@@ -203,7 +219,7 @@ async function buildSlide(SLIDE, key, index, deckMeta) {
 			const a = resolve(from)
 			const b = resolve(to)
 			const props = { color: o.color ?? 'black', dash: o.dash ?? 'draw', size: o.size ?? 'm', bend: o.bend ?? 0, font: 'draw', arrowheadEnd: o.head ?? 'arrow', arrowheadStart: o.tail ?? 'none', ...(o.text ? { richText: toRichText(o.text) } : {}) }
-			const m = { ...(o.id != null && { tag: String(o.id) }), ...(typeof o.beat === 'number' && { beat: o.beat }), anim: o.anim ?? 'wipe', ...(o.meta ?? {}) }
+			const m = { ...(o.id != null && { tag: String(o.id) }), ...(typeof o.beat === 'number' && { beat: o.beat }), ...(typeof o.until === 'number' && { until: o.until }), ...(typeof o.delay === 'number' && { delay: o.delay }), ...(typeof o.focus === 'number' && { focus: o.focus }), anim: o.anim ?? 'wipe', ...(o.meta ?? {}) }
 			let id
 			if (typeof a === 'string' && typeof b === 'string') {
 				id = helpers.createArrowBetweenShapes(a, b, props)
