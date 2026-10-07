@@ -22,6 +22,22 @@ const manifest = JSON.parse(fs.readFileSync(path.join(SLIDES, 'manifest.json'), 
 const only = args.only ? String(args.only).split(',').map((s) => s.trim().replace(/\.js$/, '')) : null
 const KIT = fs.readFileSync(KIT_FILE, 'utf8')
 
+// Pictures a slide uses with k.image(…, 'name.ext'): files in <slides>/assets/, sent along as data URLs
+// (only the ones the slide's code mentions).
+const ASSET_DIR = path.join(SLIDES, 'assets')
+const MIME = { '.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.gif': 'image/gif', '.webp': 'image/webp', '.svg': 'image/svg+xml' }
+function assetsFor(src) {
+	if (!fs.existsSync(ASSET_DIR)) return {}
+	const out = {}
+	for (const name of fs.readdirSync(ASSET_DIR)) {
+		const mime = MIME[path.extname(name).toLowerCase()]
+		if (!mime || !src.includes(name)) continue
+		const data = fs.readFileSync(path.join(ASSET_DIR, name))
+		out[name] = { src: `data:${mime};base64,${data.toString('base64')}`, mime, size: data.length, animated: mime === 'image/gif' || mime === 'image/webp' }
+	}
+	return out
+}
+
 const doc = await findDoc(args._[0])
 if (args['clear-scenes']) {
 	const n = await exec(doc.id, `const fr = editor.getCurrentPageShapes().filter(s => s.type === 'frame' && s.meta?.layout === 'scene'); editor.run(() => editor.deleteShapes(fr.map(f => f.id)), { ignoreShapeLock: true }); return fr.length`)
@@ -38,7 +54,7 @@ for (let i = 0; i < manifest.length; i++) {
 		continue
 	}
 	const src = fs.readFileSync(file, 'utf8').replace(/^\s*export\s+default\s+/m, 'return ')
-	const code = `${KIT}\nconst SLIDE = (() => {\n${src}\n})();\nreturn await buildSlide(SLIDE, ${JSON.stringify(key)}, ${i})`
+	const code = `const ASSETS = ${JSON.stringify(assetsFor(src))};\n${KIT}\nconst SLIDE = (() => {\n${src}\n})();\nreturn await buildSlide(SLIDE, ${JSON.stringify(key)}, ${i})`
 	try {
 		const r = await exec(doc.id, code)
 		console.log(`✓ ${key}: ${r.shapes} shapes, ${r.arrows} arrows`)

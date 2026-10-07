@@ -423,6 +423,9 @@ async function screenshots(deck, doc, { slides = null, step = null, size = 'larg
 	out = out ?? path.join(os.tmpdir(), 'pres-shots', deck.name)
 	fs.mkdirSync(out, { recursive: true })
 	const results = []
+	// While the deck is being presented, slides show their own steps, not a pinned one.
+	if (step !== null && (await exec(doc.id, `return editor.getCurrentToolId() === 'present'`)))
+		die(`${deck.label} is being presented in tldraw: stop presenting (Esc) to take step-by-step pictures`)
 	const jobs = []
 	for (const f of pick) {
 		const n = frames.indexOf(f) + 1
@@ -442,7 +445,8 @@ async function screenshots(deck, doc, { slides = null, step = null, size = 'larg
 			results.push({ n, name: f.name, step, file: dest })
 			onShot(results.at(-1), jobs.length)
 		} finally {
-			if (step !== null) await exec(doc.id, `const s = editor.getShape(${JSON.stringify(f.id)}); const { previewBeat, ...meta } = s.meta; editor.run(() => editor.updateShape({ id: s.id, type: 'frame', meta }), { history: 'ignore', ignoreShapeLock: true }); await helpers.saveDoc(); return true`)
+			// (tldraw merges meta on update, so leaving the key out wouldn't remove it: clear it with null)
+			if (step !== null) await exec(doc.id, `const s = editor.getShape(${JSON.stringify(f.id)}); editor.run(() => editor.updateShape({ id: s.id, type: 'frame', meta: { ...s.meta, previewBeat: null } }), { history: 'ignore', ignoreShapeLock: true }); await helpers.saveDoc(); return true`)
 		}
 	}
 	return results
@@ -491,7 +495,7 @@ async function checkDecks(decks) {
 				try {
 					const s = (await import(`file://${f}?t=${Date.now()}`)).default
 					if (!s || typeof s.draw !== 'function') bad(d, `slides/${key}.js must export default { name, draw(k) }`)
-					else if (!s.notes) bad(d, `slides/${key}.js has no speaker notes`)
+					// Speaker notes are optional.
 				} catch (e) {
 					bad(d, `slides/${key}.js: ${e.message}`)
 				}

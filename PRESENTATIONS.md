@@ -57,7 +57,7 @@ Name a deck by its folder path, its name (`scratch-talk`), or any unique part of
    overlaps, clipping, text running off the slide, too much on one slide. For the build-up, use
    `pres shot <deck> --slide 4 --steps` to get one picture per click (or `--step k` for one).
    Fix, rebuild with `--only`, look again.
-7. **Check.** `pres check <deck>` validates the files and notes.
+7. **Check.** `pres check <deck>` validates the files.
 8. **Publish** only when Aneesh asks: `pres publish <deck>` (a project deck needs `--to <folder>` the
    first time, e.g. `--to mono2micro`; ask which folder). It commits and pushes **only that deck** to
    the website repo, from a clean temporary checkout, so nothing else can come along. The site
@@ -72,7 +72,7 @@ publish again.
   arrows, sticky notes, handwriting). Not polished HTML infographics or screenshots of charts.
 - **One idea per slide.** If it needs two ideas, make two slides; more slides are fine.
 - **Minimal**: ink on paper, lots of empty space, a short handwritten title (or none), one drawing,
-  maybe one line of text. Bullet lists go in the notes, not on the slide.
+  maybe one line of text. No bullet lists on the slide.
 - **One accent colour, red**, for emphasis and marks. Green only for "fixed / works". Grey for
   anything secondary.
 - **Build up on clicks** with small entrances (`beat`, `anim`). Motion is **smooth and eased**, never
@@ -83,7 +83,7 @@ publish again.
 ## Facts
 
 **Every number, name, quote and claim must come from the source material.** Read the source fully
-(PDF → text; look at the figures). Put the location in the slide's `source` line and its notes
+(PDF → text; look at the figures). Put the location in the slide's `source` line
 (`§3.2 · Table I`). Label anything illustrative or schematic as such. If you're unsure, leave it out.
 
 ## A slide file
@@ -95,7 +95,6 @@ export default {
 	kicker: 'I · the problem',       // optional: small red line above the title
 	title: 'Words are not enough',   // optional: short
 	source: 'Table II · §4',         // optional: small grey citation, bottom right
-	notes: 'COVER\n• the point\n• the one number\nCLICKS\n1 · the arrow appears\nREF · §4',
 	draw(k) {
 		k.note(300, 380, 'a bug report\nin words', { color: 'yellow', id: 'words' })
 		k.box(1100, 330, 520, 360, { dash: 'dotted', id: 'picture' })
@@ -127,18 +126,8 @@ Interactive slides (press, drag and drop while presenting) and the details of ev
 
 ## Speaker notes
 
-Every slide gets short checklist notes, not a script:
-
-```
-COVER
-• the point of this slide
-• the one number that matters
-CLICKS
-1 · what appears · 2 · what appears
-REF · §3.2 · Table I
-```
-
-Interactive slides use `DO` (what to press or drag) instead of `CLICKS`.
+Skip them. Aneesh doesn't read speaker notes, so don't write or update the `notes` field unless asked.
+Anything the room needs goes on the slide; talking points go in your reply.
 
 ## All commands
 

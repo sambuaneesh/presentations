@@ -81,9 +81,7 @@ export function BeatStyles() {
 			const anim = ANIMS[s.meta.anim ?? 'pop']
 			// A shared origin (frame-local) makes a multi-shape drawing scale about one point.
 			const o = Array.isArray(s.meta.origin) ? `transform-origin: ${s.meta.origin[0] - s.x}px ${s.meta.origin[1] - s.y}px;` : ''
-			// meta.delay (ms): wait before the entrance, so one click can cascade (it stays hidden meanwhile)
-			const d = typeof s.meta.delay === 'number' ? `animation-delay: ${s.meta.delay}ms;` : ''
-			if (anim) out += `[data-shape-id="${id}"] > * { animation: ${anim}; ${d} ${o} }\n`
+			if (anim) out += `[data-shape-id="${id}"] > * { animation: ${anim}; ${o} }\n`
 		}
 		return out
 	}, [editor])

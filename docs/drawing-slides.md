@@ -62,6 +62,7 @@ The full source is `presentation-pack/paper/kit.exec.js`.
 | `k.underline(x, y, w, o)` · `k.cross(x, y, s, o)` · `k.tick(x, y, s, o)` | marks |
 | `k.arrow(from, to, o)` | an arrow; between two `id` tags it is a real **bound** arrow that follows its shapes; `[x, y]` points give a free arrow. `text`, `bend`, `dash`, `head`, `tail` |
 | `k.grid(x, y, cols, count, pitch, size, o)` | many small shapes (dots, squares); `each(i)` returns per-item options |
+| `k.image(x, y, w, h, 'name.webp', o)` | a picture from the deck's `slides/assets/` folder (png, jpg, gif, webp, svg), embedded in the deck so it shows on the website too; animated gif/webp play. Prefer webp for animations: far smaller |
 | `k.tag(t)` | the shape id for tag `t` |
 
 Common options on every call:
@@ -72,6 +73,8 @@ Common options on every call:
 | `color` | black grey red green blue yellow orange violet light-red light-green light-blue light-violet white |
 | `size` | s m l xl (with `scale` for bigger text) · `font` draw mono sans serif · `fill` none semi solid pattern · `dash` draw solid dashed dotted · `rot` degrees |
 | `beat` | the click that reveals it (1, 2, …). Omit to show it with the slide |
+| `until` | the click that takes it away (it disappears from then on), e.g. a figure that gets replaced. Needs template version 3 or newer |
+| `delay` | milliseconds before its entrance plays, so one click can cascade (e.g. notes popping in one by one). Needs template version 4 or newer |
 | `anim` | its entrance: `pop` (default), `wipe` (looks drawn; good for pen strokes), `drop`, `wiggle`, `fade`, `zoom` (comes out of the screen), `none` |
 | `origin` | `[x, y]`: a shared centre, so several shapes animate as one drawing (e.g. a hand that zooms in) |
 | `meta` | extra shape meta: interactive controls, below |

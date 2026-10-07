@@ -34,6 +34,7 @@ function rng(seed) {
 function makeKit(frameId, key) {
 	const shapes = []
 	const arrows = []
+	const assets = []
 	const byTag = new Map()
 	let n = 0
 	const rand = rng(hash(key))
@@ -42,12 +43,14 @@ function makeKit(frameId, key) {
 	const meta = (o) => ({
 		...(o.id != null && { tag: String(o.id) }),
 		...(typeof o.beat === 'number' && { beat: o.beat }),
+		...(typeof o.until === 'number' && { until: o.until }), // gone from that click on (needs template 3+)
+		...(typeof o.delay === 'number' && { delay: o.delay }), // ms before its entrance plays (needs template 4+)
 		...(o.anim && { anim: o.anim }),
 		...(o.origin && { origin: o.origin }), // a shared zoom/pop centre (frame-local [x, y]) for multi-shape drawings
 		...(o.meta ?? {}),
 	})
 	function put(type, x, y, props, o = {}) {
-		const id = createShapeId(`${key}-${o.id != null ? o.id : 'n' + n++}`)
+		const id = createShapeId(`${key}-${o.id != null ? o.id : '_' + n++}`) // '_': never clashes with a slide's own ids
 		const rec = { id, type, parentId: frameId, x, y, rotation: ((o.rot ?? 0) * Math.PI) / 180, opacity: o.opacity ?? 1, isLocked: !!o.locked, props, meta: meta(o) }
 		shapes.push(rec)
 		if (o.id != null) byTag.set(String(o.id), rec)
@@ -79,6 +82,15 @@ function makeKit(frameId, key) {
 			return k.box(cx - r, cy - r, 2 * r, 2 * r, { ...o, geo: 'ellipse' })
 		},
 		// A sticky note.
+		// A picture from the deck's slides/assets/ folder (png, jpg, gif, webp, svg), embedded in the deck,
+		// so it shows in tldraw and on the website alike. Animated gif/webp play.
+		image(x, y, w, h, name, o = {}) {
+			const a = (typeof ASSETS !== 'undefined' ? ASSETS : {})[name]
+			if (!a) throw new Error(`no picture "${name}" in slides/assets/`)
+			const assetId = `asset:${key}-${String(name).replace(/[^\w-]/g, '_')}`
+			if (!assets.some((r) => r.id === assetId)) assets.push({ id: assetId, typeName: 'asset', type: 'image', props: { name, src: a.src, w, h, mimeType: a.mime, isAnimated: a.animated, fileSize: a.size }, meta: {} })
+			return put('image', x, y, { assetId, w, h, playing: true, url: '', crop: null, flipX: false, flipY: false, altText: o.alt ?? '' }, o)
+		},
 		note(x, y, s, o = {}) {
 			return put('note', x, y, { color: o.color ?? 'yellow', richText: rt(s), size: o.size ?? 'm', font: o.font ?? 'draw', align: o.align ?? 'middle', verticalAlign: o.valign ?? 'middle', scale: o.scale ?? 1 }, o)
 		},
@@ -135,7 +147,7 @@ function makeKit(frameId, key) {
 		},
 		tag: (t) => createShapeId(`${key}-${t}`),
 	}
-	return { k, shapes, arrows, byTag }
+	return { k, shapes, arrows, byTag, assets }
 }
 
 // Build one slide into a frame at slide position `index` (replacing an earlier build of the same slide).
@@ -154,8 +166,17 @@ async function buildSlide(SLIDE, key, index, deckMeta) {
 		await new Promise((r) => setTimeout(r, 150))
 	}
 
+	// A slide inserted between slides already built: make room by moving every slide from this position on
+	// one place to the right (a rebuild of an existing slide finds its place empty, so nothing moves).
+	const slotX = index * (W + GAP)
+	const frames = editor.getSortedChildIdsForParent(pageId).map((id) => editor.getShape(id)).filter((s) => s?.type === 'frame' && !s.meta?.joinSlide)
+	if (frames.some((f) => Math.abs(f.x - slotX) < W / 2)) {
+		const later = frames.filter((f) => f.x > slotX - W / 2)
+		editor.run(() => editor.updateShapes(later.map((f) => ({ id: f.id, type: 'frame', x: f.x + W + GAP }))), { ignoreShapeLock: true })
+	}
+
 	const frameId = createShapeId(`paper-${key}`)
-	const { k, shapes, arrows } = makeKit(frameId, key)
+	const { k, shapes, arrows, assets } = makeKit(frameId, key)
 	const role = (r, extra = {}) => ({ role: r, ...extra })
 	const chrome = [
 		{ id: createShapeId(`${key}-bg`), type: 'geo', parentId: frameId, x: 0, y: 0, isLocked: true, props: { geo: 'rectangle', w: W, h: H, color: 'yellow', fill: 'semi', dash: 'solid', size: 's' }, meta: role('bg') },
@@ -172,6 +193,10 @@ async function buildSlide(SLIDE, key, index, deckMeta) {
 
 	editor.run(() => {
 		editor.createShape({ id: frameId, type: 'frame', x: index * (W + GAP), y: 0, props: { w: W, h: H, name: `${String(index + 1).padStart(2, '0')} · ${SLIDE.name}` }, meta: { paper: key, layout: 'paper', notes: SLIDE.notes ?? '' } })
+		// pictures first (a rebuild replaces them), then the shapes that show them
+		const stale = assets.map((a) => a.id).filter((id) => editor.getAsset(id))
+		if (stale.length) editor.deleteAssets(stale)
+		if (assets.length) editor.createAssets(assets)
 		editor.createShapes([...chrome, ...shapes])
 		for (const { from, to, o } of arrows) {
 			const resolve = (e) => (typeof e === 'string' ? (e.startsWith('shape:') ? e : k.tag(e)) : e)
