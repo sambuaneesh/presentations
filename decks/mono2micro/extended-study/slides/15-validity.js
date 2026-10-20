@@ -16,6 +16,7 @@ export default {
 			k.text(X + v * U + 230, y + 22, n, { size: 's', scale: 1.15, color: 'grey' })
 		})
 		k.text(150, 880, 'every decomposition it produced was valid: its 11 failures were answers that could not be parsed', { size: 'm', scale: 1.05, color: 'red' })
-		k.text(150, 270, 'primary set: workflow 159 / 160 · single-shot 157 / 160 · OpenCode 151 / 160', { size: 'm', scale: 1.05, color: 'grey' })
+		k.text(150, 255, 'primary set (8 models × 5 seeds × 4 systems = 160): workflow 159 · single-shot 157 · OpenCode 151', { size: 'm', scale: 1.05, color: 'grey' })
+		k.text(150, 300, 'bars: all 16 models of the extension, every attempt: 3 × 5 × 4 + 13 × 1 × 4 + 4 × 4 × 4 = 176 per approach', { size: 'm', scale: 1.05, color: 'red' })
 	},
 }

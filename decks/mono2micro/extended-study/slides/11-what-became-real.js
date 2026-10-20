@@ -13,7 +13,7 @@ export default {
 			['transaction purity (DTP)', -2.98, -5.9, -0.14, null, [-14.7, -0.91]],
 			['close match to reference (C2C-50)', 2.92, -1.66, 7.69, null, [-1.17, 16.38]],
 		]
-		const x = (v) => 1060 + v * 30, Y = 330, P = 122
+		const x = (v) => 1040 + v * 27, Y = 330, P = 122
 		k.pen([[x(0), 275], [x(0), 905]], { color: 'grey', size: 's' })
 		k.text(x(0) - 70, 232, 'no difference', { size: 's', scale: 1.05, color: 'grey' })
 		ROWS.forEach(([name, d, lo, hi, p, old], i) => {
