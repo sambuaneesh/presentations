@@ -1,0 +1,11 @@
+{
+	"title": "The Extended Study",
+	"description": "What the extended benchmark added to our first results: more seeds, more models, a stricter analysis, and what changed.",
+	"date": "2026-10-20",
+	"listed": true,
+	"pack": 7,
+	"publish": {
+		"folder": "mono2micro"
+	},
+	"home": "~/IIITH/Research/decomplab/presentations/extended-study"
+}
