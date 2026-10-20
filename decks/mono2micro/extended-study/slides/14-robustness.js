@@ -21,6 +21,6 @@ export default {
 			ok.forEach((v, j) => v ? k.tick(X + j * CW + 40, y + 20, 44, { color: 'green', ...o }) : k.cross(X + j * CW + 40, y + 20, 40, { color: 'red', ...o }))
 		})
 		k.text(150, 900, 'DI grows in most cells, but by amounts that differ a lot between models', { size: 'm', scale: 1.1, color: 'red' })
-		k.text(1195, 596, 'p = 0.12', { size: 's', scale: 1.1, color: 'red' })
+		k.text(1195, 596, 'p = 0.10', { size: 's', scale: 1.1, color: 'red' })
 	},
 }
