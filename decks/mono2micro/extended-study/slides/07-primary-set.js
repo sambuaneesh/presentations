@@ -16,8 +16,14 @@ export default {
 			k.text(150, y + 2, m, { size: 'm', scale: 1.1, color: nw ? 'red' : 'black' })
 			for (let j = 0; j < 4; j++) for (let d = 0; d < 5; d++) k.circle(X + j * CW + 20 + d * 26, y + 22, 9, { size: 's', fill: 'solid', color: nw ? 'red' : 'black'})
 		})
+		// click 1: one cell, explained
+		k.loop(X + 72, Y + 22, 92, 34, { beat: 1, anim: 'wipe' })
+		k.text(1480, 430, 'one cell = one model\non one system: all three\napproaches, five runs each', { size: 's', scale: 1.15, color: 'red', beat: 1, anim: 'fade' })
+		// click 2: every cell, one after another
+		M.forEach((_, r) => { for (let j = 0; j < 4; j++) k.box(X + j * CW + 2, Y + r * P + 2, 142, 40, { size: 's', color: 'red', fill: 'none', dash: 'solid', beat: 2, anim: 'pop', delay: (r * 4 + j) * 35 }) })
+		k.text(1480, 560, '= 32 cells,\n32 paired comparisons', { size: 'm', scale: 1.1, color: 'red', beat: 2, anim: 'fade', delay: 1150 })
 		k.text(1480, 300, 'DeepSeek v4.1 Flash: its\nfive runs reused from\nthe first benchmark', { size: 's', scale: 1.15, color: 'grey' })
 		k.text(150, 940, 'five runs of a cell are averaged first: the cell, not the run, is what we compare', { size: 'm', scale: 1.05, color: 'red' })
-		k.text(1480, 640, 'new: chosen because all 12\nof their sweep runs were\nvalid, before any metric\nwas looked at', { size: 's', scale: 1.15, color: 'grey' })
+		k.text(1480, 700, 'new: chosen because all 12\nof their sweep runs were\nvalid, before any metric\nwas looked at', { size: 's', scale: 1.15, color: 'grey' })
 	},
 }
