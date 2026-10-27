@@ -1,5 +1,5 @@
 // The first benchmark: 4 models x 3 arms x 4 repositories; only DeepSeek ran five times.
-// One click turns the plain squares into the four repositories: own colour, first letter inside.
+// Each square is one repository: own colour, first letter inside. No clicks.
 export default {
 	name: 'Where we left off',
 	kicker: 'I · where we were',
@@ -17,15 +17,13 @@ export default {
 			for (let a = 0; a < 3; a++) for (let s = 0; s < 4; s++) {
 				const x = X + a * (4 * G + 40) + s * G
 				if (n > 1) for (let t = 4; t >= 1; t--) k.box(x + t * 5, y - t * 5, S, S, { size: 's', color: 'red' })
-				k.box(x, y, S, S, { size: 's', fill: 'solid', color: 'white', until: 1 })
-				k.box(x, y, S, S, { size: 's', fill: 'semi', color: 'grey', until: 1 })
-				k.box(x, y, S, S, { size: 's', fill: 'solid', color: REPO[s][1], text: REPO[s][0], beat: 1, anim: 'pop', delay: (r * 12 + a * 4 + s) * 12 })
+				k.box(x, y, S, S, { size: 's', fill: 'solid', color: REPO[s][1], text: REPO[s][0] })
 			}
 			k.text(X + 3 * (4 * G + 40) + 10, y + 6, n > 1 ? '× 5 runs' : '× 1 run', { size: 'm', scale: 1.1, color: n > 1 ? 'red' : 'grey' })
 		})
 		REPO.forEach(([l, c, name], i) => {
-			k.box(150 + i * 420, 860, 40, 40, { size: 's', fill: 'solid', color: c, text: l, beat: 1, anim: 'fade' })
-			k.text(205 + i * 420, 862, name, { size: 's', scale: 1.15, beat: 1, anim: 'fade' })
+			k.box(150 + i * 420, 860, 40, 40, { size: 's', fill: 'solid', color: c, text: l })
+			k.text(205 + i * 420, 862, name, { size: 's', scale: 1.15 })
 		})
 		k.text(150, 935, 'one square = one repository · 4 repositories × 3 arms per model · 96 runs in all', { size: 's', scale: 1.15, color: 'grey' })
 	},
