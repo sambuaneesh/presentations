@@ -33,6 +33,7 @@ export default {
 			k.text(xOf(11) + G + 40, y + 4, same + ' of ' + n, { size: 'l', scale: 1.05, color: r === 2 ? 'red' : 'black' })
 		})
 		k.text(150, 255, 'GLM-5.2 · gpt-oss:120b · gemma4:31b: seed 1 run again three weeks later, same inputs and settings', { size: 'm', scale: 1.05, color: 'grey' })
+		k.text(150, 790, 'OpenCode exposes no seed: its row is the same configuration run again · workflow: the first LLM answer already differed in all 12 pairs', { size: 's', scale: 1.05, color: 'grey' })
 		k.text(150, 860, 'filled = the identical partition came back · dashed = a different one · – = re-run unreadable', { size: 'm', scale: 1.05, color: 'red' })
 		REPO.forEach(([l, c, name], i) => {
 			k.box(150 + i * 420, 925, 40, 40, { size: 's', fill: 'solid', color: c, text: l, beat: 1, anim: 'fade' })

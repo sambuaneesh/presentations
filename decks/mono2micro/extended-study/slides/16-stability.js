@@ -16,7 +16,7 @@ export default {
 		})
 		k.pen([[X + U, Y - 40], [X + U, Y + 2 * P + 110]], { color: 'grey', size: 's', dash: 'dashed' })
 		k.text(X + U - 60, Y + 2 * P + 120, '1 = always the same', { size: 's', scale: 1.1, color: 'grey' })
-		k.text(150, 270, 'distinct partitions among five runs of the same cell', { size: 'm', scale: 1.1, color: 'grey' })
+		k.text(150, 245, 'one cell = one model on one system, run with seeds 1–5: how many different partitions came back\n(1 = all five identical, 5 = all different) · averaged over all 32 cells (8 models × 4 systems)', { size: 'm', scale: 1.0, color: 'grey' })
 		k.text(150, 930, 'five LLM calls feed each other, and selection can flip between close candidates', { size: 'm', scale: 1.05, color: 'red' })
 	},
 }

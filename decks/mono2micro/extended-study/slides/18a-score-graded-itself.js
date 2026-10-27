@@ -12,7 +12,7 @@ export default {
 		k.arrow('cand', 'score', {})
 		k.arrow('score', 'map', { color: 'red', bend: -170, text: 'it grades the map against itself' })
 		k.text(150, 760, 'so the map\'s own candidate scored ≈100 and tended to win:', { size: 'm', scale: 1.1 })
-		k.text(150, 830, 'PetClinic: 6 small services picked, close-match 16.7 instead of 50.0', { size: 'm', scale: 1.1, color: 'red' })
+		k.text(150, 830, 'PetClinic: 6 small services picked, close match 16.7 instead of 75.0 (same LLM answers)', { size: 'm', scale: 1.1, color: 'red' })
 		k.text(150, 920, 'the final workflow drops this term: it scores structure only', { size: 'm', scale: 1.1, color: 'grey' })
 	},
 }

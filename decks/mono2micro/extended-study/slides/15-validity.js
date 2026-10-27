@@ -15,7 +15,7 @@ export default {
 			k.text(X + v * U + 30, y + 8, v.toFixed(1) + '%', { size: 'l', scale: 1.05, color: me ? 'red' : 'black' })
 			k.text(X + v * U + 230, y + 22, n, { size: 's', scale: 1.15, color: 'grey' })
 		})
-		k.text(150, 880, 'every decomposition it produced was valid: its 11 failures were answers that could not be parsed', { size: 'm', scale: 1.05, color: 'red' })
+		k.text(150, 850, 'workflow: 165 runs produced a decomposition, all of them valid\nthe other 11 stopped earlier: an LLM step returned text we could not read', { size: 'm', scale: 1.05, color: 'red' })
 		k.text(150, 255, 'primary set (8 models × 5 seeds × 4 systems = 160): workflow 159 · single-shot 157 · OpenCode 151', { size: 'm', scale: 1.05, color: 'grey' })
 		k.text(150, 300, 'bars: all 16 models of the extension, every attempt: 3 × 5 × 4 + 13 × 1 × 4 + 4 × 4 × 4 = 176 per approach', { size: 'm', scale: 1.05, color: 'red' })
 	},
