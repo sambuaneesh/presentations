@@ -1,5 +1,5 @@
 // Seed 1 run twice, three weeks apart: often a different partition. One square per model and repository, placed
-// by the real per-repository result (extension analysis §5); one click shows which repository each square is.
+// by the real per-repository result (extension analysis §5). No clicks.
 export default {
 	name: 'Same seed, different answer',
 	kicker: 'I · where we were',
@@ -27,8 +27,7 @@ export default {
 					k.box(x, y, S, S, { size: 's', dash: 'dotted', color: 'grey', text: '–' })
 					return
 				}
-				k.box(x, y, S, S, { size: 's', fill: c ? 'solid' : 'none', color: c ? 'black' : 'grey', until: 1 })
-				k.box(x, y, S, S, { size: 's', fill: c ? 'solid' : 'none', dash: c ? 'draw' : 'dashed', color: col, text: l, beat: 1, anim: 'pop', delay: (r * 12 + i) * 15 })
+				k.box(x, y, S, S, { size: 's', fill: c ? 'solid' : 'none', dash: c ? 'draw' : 'dashed', color: col, text: l })
 			})
 			k.text(xOf(11) + G + 40, y + 4, same + ' of ' + n, { size: 'l', scale: 1.05, color: r === 2 ? 'red' : 'black' })
 		})
@@ -36,8 +35,8 @@ export default {
 		k.text(150, 790, 'OpenCode exposes no seed: its row is the same configuration run again · workflow: the first LLM answer already differed in all 12 pairs', { size: 's', scale: 1.05, color: 'grey' })
 		k.text(150, 860, 'filled = the identical partition came back · dashed = a different one · – = re-run unreadable', { size: 'm', scale: 1.05, color: 'red' })
 		REPO.forEach(([l, c, name], i) => {
-			k.box(150 + i * 420, 925, 40, 40, { size: 's', fill: 'solid', color: c, text: l, beat: 1, anim: 'fade' })
-			k.text(205 + i * 420, 927, name, { size: 's', scale: 1.15, beat: 1, anim: 'fade' })
+			k.box(150 + i * 420, 925, 40, 40, { size: 's', fill: 'solid', color: c, text: l })
+			k.text(205 + i * 420, 927, name, { size: 's', scale: 1.15 })
 		})
 	},
 }

@@ -22,9 +22,9 @@ export default {
 			const sgn = (d > 0 ? '+' : '−') + Math.abs(d).toFixed(1)
 			k.text(150, y - 44, name, { size: 'm', scale: 1.1 })
 			k.pen([[x(old[0]), y + 24], [x(old[1]), y + 24]], { color: 'light-red', size: 's' })
-			k.pen([[x(lo), y], [x(hi), y]], { color: sig ? 'black' : 'grey', size: 'l', beat: 1, anim: 'wipe' })
-			k.circle(x(d), y, 13, { color: sig ? 'red' : 'grey', fill: 'solid', size: 's', beat: 1 })
-			k.text(1610, y - 26, sig ? sgn + '   p ' + p : sgn + '   n.s.', { size: 'm', scale: 1.05, color: sig ? 'red' : 'grey', beat: 1, anim: 'fade' })
+			k.pen([[x(lo), y], [x(hi), y]], { color: sig ? 'black' : 'grey', size: 'l' })
+			k.circle(x(d), y, 13, { color: sig ? 'red' : 'grey', fill: 'solid', size: 's' })
+			k.text(1610, y - 26, sig ? sgn + '   p ' + p : sgn + '   n.s.', { size: 'm', scale: 1.05, color: sig ? 'red' : 'grey' })
 		})
 		k.text(150, 960, 'thin red: the first benchmark (16 cells, one run) · thick: now · CiD, C2C-10, C2C-33: no significant difference', { size: 's', scale: 1.1, color: 'grey' })
 	},
