@@ -7,9 +7,12 @@ export default {
 	draw(k) {
 		const M = [['DeepSeek v4.1 Flash', 'first benchmark'], ['GLM-5.2', 'first benchmark'], ['gpt-oss:120b', 'first benchmark'], ['gemma4:31b', 'first benchmark'],
 			['DeepSeek v4 Pro', 'new'], ['Mistral Large 4', 'new'], ['Kimi K2.7 Code', 'new'], ['Kimi K3', 'new']]
-		const SYS = ['Demo', 'JPetStore', 'PartsUnl.', 'PetClinic']
+		const REPO = [['D', 'blue', 'Demo'], ['J', 'violet', 'JPetStore'], ['P', 'orange', 'PartsUnl.'], ['S', 'yellow', 'PetClinic']]
 		const X = 760, Y = 300, P = 78, CW = 170
-		SYS.forEach((s, j) => k.text(X + j * CW + 10, Y - 60, s, { size: 's', scale: 1.15, color: 'grey' }))
+		REPO.forEach(([l, c, s], j) => {
+			k.box(X + j * CW + 8, Y - 66, 36, 36, { size: 's', fill: 'solid', color: c, text: l })
+			k.text(X + j * CW + 52, Y - 62, s, { size: 's', scale: 1.1, color: 'grey' })
+		})
 		M.forEach(([m, tag], r) => {
 			const y = Y + r * P
 			const nw = tag === 'new'
