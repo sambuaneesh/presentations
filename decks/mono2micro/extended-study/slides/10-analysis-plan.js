@@ -1,9 +1,8 @@
 // The analysis, declared in writing before the robustness checks.
 export default {
-	name: 'Written down first',
+	name: 'How we compare',
 	kicker: 'II · what we did',
-	title: 'One analysis, written down first',
-	source: '§IV-I · declared 2026-10-19, after a first descriptive look (not pre-registered)',
+	title: 'How we compare the approaches',
 	draw(k) {
 		const S = [['5 runs', '→ one mean per cell'], ['32 cells', 'paired: same model,\nsame system'], ['Wilcoxon test', 'per metric'], ['Holm correction', 'for testing 8 metrics']]
 		S.forEach(([a, b], i) => {

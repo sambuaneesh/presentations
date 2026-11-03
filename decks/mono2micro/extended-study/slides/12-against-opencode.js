@@ -3,7 +3,6 @@ export default {
 	name: 'vs. OpenCode: domain gains, at a price',
 	kicker: 'III · what we found · workflow vs. OpenCode (autonomous agent)',
 	title: 'vs. OpenCode: domain gains, at a price',
-	source: 'Table XII · Fig. 3 · workflow − OpenCode · 32 cells · 95% bootstrap intervals · Holm-corrected p',
 	draw(k) {
 		const ROWS = [
 			['domain independence (DI)', 8.22, 2.68, 13.86, '0.023', [-1.33, 15.7]],

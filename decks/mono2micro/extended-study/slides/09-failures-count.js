@@ -3,7 +3,6 @@ export default {
 	name: 'Failures count',
 	kicker: 'II · what we did',
 	title: 'Unreadable answers count as failures',
-	source: '§IV-J · Table X · e.g. Kimi K3, workflow, JPetStore, seed 5',
 	draw(k) {
 		k.box(170, 330, 700, 300, { dash: 'dotted', size: 'm', id: 'json' })
 		k.text(210, 360, '{ "name": "AccountManagement", … },\n{\n  "CatalogManagement",\n', { size: 'm', font: 'mono', scale: 1.0 })

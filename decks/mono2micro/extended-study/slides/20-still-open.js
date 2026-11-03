@@ -3,7 +3,6 @@ export default {
 	name: 'Still open',
 	kicker: 'VI · what it means',
 	title: 'What it does not settle',
-	source: '§VII threats to validity',
 	draw(k) {
 		const N = [
 			['the DI gain\ndepends on the model', 'light-red'],

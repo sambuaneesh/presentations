@@ -3,7 +3,6 @@ export default {
 	name: 'What it told us',
 	kicker: 'I · where we were',
 	title: 'Valid, cheaper, and a tie',
-	source: 'earlier draft: abstract · §V-A–C',
 	draw(k) {
 		k.box(150, 330, 480, 300, { text: 'valid in all\n32 of its runs', color: 'green', fill: 'semi', size: 'l' })
 		k.box(720, 330, 480, 300, { text: '31.9% fewer\ntokens than\nsingle-shot', color: 'green', fill: 'semi', size: 'l' })

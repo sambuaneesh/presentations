@@ -3,7 +3,6 @@ export default {
 	name: 'Cheaper everywhere',
 	kicker: 'III · what we found',
 	title: 'Cheaper than single-shot, in all 32 cells',
-	source: 'Fig. 5 · tokens per system, range over the eight models · means: workflow 52.8k, single-shot 84.0k, OpenCode 168.3k',
 	draw(k) {
 		const R = [['workflow', 51, 59, 'red'], ['single-shot', 62, 103, 'black'], ['OpenCode', 40, 426, 'grey']]
 		const x = (v) => 560 + v * 2.7, Y = 400, P = 160

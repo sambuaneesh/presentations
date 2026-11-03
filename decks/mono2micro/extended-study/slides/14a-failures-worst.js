@@ -3,7 +3,6 @@ export default {
 	name: 'Failures at their worst',
 	kicker: 'IV · is it robust?',
 	title: 'What if every failure scored the worst?',
-	source: '§V-A robustness · Table XIII · extension analysis §8 · workflow − single-shot',
 	draw(k) {
 		k.text(150, 270, 'why: the approaches fail differently, so leaving failures out could favour one of them', { size: 'm', scale: 1.05, color: 'grey' })
 		k.box(150, 380, 380, 200, { text: '13 of 480 runs\nfailed in the\nprimary set', color: 'red', fill: 'semi', size: 'm', id: 'f' })

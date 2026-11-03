@@ -4,7 +4,6 @@ export default {
 	name: 'Where we left off',
 	kicker: 'I · where we were',
 	title: 'The first benchmark',
-	source: 'earlier draft §IV-C · studies/final-benchmark-v1',
 	draw(k) {
 		const REPO = [['D', 'blue', '7ep Demo'], ['J', 'violet', 'JPetStore'], ['P', 'orange', 'PartsUnlimitedMRP'], ['S', 'yellow', 'Spring PetClinic']]
 		const MODELS = [['DeepSeek v4.1 Flash', 5], ['GLM-5.2', 1], ['gpt-oss:120b', 1], ['gemma4:31b', 1]]

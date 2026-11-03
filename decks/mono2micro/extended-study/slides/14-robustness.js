@@ -3,7 +3,6 @@ export default {
 	name: 'Checked four ways',
 	kicker: 'IV · is it robust?',
 	title: 'All four checks together',
-	source: 'Table XIII · §V-A robustness · Holm-corrected p vs. single-shot',
 	draw(k) {
 		const COLS = ['DI', 'BCP', 'CMod']
 		const ROWS = [

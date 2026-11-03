@@ -3,7 +3,6 @@ export default {
 	name: 'Eight models, five runs',
 	kicker: 'II · what we did',
 	title: '32 cells, five runs each',
-	source: '§IV-E · §IV-I · Table VIII',
 	draw(k) {
 		const M = [['DeepSeek v4.1 Flash', 'first benchmark'], ['GLM-5.2', 'first benchmark'], ['gpt-oss:120b', 'first benchmark'], ['gemma4:31b', 'first benchmark'],
 			['DeepSeek v4 Pro', 'new'], ['Mistral Large 4', 'new'], ['Kimi K2.7 Code', 'new'], ['Kimi K3', 'new']]

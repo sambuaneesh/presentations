@@ -15,13 +15,5 @@
 	"16-stability",
 	"17-cost",
 	"14a-failures-worst",
-	"14b-every-run",
-	"14c-held-out",
-	"14-robustness",
-	"14d-audit",
-	"18a-score-graded-itself",
-	"18b-replayed",
-	"18-ablation",
-	"19-what-it-bought",
-	"20-still-open"
+	"14b-every-run"
 ]

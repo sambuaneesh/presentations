@@ -1,42 +1,43 @@
-// Seed 1 run twice, three weeks apart: often a different partition. One square per model and repository, placed
-// by the real per-repository result (extension analysis §5). No clicks.
+// Seed 1, run twice three weeks apart with everything else identical: did the same decomposition come back?
+// One mark per model and repository, from the stored runs (extension analysis §5). No clicks.
 export default {
-	name: 'Same seed, different answer',
+	name: 'Repeatability (same seed)',
 	kicker: 'I · where we were',
-	title: 'Same seed, different answer',
-	source: 'extension analysis §5 · seed 1 on 2026-09-25 and 2026-10-15 · GLM-5.2, gpt-oss:120b, gemma4:31b',
+	title: 'Let’s talk about repeatability (same seed)',
 	draw(k) {
-		const REPO = [['D', 'blue', '7ep Demo'], ['J', 'violet', 'JPetStore'], ['P', 'orange', 'PartsUnlimitedMRP'], ['S', 'yellow', 'Spring PetClinic']]
+		// the experiment: one setup, run twice
+		k.box(150, 280, 300, 110, { text: 'run 1', size: 'l' })
+		k.text(478, 312, 'vs', { size: 'l', scale: 1.0, color: 'grey' })
+		k.box(560, 280, 300, 110, { text: 'run 2', size: 'l' })
+		k.text(920, 282, 'same model · same repository · same approach · seed 1 · same inputs\n→ did the identical decomposition come back the second time?', { size: 'm', scale: 1.0 })
+
+		const REPO = [['D', 'blue'], ['J', 'violet'], ['P', 'orange'], ['S', 'yellow']]
 		const MODELS = ['GLM-5.2', 'gpt-oss:120b', 'gemma4:31b']
-		// 1 = the identical partition came back, 0 = a different one, null = re-run unreadable; order: model, then D J P S
+		// 1 = identical decomposition both times, 0 = a different one, null = second run unreadable; order: model, then D J P S
 		const ROWS = [
 			['80k concat', [1, 1, 1, 1, 0, 1, 0, 0, 0, 1, 1, 0]],
 			['OpenCode', [0, 1, 1, 0, 0, 0, null, 0, 1, 1, 1, 0]],
 			['workflow', [0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1]],
 		]
-		const X = 560, Y = 400, P = 150, S = 54, G = 64, GAP = 40
+		const X = 560, G = 64, GAP = 44, Y = 580, P = 90
 		const xOf = (i) => X + Math.floor(i / 4) * (4 * G + GAP) + (i % 4) * G
-		MODELS.forEach((m, j) => k.text(xOf(j * 4), Y - 60, m, { size: 's', scale: 1.15, color: 'grey' }))
+		MODELS.forEach((m, j) => k.text(xOf(j * 4), 450, m, { size: 's', scale: 1.15, color: 'grey' }))
+		k.text(xOf(11) + G + 50, 460, 'pairs per approach:\n3 models × 4 repositories', { size: 's', scale: 1.05, color: 'grey' })
+		for (let i = 0; i < 12; i++) k.box(xOf(i) + 8, 492, 40, 40, { size: 's', fill: 'solid', color: REPO[i % 4][1], text: REPO[i % 4][0] })
 		ROWS.forEach(([name, cells], r) => {
 			const y = Y + r * P
 			const same = cells.filter((c) => c === 1).length, n = cells.filter((c) => c !== null).length
-			k.text(150, y + 8, name, { size: 'm', scale: 1.3 })
+			k.text(150, y - 18, name, { size: 'm', scale: 1.2, color: r === 2 ? 'red' : 'black' })
 			cells.forEach((c, i) => {
-				const x = xOf(i), [l, col] = REPO[i % 4]
-				if (c === null) {
-					k.box(x, y, S, S, { size: 's', dash: 'dotted', color: 'grey', text: '–' })
-					return
-				}
-				k.box(x, y, S, S, { size: 's', fill: c ? 'solid' : 'none', dash: c ? 'draw' : 'dashed', color: col, text: l })
+				const cx = xOf(i) + 28
+				if (c === null) k.pen([[cx - 16, y - 6], [cx + 16, y - 6]], { color: 'grey', size: 'm' })
+				else if (c) k.tick(cx, y - 14, 34, { color: 'green' })
+				else k.cross(cx, y - 12, 28, { color: 'red' })
 			})
-			k.text(xOf(11) + G + 40, y + 4, same + ' of ' + n, { size: 'l', scale: 1.05, color: r === 2 ? 'red' : 'black' })
+			k.text(xOf(11) + G + 50, y - 22, 'same in ' + same + ' of ' + n, { size: 'm', scale: 1.1, color: r === 2 ? 'red' : 'black' })
 		})
-		k.text(150, 255, 'GLM-5.2 · gpt-oss:120b · gemma4:31b: seed 1 run again three weeks later, same inputs and settings', { size: 'm', scale: 1.05, color: 'grey' })
-		k.text(150, 790, 'OpenCode exposes no seed: its row is the same configuration run again · workflow: the first LLM answer already differed in all 12 pairs', { size: 's', scale: 1.05, color: 'grey' })
-		k.text(150, 860, 'filled = the identical partition came back · dashed = a different one · – = re-run unreadable', { size: 'm', scale: 1.05, color: 'red' })
-		REPO.forEach(([l, c, name], i) => {
-			k.box(150 + i * 420, 925, 40, 40, { size: 's', fill: 'solid', color: c, text: l })
-			k.text(205 + i * 420, 927, name, { size: 's', scale: 1.15 })
-		})
+		k.text(150, 850, '✓ the identical decomposition came back · ✗ a different one · – second run unreadable', { size: 'm', scale: 1.05, color: 'red' })
+		k.text(150, 905, 'OpenCode has no seed setting: its row is the same setup run twice · workflow: its first LLM answer already differed in all 12', { size: 's', scale: 1.05, color: 'grey' })
+		k.text(150, 945, 'D 7ep Demo · J JPetStore · P PartsUnlimitedMRP · S Spring PetClinic', { size: 's', scale: 1.05, color: 'grey' })
 	},
 }

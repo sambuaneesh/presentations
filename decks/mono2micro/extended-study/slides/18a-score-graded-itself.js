@@ -3,7 +3,6 @@ export default {
 	name: 'The score that graded itself',
 	kicker: 'V · the ablation',
 	title: 'The score that graded itself',
-	source: '§III-E (E8, E9) · §V-D · Table V · illustrative run: Spring PetClinic, DeepSeek',
 	draw(k) {
 		k.box(150, 360, 400, 170, { text: 'domain agent writes\na capability map', size: 'm', id: 'map' })
 		k.box(760, 360, 420, 170, { text: 'domain-first candidate\nis built from the map', size: 'm', id: 'cand' })

@@ -3,7 +3,6 @@ export default {
 	name: 'Valid even with weak models',
 	kicker: 'III · what we found',
 	title: 'Valid, even with weaker models',
-	source: 'Table XV · 16 models re-run or added · 176 attempts per approach · unreadable = failed',
 	draw(k) {
 		const B = [['single-shot', 85.8, '151 / 176'], ['OpenCode', 90.3, '159 / 176'], ['workflow', 93.8, '165 / 176']]
 		const X = 520, Y = 360, P = 160, U = 11

@@ -3,7 +3,6 @@ export default {
 	name: 'Re-scored for free',
 	kicker: 'V · the ablation',
 	title: 'Re-scored without any model call',
-	source: '§IV-J ablation by replay · SS-04 · 139 replays, 0 tokens',
 	draw(k) {
 		k.text(150, 270, 'why: the first test covered only 2 models, both used in development', { size: 'm', scale: 1.05, color: 'grey' })
 		k.box(150, 380, 440, 260, { text: 'a stored run:\nevidence, map,\n3 candidates', size: 'm', id: 'run' })

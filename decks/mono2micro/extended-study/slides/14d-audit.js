@@ -3,7 +3,6 @@ export default {
 	name: 'Did the agent peek?',
 	kicker: 'IV · is it robust?',
 	title: 'Did the agent peek?',
-	source: '§IV-J workspace audit · studies/final-benchmark-extension-v1/analysis/opencode_workspace_audit.py',
 	draw(k) {
 		k.text(150, 270, 'why: OpenCode ran unsandboxed, in a folder inside the repository that holds the answers', { size: 'm', scale: 1.05, color: 'grey' })
 		k.box(150, 360, 560, 360, { dash: 'dotted', size: 'm', text: '', id: 'repo' })

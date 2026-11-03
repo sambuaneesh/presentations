@@ -3,7 +3,6 @@ export default {
 	name: 'Models we never tuned on',
 	kicker: 'IV · is it robust?',
 	title: 'Models we never tuned on',
-	source: '§IV-I · Table XIII · extension analysis §11 · 6 models × 4 systems × 5 runs · Holm-corrected p',
 	draw(k) {
 		k.text(150, 270, 'why: the workflow was designed while watching DeepSeek (and GLM-5.2 for the last change)', { size: 'm', scale: 1.05, color: 'grey' })
 		const M = ['gpt-oss:120b', 'gemma4:31b', 'DeepSeek v4 Pro', 'Mistral Large 4', 'Kimi K2.7 Code', 'Kimi K3']

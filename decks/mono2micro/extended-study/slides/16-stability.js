@@ -3,7 +3,6 @@ export default {
 	name: 'Still not stable',
 	kicker: 'III · what we found',
 	title: 'Still not stable',
-	source: 'Table XVI · 8 models × 4 systems · mean distinct partitions among five runs',
 	draw(k) {
 		const R = [['single-shot', 2.5], ['OpenCode', 2.38], ['workflow', 2.91]]
 		const X = 620, Y = 380, P = 170, U = 250

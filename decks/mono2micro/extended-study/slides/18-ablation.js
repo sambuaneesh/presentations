@@ -3,7 +3,6 @@ export default {
 	name: 'The design fix holds',
 	kicker: 'V · the ablation',
 	title: 'The design fix holds for all eight',
-	source: 'Table XVII · Fig. 6 · 159 run pairs replayed, no model calls · final − V-measure version, mean per model',
 	draw(k) {
 		const M = [['DS v4.1', 7.4, 11.56], ['GLM-5.2', 7.1, 19.91], ['gpt-oss', 2.62, 3.71], ['gemma4', 3.01, 15.75], ['DS v4 Pro', 5.27, 15.53], ['Mistral L4', 7.19, 13.2], ['Kimi K2.7', 5.77, 13.79], ['Kimi K3', 7.63, 10.0]]
 		const BASE = 820, U = 22, X = 220, CW = 190

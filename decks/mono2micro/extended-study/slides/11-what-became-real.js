@@ -4,7 +4,6 @@ export default {
 	name: 'vs. 80k: what became real',
 	kicker: 'III · what we found · workflow vs. 80k concat (single-shot)',
 	title: 'vs. 80k: three gains become real',
-	source: 'Table XII · Fig. 3 · workflow − 80k concat · 32 cells · 95% bootstrap intervals · Holm-corrected p',
 	draw(k) {
 		const ROWS = [
 			['domain independence (DI)', 9.01, 4.04, 14.55, '0.011', [0.23, 18.78]],
