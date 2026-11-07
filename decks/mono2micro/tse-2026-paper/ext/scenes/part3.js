@@ -23,9 +23,9 @@ const KEY = [
 		${P(html`The first refiner asked the LLM to critique and patch its own candidate. That matches the literature's warning: LLMs rarely improve their own output without reliable external feedback <${Cite} keys=${['huang2024cannot', 'kamoi2024selfcorrection', 'olausson2024selfrepair']} />.`)}
 		${P(html`Its replacement, bounded <${Term} k="local-search" /> with strict <${Term} k="pareto">Pareto</${Term}> acceptance, only accepts a move when the measurements improve, and otherwise abstains. It makes no LLM call.`)}</div>` },
 	{ id: 'E9', trigger: 'E8', lesson: 'Never grade a candidate by its own construction', term: 'self-referential', extra: () => html`<div>
-		${P(html`E8 evaluated the interim design and found lower C2C-50 and DTP than 80k concat, with selection favouring the fragmented domain-first candidate. Analysing the score (E9) showed why: V-measure rewarded agreement with the capability map from which the domain-first candidate was generated.`)}
+		${P(html`E8 evaluated the interim design and found lower C2C-50 and DTP than single-shot, with selection favouring the fragmented domain-first candidate. Analysing the score (E9) showed why: V-measure rewarded agreement with the capability map from which the domain-first candidate was generated.`)}
 		${P('How the change was checked before adoption (development loop, recorded LLM outputs of the 20 DeepSeek runs replayed):')}
-		${List(['with the circular term, the refiner accepted 0 moves in all 20 runs', 'without it, the refiner accepted 36 moves across the 20 runs', 'on the development runs the change beat 80k concat on four of five design metrics (CMod, CiD, DI, BCP) and lost on DTP'])}
+		${List(['with the circular term, the refiner accepted 0 moves in all 20 runs', 'without it, the refiner accepted 36 moves across the 20 runs', 'on the development runs the change beat single-shot on four of five design metrics (CMod, CiD, DI, BCP) and lost on DTP'])}
 		${Src('studies/agentic-development-loop-v1/loop-log.jsonl (v0-control, v1b-no-domain-selection); docs/research-notes/final-architecture-and-benchmark-design-2026-09-25.md')}
 		${Note(html`Adopted as the final workflow. Its effect is measured by the paired ablation of Q4. The analysis was prompted by a blinded outcome (E8), so the current write-up treats the size of that effect as possibly optimistic.`, C.faint)}</div>` },
 ]
@@ -104,14 +104,14 @@ export function BaselinesScene({ b, still }) {
 		<div style=${{ ...box(110, 250, 780, 690) }}>
 			<div style=${{ fontFamily: F.hand, fontSize: 36, color: C.red }}>which single-shot variant?</div>
 			<div style=${{ fontFamily: F.sans, fontSize: 20, color: C.dim, margin: '6px 0 22px' }}>matched DeepSeek runs, per system</div>
-			${[['80k concat', 60.8, 89516], ['hierarchical', 51.6, 414006]].map(([n, c, t]) => html`<div key=${n} style=${{ marginBottom: 26 }}>
+			${[['80k concat', 60.8, 89516], ['hierarchical', 51.5, 414006]].map(([n, c, t]) => html`<div key=${n} style=${{ marginBottom: 26 }}>
 				<div style=${{ fontFamily: F.hand, fontSize: 32 }}>${n === 'hierarchical' ? html`<${Term} k="hierarchical">hierarchical</${Term}>` : html`<${Term} k="80k">80k concat</${Term}>`}</div>
 				<div style=${{ display: 'flex', gap: 14, alignItems: 'center', fontFamily: F.sans, fontSize: 18, marginTop: 6 }}>
 					<span style=${{ width: 110 }}>C2C-50</span><div style=${{ width: 400, height: 18, background: C.paper2, borderRadius: 9 }}><div style=${{ width: `${c}%`, height: '100%', background: C.ink, borderRadius: 9, opacity: 0.75 }} /></div><b>${c.toFixed(1)}</b></div>
 				<div style=${{ display: 'flex', gap: 14, alignItems: 'center', fontFamily: F.sans, fontSize: 18, marginTop: 8 }}>
 					<span style=${{ width: 110 }}>tokens</span><div style=${{ width: 400, height: 18, background: C.paper2, borderRadius: 9 }}><div style=${{ width: `${(t / 414006) * 100}%`, height: '100%', background: C.red, borderRadius: 9, opacity: 0.8 }} /></div><b>${t.toLocaleString('en-US')}</b></div></div>`)}
-			<div style=${{ fontFamily: F.hand, fontSize: 30, marginTop: 10 }}>4.6× the tokens, no gain → <span style=${{ color: C.red }}>80k concat</span></div>
-			<div style=${{ fontFamily: F.sans, fontSize: 18, color: C.dim, marginTop: 8 }}>as our previous study found <${Cite} k="sambu2026icsa" /></div>
+			<div style=${{ fontFamily: F.hand, fontSize: 30, marginTop: 10 }}>4.6× the tokens, no gain → <span style=${{ color: C.red }}>80k concat</span>, our Single-shot (ICSA)</div>
+			<div style=${{ fontFamily: F.sans, fontSize: 18, color: C.dim, marginTop: 8 }}>our previous study found no significant quality difference among its seven summarisation strategies, and 80k concatenation used the fewest tokens of them (202k per run, against 207k–235k and 813k for hierarchical) <${Cite} k="sambu2026icsa" /></div>
 		</div>
 		<div style=${{ ...box(960, 250, 850, 690), ...reveal(B >= 1, still) }}>
 			<div style=${{ fontFamily: F.hand, fontSize: 36, color: C.red }}>which OpenCode prompt?</div>

@@ -14,8 +14,8 @@ const body = (label) => paras(label).map((e, i) => html`<div key=${i}>${e.head &
 export function BuysScene({ b, still }) {
 	const B = still ? 2 : b
 	const v = EXT.validity_per_model_8x5, m8 = Object.keys(v), fin = m8.reduce((a, m) => [a[0] + v[m].Final.valid, a[1] + v[m].Final.attempts], [0, 0])
-	const yes = [html`a complete assignment, guaranteed <${Term} k="repair">by construction</${Term}> (${fin[0]} of ${fin[1]} runs valid)`, `a third fewer tokens, cheaper than 80k in ${EXT.tokens_8_models_5reps_all_recorded.final_vs_80k.losses} of ${EXT.tokens_8_models_5reps_all_recorded.final_vs_80k.n_cells} cells`, 'modest design gains: BCP and DI higher, CMod higher (partly by construction)', 'up to three explicit alternatives and a complete audit trail']
-	const no = ['decompositions closer to the developers\' reference', 'more repeatable results', 'valid output with every model']
+	const yes = [html`a complete assignment, guaranteed <${Term} k="repair">by construction</${Term}> (${fin[0]} of ${fin[1]} runs valid)`, `a third fewer tokens, cheaper than single-shot in ${EXT.tokens_8_models_5reps_all_recorded.final_vs_80k.losses} of ${EXT.tokens_8_models_5reps_all_recorded.final_vs_80k.n_cells} cells`, 'modest design gains: BCP and DI higher, CMod higher (partly by construction)', 'up to three explicit alternatives and a complete audit trail']
+	const no = ['decompositions closer to the developers\' reference', 'more repeatable results', 'valid output with every model', 'faster runs: whole workflow runs take longer']
 	const drawer = { title: 'What the agentic organisation buys', kicker: '§VI-A', tabs: [{ id: 'text', label: 'The argument', render: () => html`<div>${body('sc:disc-buys')}</div>` }], source: 'Source: §VI-A.' }
 	return html`<${Stage} still=${still}>
 		<div style=${{ ...box(110, 260, 820, 560) }}>
@@ -27,7 +27,7 @@ export function BuysScene({ b, still }) {
 			${no.map((t, i) => html`<div key=${i} style=${{ fontFamily: F.hand, fontSize: 32, lineHeight: 1.3, margin: '20px 0 0' }}>• ${t}</div>`)}
 			<div style=${{ fontFamily: F.sans, fontSize: 20, color: C.dim, lineHeight: 1.5, marginTop: 30 }}>An autonomous agent received the same inputs and goals, yet collapsed a system into one service, silently dropped classes, and with gpt-oss:120b wrote an unreadable result in ${EXT.validity_per_model_8x5['gpt-oss:120b']['OpenCode-B3'].unrecorded} of ${EXT.validity_per_model_8x5['gpt-oss:120b']['OpenCode-B3'].attempts} runs: flexibility without guarantees <${Cite} k="xia2024agentless" />.</div>
 		</div>
-		<div style=${{ ...box(110, 860, 1700, 60), textAlign: 'center', fontFamily: F.hand, fontSize: 34, ...reveal(B >= 2, still) }}>Much of an architect's cost is checking LLM output: a well-formed, auditable answer lowers it, and here it is also modestly better.</div>
+		<div style=${{ ...box(110, 860, 1700, 60), textAlign: 'center', fontFamily: F.hand, fontSize: 34, ...reveal(B >= 2, still) }}>Much of an architect's cost is checking LLM output: a complete, auditable answer lowers it, and here it is also modestly better.</div>
 		<${Inside} x=${1560} y=${196} w=${300} label="The argument" drawer=${drawer} still=${still} />
 		<${SlideSource}>§VI-A</${SlideSource}>
 	</${Stage}>`
@@ -127,7 +127,7 @@ const STUDIES = [
 	{ id: 'harness-repeatability-v1', t: 'Harness repeatability', role: 'exploratory', what: 'Three repeated runs of one harness prompt for two models (24 runs): an early sign that single runs vary.', status: 'archived' },
 	{ id: 'matched-agentic-v1', t: 'First matched campaign', role: 'superseded', what: 'The first comparison of all arms with a locally served Qwen model. Generation and validation used different class universes, which led to the canonical class scope (ADR 0005).', status: 'superseded' },
 	{ id: 'matched-agentic-v2', t: 'qwen-35B pilot', role: 'pilot', what: 'The same comparison with the canonical scope and NVIDIA\'s NVFP4 build of Qwen 3.6 35B-A3B (32 runs). Here repair mattered: 3 of 12 raw candidates were invalid and were repaired.', status: 'kept' },
-	{ id: 'matched-ollama-deepseek-v1', t: 'Matched DeepSeek campaign', role: 'baseline choice', what: 'All eight treatments with DeepSeek v4.1 Flash (32 runs, all valid). The evidence for choosing 80k concat and OpenCode baseline-3; its first 80k and OpenCode runs are reused in the benchmark.', status: 'archived' },
+	{ id: 'matched-ollama-deepseek-v1', t: 'Matched DeepSeek campaign', role: 'baseline choice', what: 'All eight treatments with DeepSeek v4.1 Flash (32 runs, all valid). The evidence for choosing 80k concatenation (Single-shot) and OpenCode baseline-3; its first 80k and OpenCode runs are reused in the benchmark.', status: 'archived' },
 	{ id: 'agentic-improvement-lab-v1', t: 'Improvement lab', role: 'design experiments', what: 'One change at a time on DeepSeek (trials T000–T008): the source of the design experiments in Table IV.', status: 'archived' },
 	{ id: 'agentic-development-loop-v1', t: 'Development loop', role: 'selection tests', what: 'Replayed the recorded LLM outputs to test selection and refinement changes cheaply; it produced the final version (v1b), checked once on GLM-5.2 as a hold-out (2 of 5 design metrics better there).', status: 'kept' },
 	{ id: 'final-benchmark-v1', t: 'Benchmark runs (I)', role: 'the results', what: 'DeepSeek v4.1 Flash with five seeds and the earlier seed-1 runs of GLM-5.2, gpt-oss:120b and gemma4:31b (96 runs, three arms, four systems), plus the earlier workflow version kept for the ablation. One protocol with the folder below.', status: 'current' },
@@ -157,8 +157,8 @@ const NOT_ADOPTED = [
 	['E4', 'A Pareto selector', 'with three candidates and four objectives every candidate was non-dominated: no discrimination, so the weighted composite stayed'],
 	['E6', 'Ownership-guided refinement', 'the entity/repository links were LLM-inferred, and prioritising them displaced structural moves'],
 	['E7', 'Replicating shared classes', 'cut cross-service dependency weight by 3–33 % on three systems, but the metrics cannot evaluate replicated classes fairly: future work'],
-	['loop', 'Consensus (medoid) selection', 'picking the candidate closest to the others beat 80k concat on only one of five design metrics'],
-	['loop', 'A persistence-cohesion objective', 'beat 80k concat on three of five design metrics, but less than the final version'],
+	['loop', 'Consensus (medoid) selection', 'picking the candidate closest to the others beat single-shot on only one of five design metrics'],
+	['loop', 'A persistence-cohesion objective', 'beat single-shot on three of five design metrics, but less than the final version'],
 ]
 export function NotAdoptedScene({ still }) {
 	return html`<${Stage} still=${still}>

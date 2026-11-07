@@ -41,7 +41,7 @@ export const REFS = {
    {
     "sec": "III-B",
     "label": "sc:workflow-components",
-    "text": "Its LLM part receives the scoped source code in one context (truncated at 320,000 characters, a limit no system reached), without the separate summarization step of our previous study [1], and returns architectural views: components, API endpoints, persistence entities, interaction scenarios, and a technology map, mirroring the views A1–A5 of that study."
+    "text": "Its LLM part receives the scoped source code in one context (truncated at 320,000 characters, a limit no system reached), without the separate summarization step of our previous study [1], and returns five architectural views that mirror the views A1–A5 of that study (a component diagram, components, API endpoints, a technology map, and interaction scenarios), together with persistence entities."
    }
   ],
   "hidden": false
@@ -393,7 +393,7 @@ export const REFS = {
    {
     "sec": "VI-B",
     "label": "sc:disc-repeats",
-    "text": "First, the provider did not return the same output for the same seed and inputs, so a “seed” does not make a hosted-model experiment repeatable [13]."
+    "text": "First, the provider did not return the same output for the same seed and inputs three weeks apart, so a “seed” does not make a hosted-model experiment repeatable [13]."
    },
    {
     "sec": "VII",
@@ -1352,7 +1352,7 @@ export const REFS = {
    {
     "sec": "III-C",
     "label": "sc:workflow-select",
-    "text": "The evaluator also records diagnostics that are reported but not optimized, among them each candidate's agreement with the capability map (V-measure [53]) and the label-invariant distance between candidates."
+    "text": "The evaluator also records diagnostics that are reported but not optimized, among them each candidate's agreement with the capability map (V-measure [53]) and the distance between candidates (normalized variation of information, which ignores service names)."
    }
   ],
   "hidden": false
@@ -1514,7 +1514,7 @@ export const REFS = {
    {
     "sec": "IV-I",
     "label": "sc:method-analysis",
-    "text": "For each metric, the workflow is compared with each baseline by the two-sided Wilcoxon signed-rank test over the 32 cells [61], and the eight p-values of each comparison (five design metrics, three C2C thresholds) are Holm-corrected [62] at α = 0.05."
+    "text": "For each metric, the workflow is compared with each baseline by the two-sided Wilcoxon signed-rank test over the 32 cells [61], with zero differences split between the two signs, and the eight p-values of each comparison (five design metrics, three C2C thresholds) are Holm-corrected [62] at α = 0.05."
    }
   ],
   "hidden": false
@@ -1535,7 +1535,7 @@ export const REFS = {
    {
     "sec": "IV-I",
     "label": "sc:method-analysis",
-    "text": "For each metric, the workflow is compared with each baseline by the two-sided Wilcoxon signed-rank test over the 32 cells [61], and the eight p-values of each comparison (five design metrics, three C2C thresholds) are Holm-corrected [62] at α = 0.05."
+    "text": "For each metric, the workflow is compared with each baseline by the two-sided Wilcoxon signed-rank test over the 32 cells [61], with zero differences split between the two signs, and the eight p-values of each comparison (five design metrics, three C2C thresholds) are Holm-corrected [62] at α = 0.05."
    }
   ],
   "hidden": false
@@ -1577,7 +1577,7 @@ export const REFS = {
    {
     "sec": "IV-I",
     "label": "sc:method-analysis",
-    "text": "Robustness checks: two other treatments of failed runs (invalid runs kept with their measured values; every failure scored at the worst value of that metric observed on that system), and a regression on every individual run with one fixed effect per cell and cluster-robust standard errors [64], clustered by cell and, more strictly, by model, which asks whether an effect generalizes over models rather than over cells."
+    "text": "Robustness checks: two other treatments of failed runs (invalid runs kept with their measured values; every failure scored at the worst value of that metric observed on that system), and a regression on every individual run with one fixed effect per cell and cluster-robust standard errors [64], clustered by cell and, more strictly, by model, which asks whether an effect generalizes over models rather than over cells; with only eight clusters, the model-clustered errors are themselves imprecise."
    }
   ],
   "hidden": false
@@ -1608,7 +1608,7 @@ export const REFS = {
    {
     "sec": "VII",
     "label": "sc:threats",
-    "text": "itemize Development on the evaluation systems. The workflow was developed on the four benchmark systems with DeepSeek v4.1 Flash, and its last change was also informed by GLM-5.2; decisions taken while observing blinded outcomes bias estimates for those models [65]."
+    "text": "itemize Development on the evaluation systems. The workflow was developed on the four benchmark systems with DeepSeek v4.1 Flash, and its last change was also checked on GLM-5.2; decisions taken while observing blinded outcomes bias estimates for those models [65]."
    }
   ],
   "hidden": false

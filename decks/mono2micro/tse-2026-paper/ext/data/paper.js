@@ -16,23 +16,23 @@ export const PAPER = {
  "abstract": [
   {
    "head": "Context",
-   "text": "Splitting a monolith into microservices requires service boundaries that balance structure, business capabilities, and migration effort. Large language models (LLMs) can propose such boundaries, but a single prompt gives no guarantee that the answer is complete, offers no alternatives, and leaves cost uncontrolled."
+   "text": "Splitting a monolith into microservices requires service boundaries that balance structure, business capabilities, and migration effort. A single LLM prompt can propose them, but guarantees no complete answer, offers no alternatives, and leaves cost uncontrolled."
   },
   {
    "head": "Goal",
-   "text": "We design an agentic workflow built on one principle—let the LLM propose, let code decide—and evaluate whether it produces better, more reliable, and cheaper decompositions than single-shot prompting and an autonomous coding agent."
+   "text": "We design an agentic workflow on one principle—let the LLM propose, let code decide—and test whether it decomposes better, more reliably, and more cheaply than single-shot prompting and an autonomous coding agent."
   },
   {
    "head": "Method",
-   "text": "In the workflow, LLM agents construct evidence, infer provisional business capabilities, and propose three candidates, while deterministic agents repair, validate, select, and refine them without access to any reference decomposition. We compare it with single-shot prompting and OpenCode on four benchmark systems with seventeen LLMs, using identical inputs within each model. Eight models were run five times per system and approach; this primary analysis (32 model–system cells) follows a declared plan with Holm-corrected paired tests and robustness checks."
+   "text": "LLM agents construct evidence, infer business capabilities, and propose three candidates; deterministic agents repair, validate, select, and refine them without seeing any reference. We compare it with single-shot prompting and OpenCode on four benchmark systems with seventeen LLMs. Eight models ran five times per system and approach; their 32 model–system cells are tested under a declared plan."
   },
   {
    "head": "Results",
-   "text": "The workflow produced a valid decomposition in 159/160 runs, against 157/160 for single-shot prompting and 151/160 for the agent, and every decomposition it produced was valid. It achieved significantly higher domain independence and business-capability purity than both baselines, at the price of lower transaction purity (significantly so against the agent), while similarity to the developers' own decompositions did not differ significantly. It used 37.2% fewer tokens than single-shot prompting, in every cell. No approach was stable across runs. The largest effect we measured came from deterministic selection: removing a self-referential score term improved modularity, domain independence, and close correspondence to reference services with all eight models."
+   "text": "The workflow produced a valid decomposition in 159/160 runs, and every decomposition it produced was valid. It achieved significantly higher domain independence and business context purity than both baselines, at the price of lower transaction purity (significant against OpenCode); similarity to the developers' decompositions did not differ significantly. It used 37.2% fewer tokens than single-shot prompting, in every cell. No approach was stable across runs. The largest measured effect was deterministic: removing a self-referential term from selection and refinement reduced service fragmentation and raised modularity, domain independence, and close correspondence to reference services with all eight models."
   },
   {
    "head": "Conclusion",
-   "text": "Wrapping LLM proposals in deterministic safeguards made decomposition complete by construction, cheaper, and modestly better aligned with the domain. The components that mattered most were deterministic, not additional LLM reasoning, and one run per model and system proved too few to reveal these differences."
+   "text": "Deterministic safeguards around LLM proposals made decomposition complete by construction, cheaper than single-shot prompting, and modestly better aligned with the domain; single runs per model and system were too few to show this."
   }
  ],
  "keywords": [
@@ -51,11 +51,11 @@ export const PAPER = {
   "RQ4 (Design): Which design decisions of the workflow matter, and why?"
  ],
  "findings": [
-  "Valid by construction. The workflow produced a valid decomposition in 159/160 runs of the primary analysis, and in 94.4% of attempts over all seventeen models, significantly more often than single-shot prompting. Every decomposition it produced was valid; its rare failures were answers that could not be parsed at all (Section V-B).",
-  "Modest design gains, no similarity gain, lower cost. The workflow's decompositions had significantly higher domain independence and business-capability purity than both baselines, and higher modularity than single-shot prompting, but lower database transaction purity. Similarity to the reference decompositions did not differ significantly. The workflow used 37.2% fewer tokens than single-shot prompting, in every model–system cell (Sections V-A and V-C).",
-  "Single runs are not enough. With one run per model and system, only one of the three design gains over single-shot prompting was significant, and no difference from the autonomous agent; the others needed five runs per cell. The provider returned different partitions for the same seed, and the workflow varied the most (Sections V-A and V-B).⟪ In our first, mostly single-run analysis no difference was significant, and its largest apparent gain—in close correspondence to reference services—did not hold with five runs and more models.⟫",
-  "Safeguards matter more than reasoning. The components with measurable effects were deterministic: removing a self-referential term from the selection score improved modularity, domain independence, and close correspondence to reference services with all eight models on identical LLM outputs, and deterministic local search replaced an ineffective LLM self-critique (Section V-D).",
-  "Models converge. On these well-known systems, single-shot prompting often returned the identical partition for different models—on JPetStore, for all eight—suggesting a strong prior shared across models (Section V-A)."
+  "Valid by construction. The workflow produced a valid decomposition in 159/160 runs of the primary analysis, more often than OpenCode on paired attempts, and in 94.4% of attempts over all seventeen models, where it also failed less often than single-shot prompting. Every decomposition it produced was valid; its rare failures were answers that could not be parsed at all (Section V-B).",
+  "Modest design gains, no similarity gain, a mixed cost picture. The workflow's decompositions had significantly higher domain independence and business context purity than both baselines (a size-controlled view agrees), and higher modularity than single-shot prompting, but lower database transaction purity, significantly so against OpenCode. Similarity to the reference decompositions did not differ significantly. The workflow used 37.2% fewer tokens than single-shot prompting, in every model–system cell; OpenCode processed more tokens, but mostly as cache reads, and whole workflow runs took longer (Sections V-A and V-C).",
+  "Single runs are not enough. With one run per model and system, the estimated differences were similar, but only one of the three design gains over single-shot prompting reached significance, and no difference from OpenCode did. The provider returned different partitions for the same seed, and the workflow varied the most (Sections V-A and V-B).⟪ In our first analysis, with one run per cell for the four models chosen first, no difference was significant, and its largest apparent gain—in close correspondence to reference services—did not hold with five runs and more models.⟫",
+  "A deterministic decision had the largest effect. Removing a self-referential term from selection and refinement reduced a fragmentation of the services and, on identical LLM outputs, raised modularity, domain independence, and close correspondence to reference services with all eight models; deterministic local search replaced an ineffective LLM self-critique. We did not ablate the LLM components (Section V-D).",
+  "Models converge. On these well-known systems, single-shot prompting often returned the identical partition for different models at the same seed—on JPetStore, for all eight—suggesting a strong prior shared across models (Section V-A)."
  ],
  "contributions": [
   "An agentic decomposition workflow in which LLM components construct evidence, infer provisional domain knowledge, and propose alternative candidates, while deterministic components repair, validate, select, and refine the result without access to reference data (Section III).",
@@ -79,51 +79,54 @@ export const LABELS = {
  "tab:positioning": "II",
  "sc:workflow-principles": "III-A",
  "sc:workflow-components": "III-B",
- "sc:workflow-select": "III-C",
  "fig:agenticFramework": "1",
  "tab:agentResponsibilities": "III",
+ "sc:workflow-select": "III-C",
  "eq:mf": "1",
  "alg:select-refine": "1",
  "sc:workflow-firewall": "III-D",
  "sc:application-evolution": "III-E",
- "sc:application-example": "III-F",
  "tab:evolution": "IV",
+ "sc:application-example": "III-F",
  "tab:example": "V",
+ "fig:example": "2",
  "sc:method-design": "IV",
  "sc:method": "IV",
  "sc:application": "IV",
- "fig:studyDesign": "2",
  "sc:method-gqm": "IV-A",
+ "fig:studyDesign": "3",
+ "tab:systems": "VI",
  "sc:study-benchmark": "IV-B",
  "sc:study-arms": "IV-C",
- "tab:systems": "VI",
  "sc:application-pilot": "IV-D",
- "sc:study-models": "IV-E",
  "tab:opencode": "VII",
+ "sc:study-models": "IV-E",
  "sc:study-measures": "IV-F",
- "sc:method-similarity": "IV-G",
  "tab:models": "VIII",
+ "sc:method-similarity": "IV-G",
  "tab:refself": "IX",
  "sc:study-collection": "IV-H",
  "tab:runs": "X",
  "sc:method-analysis": "IV-I",
+ "fig:timeline": "4",
  "sc:application-exec": "IV-J",
  "sc:results": "V",
  "sc:results-rq1": "V-A",
+ "fig:forest": "5",
  "tab:glance": "XI",
  "tab:paired": "XII",
- "fig:forest": "3",
  "tab:sensitivity": "XIII",
- "fig:permodel": "4",
+ "fig:sizecontrol": "6",
+ "fig:permodel": "7",
  "tab:tools": "XIV",
  "sc:results-rq2": "V-B",
- "tab:validity": "XV",
- "tab:stability": "XVI",
- "fig:tokens": "5",
+ "fig:validity": "8",
+ "tab:stability": "XV",
  "sc:results-rq3": "V-C",
+ "fig:tokens": "9",
  "sc:results-rq4": "V-D",
- "tab:ablation": "XVII",
- "fig:ablation": "6",
+ "tab:ablation": "XVI",
+ "fig:ablation": "10",
  "sc:discussion": "VI",
  "sc:disc-buys": "VI-A",
  "sc:disc-repeats": "VI-B",
@@ -135,7 +138,7 @@ export const LABELS = {
  "sc:threats": "VII",
  "sc:conclusion": "VIII",
  "sc:appendix-permodel": "A",
- "tab:main": "XVIII"
+ "tab:main": "XVII"
 }
 export const POSITIONING = {
  "caption": "Positioning against the closest prior work. : yes; : no; –: not applicable; n/r: not reported in the cited work. aTools that require a target number of services, including Mono2Micro, received the reference's service count.",
@@ -228,7 +231,7 @@ export const SYSTEMS_TABLE = {
    "7ep Demo",
    "Library & utilities",
    "47",
-   "3,052",
+   "3,054",
    "4",
    "23"
   ],
@@ -236,7 +239,7 @@ export const SYSTEMS_TABLE = {
    "JPetStore",
    "E-commerce",
    "24",
-   "2,085",
+   "2,086",
    "3",
    "2"
   ],
@@ -270,7 +273,7 @@ export const METRICS_TABLE = {
   [
    "Design",
    "CMod (Code Modularity)",
-   "Mean cluster factor over services, CF_i = 2 int_i / (2 int_i + ext_i), where int_i counts dependency edges inside service i and ext_i edges between service i and other services, in either direction (normalized TurboMQ [20])."
+   "Mean cluster factor over services, CF_i = 2 int_i / (2 int_i + ext_i), where int_i sums the weights of dependency edges inside service i and ext_i those of edges between service i and other services, in either direction (normalized TurboMQ [20])."
   ],
   [
    "",
@@ -285,12 +288,12 @@ export const METRICS_TABLE = {
   [
    "",
    "DI (Domain Independence)",
-   "How concentrated the classes of each traced business use case are across services."
+   "How concentrated the classes of each traced business use case are across services (100 × (1-mean clipped entropy))."
   ],
   [
    "",
    "BCP (Business Context Purity)",
-   "How few distinct use cases each service participates in."
+   "How concentrated each service's traced classes are on few use cases (100 × (1-mean clipped entropy of the use cases per service); services without a traced class are ignored)."
   ],
   [
    "Similarity",

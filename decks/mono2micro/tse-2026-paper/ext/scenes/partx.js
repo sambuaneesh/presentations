@@ -12,14 +12,14 @@ export const Toggle = ({ options, value, onChange }) => html`<div style=${{ disp
 	${options.map((o) => html`<button key=${o} type="button" ...${SHIELD} onClick=${(e) => { e.stopPropagation(); onChange(o) }}
 		style=${{ pointerEvents: 'all', cursor: 'pointer', height: 44, padding: '0 18px', borderRadius: 999, border: `2.5px solid ${o === value ? C.red : C.ink}`, background: o === value ? C.red : '#fffdf8', color: o === value ? '#fff' : C.ink, fontFamily: F.sans, fontSize: 17, fontWeight: 600 }}>${o}</button>`)}</div>`
 const ARMS = ['80k', 'OpenCode-B3', 'Final']
-const ARM_LABEL = { '80k': '80k concat', 'OpenCode-B3': 'OpenCode', Final: 'Final' }
+const ARM_LABEL = { '80k': 'Single-shot (ICSA)', 'OpenCode-B3': 'OpenCode', Final: 'Final' }
 const ARM_COLOR = { '80k': '#6f675c', 'OpenCode-B3': '#2f6fb5', Final: C.red }
 const KEYS = ['CMod', 'CiD', 'DTP', 'DI', 'BCP', 'c2c_cvg 10%', 'c2c_cvg 33%', 'c2c_cvg 50%']
 const DESIGN = KEYS.slice(0, 5)
 const LABEL = { CMod: 'CMod', CiD: 'CiD', DTP: 'DTP', DI: 'DI', BCP: 'BCP', 'c2c_cvg 10%': 'C2C-10', 'c2c_cvg 33%': 'C2C-33', 'c2c_cvg 50%': 'C2C-50' }
 const TERM = { CMod: 'cmod', CiD: 'cid', DTP: 'dtp', DI: 'di', BCP: 'bcp', 'c2c_cvg 10%': 'c2c', 'c2c_cvg 33%': 'c2c', 'c2c_cvg 50%': 'c2c' }
 const SYS = { demo: 'Demo', jpetstore: 'JPet', partsunlimited: 'Parts', 'spring-petclinic': 'PetCl' }
-const VS = { 'vs 80k concat': 'final_vs_80k', 'vs OpenCode': 'final_vs_opencode' }
+const VS = { 'vs single-shot': 'final_vs_80k', 'vs OpenCode': 'final_vs_opencode' }
 const SRC = 'studies/final-benchmark-extension-v1/analysis'
 const sgn = (v, d = 1) => (v > 0 ? '+' : '') + v.toFixed(d)
 const pfmt = (p) => (p == null ? '—' : p < 0.001 ? '< 0.001' : p.toFixed(3))
@@ -62,7 +62,7 @@ export function CollectionScene({ b, still }) {
 			{ id: 'same', label: 'One protocol', render: () => html`<div>
 				${P('Every run follows one frozen protocol: the same four systems, the same three arms with one model per execution, the same decoding and the same blinded evaluation.')}
 				${Table(['arm', 'exactly'], [
-					['80k concat', '1 summary call (each system fits one chunk) + 5 view calls + 1 decomposition call'],
+					['Single-shot (ICSA)', '1 summary call (each system fits one chunk) + 5 view calls + 1 decomposition call'],
 					['OpenCode', 'base opencode run, prompt baseline-3 + canonical inventory, source + dependency graph'],
 					['Final', 'agentic-final-v1b, the final architecture'],
 				], { align: ['left', 'left'], size: 18 })}
@@ -87,7 +87,7 @@ export function CollectionScene({ b, still }) {
 				${Note('Declared after a first descriptive report of the collected runs and before the robustness checks: a declared plan, not a pre-registration.')}</div>` },
 			{ id: 'lesson', label: 'Single-run lesson', render: () => html`<div style=${{ color: TEAL }}>
 				${P('How the conclusion changed with the number of runs:', { color: TEAL })}
-				${Table(['analysis', 'significant after Holm vs 80k concat', 'C2C-50 vs 80k'], [
+				${Table(['analysis', 'significant after Holm vs single-shot', 'C2C-50 vs single-shot'], [
 					['first analysis: 4 models, mostly one run (16 cells)', sig(fb.final_vs_80k, 1), sgn(fb.final_vs_80k['c2c_cvg 50%'].mean_difference)],
 					['8 models × 1 run (seed 1, 32 cells)', sig(one.final_vs_80k, 1), sgn(one.final_vs_80k['c2c_cvg 50%'].mean_difference)],
 					['8 models × 5 runs (primary, 32 cells)', sig(m8.final_vs_80k, 1), sgn(m8.final_vs_80k['c2c_cvg 50%'].mean_difference)],
@@ -208,7 +208,7 @@ function Robust({ vs, t }) {
 }
 export function Rq1PairedExtra({ b, still }) {
 	const [view, setView] = useShared('x:view', '8 models × 5 · primary')
-	const [vs, setVs] = useShared('x:vs', 'vs 80k concat')
+	const [vs, setVs] = useShared('x:vs', 'vs single-shot')
 	const t = VIEWS[view].get(VS[vs])
 	const better = KEYS.filter((k) => t[k].holm_p < 0.05 && t[k].mean_difference > 0).map((k) => LABEL[k])
 	const worse = KEYS.filter((k) => t[k].holm_p < 0.05 && t[k].mean_difference < 0).map((k) => LABEL[k])
@@ -232,8 +232,11 @@ export function Rq1PairedExtra({ b, still }) {
 					${P(html`The workflow's selection and refinement maximise CMod (weight 0.3), CiD (0.2) and a service-size balance score (0.2). A gain in CMod is therefore partly <b>by construction</b>. DI, BCP and DTP are not optimized: their changes are the independent evidence. C2C compares with the developers' decomposition, which the workflow never sees.`)}
 					${Note('Marked ◆ on the slide.')}</div>` },
 			], render: () => P('The primary result, checked two more ways (no new model calls).', { fontSize: 18, color: C.dim }) },
+			{ id: 'size', label: 'At equal size', render: () => html`<div>
+				${P('DI, DTP, CMod and CiD rise as classes are concentrated in fewer services. Over the 32 cells, each metric difference regressed on the difference in the number of services; the intercept is the difference at equal service counts (a supporting view added after the plan; the number of services is itself an outcome, so the adjustment is descriptive).', { fontSize: 18 })}
+				${Table(['metric', 'Δ', 'Δ at equal size', '95% interval', 'Δ services'], ['CMod', 'CiD', 'DTP', 'DI', 'BCP', 'c2c_cvg 50%'].map((k) => { const z = EXT.size_control_8x5[VS[vs]][k]; return [LABEL[k], sgn(z.mean_difference), sgn(z.adjusted_difference), `[${z.ci95_adjusted.map((v) => v.toFixed(1)).join(', ')}]`, sgn(z.mean_service_difference, 2)] }), { size: 18 })}</div>` },
 			{ id: 'precision', label: 'What five runs bought', render: () => html`<div>
-				${P('Width of the 95% interval with five runs per cell, as a share of its width with one run (8 models, Final vs 80k concat):', { fontSize: 19 })}
+				${P('Width of the 95% interval with five runs per cell, as a share of its width with one run (8 models, Final vs single-shot):', { fontSize: 19 })}
 				${Table(['metric', 'one run', 'five runs', 'share'], KEYS.map((k) => [LABEL[k], gain[k].ci_width_1_rep.toFixed(1), gain[k].ci_width_5_reps.toFixed(1), Math.round(gain[k].ratio * 100) + '%']), { size: 18 })}
 				${P('Repetitions remove run-to-run noise, but most of the remaining uncertainty comes from differences between models and systems: the number of cells matters as much as the number of runs.', { fontSize: 19 })}</div>` },
 			METHOD_TAB,
@@ -284,7 +287,7 @@ export function Rq1ToolsExtra({ b, still }) {
 			{ id: 'conv', label: 'Convergence', render: () => html`<div>
 				${P('Distinct partitions among the models at seed 1, per system (1 = every model returned the same partition):', { fontSize: 19 })}
 				${Table(['system', ...ARMS.map((a) => `${ARM_LABEL[a]} · 8 models`), ...ARMS.map((a) => `${ARM_LABEL[a]} · 17 models`)], Object.keys(SYS).map((s) => [s, ...ARMS.map((a) => String(conv.per_system[s][a])), ...ARMS.map((a) => String(conv17.per_system[s][a]))]), { size: 17 })}
-				${P(`Final reproduced the 80k partition of the same model and seed in ${eq.equal} of ${eq.pairs} runs (8 models × 5 runs).`, { fontSize: 19 })}</div>` },
+				${P(`Final reproduced the single-shot partition of the same model and seed in ${eq.equal} of ${eq.pairs} runs (8 models × 5 runs).`, { fontSize: 19 })}</div>` },
 		],
 		source: `Source: ${SRC} · tools_comparison_8x5, convergence_8_models, convergence_17_models_seed1.`,
 	}
@@ -301,7 +304,7 @@ export function Rq1ToolsExtra({ b, still }) {
 		<${Box} x=${1270} y=${300} w=${540} h=${580} title="convergence, eight models" on=${B >= 1} still=${still}>
 			${Table(['system', '80k', 'Final'], Object.keys(SYS).map((s) => [SYS[s], String(conv.per_system[s]['80k']), String(conv.per_system[s].Final)]), { size: 21 })}
 			<div style=${{ fontFamily: F.sans, fontSize: 18, color: C.dim, marginTop: -4 }}>distinct partitions among the 8 models (seed 1)</div>
-			<div style=${{ fontFamily: F.sans, fontSize: 20, lineHeight: 1.45, marginTop: 14 }}>Final matched the 80k partition of the same model and seed in <b>${eq.equal} of ${eq.pairs}</b> runs.</div>
+			<div style=${{ fontFamily: F.sans, fontSize: 20, lineHeight: 1.45, marginTop: 14 }}>Final matched the single-shot partition of the same model and seed in <b>${eq.equal} of ${eq.pairs}</b> runs.</div>
 		</${Box}>
 		<${Inside} x=${1560} y=${196} w=${300} label="Tools, convergence" drawer=${drawer} still=${still} />
 		<${SlideSource}>${SRC} · tools and convergence</${SlideSource}>
@@ -320,7 +323,7 @@ export function Rq2Extra({ b, still }) {
 			{ id: 'models', label: 'Validity per model', render: () => Table(['model', ...ARMS.map((a) => ARM_LABEL[a])], MODELS8.map((m) => [m, ...ARMS.map((a) => `${V[m][a].valid}/${V[m][a].attempts}`)]), { align: ['left'], size: 18 }) },
 			{ id: 'all', label: 'All 17 models', render: () => html`<div>
 				${Table(['', ...ARMS.map((a) => ARM_LABEL[a])], [['valid / attempts', ...ARMS.map((a) => `${all[a].valid}/${all[a].attempts}`)], ['share', ...ARMS.map((a) => `${(all[a].valid_rate * 100).toFixed(1)}%`)]], { size: 19 })}
-				${P(`All 17 models: the eight primary models with five seeds and the ${ROLES.breadth.length} breadth models with one. Fisher's exact test, Final vs 80k: p = ${pfmt(all.fisher_final_vs_80k)}; vs OpenCode: p = ${pfmt(all['fisher_final_vs_OpenCode-B3'])}. Eight of Final's eleven failures are glm-5.3 and glm-5.3-flash, whose evidence-stage answers could not be read.`, { fontSize: 18 })}</div>` },
+				${P(`All 17 models: the eight primary models with five seeds and the ${ROLES.breadth.length} breadth models with one. Exact McNemar tests on paired attempts (same model, system and seed; added after the plan), Final vs single-shot: primary p = ${pfmt(EXT.validity_all_17.mcnemar['primary_8_final_vs_80k'].p_exact)}, all 17 models p = ${pfmt(EXT.validity_all_17.mcnemar['all_17_final_vs_80k'].p_exact)}; vs OpenCode: primary p = ${pfmt(EXT.validity_all_17.mcnemar['primary_8_final_vs_OpenCode-B3'].p_exact)}, all 17 models p = ${pfmt(EXT.validity_all_17.mcnemar['all_17_final_vs_OpenCode-B3'].p_exact)}. Eight of Final's eleven failures are glm-5.3 and glm-5.3-flash, whose evidence-stage answers could not be read.`, { fontSize: 18 })}</div>` },
 			{ id: 'seed', label: 'Same seed, twice', render: () => html`<div>${P(`Seed 1 run twice, three weeks apart, for ${ROLES.repeat.join(', ')}:`, { fontSize: 18 })}${Table(['arm', 'cells', 'identical partition', 'NVI'], ARMS.map((a) => { const r = EXT.seed1_reproducibility[a]; return [ARM_LABEL[a], String(r.pairs), String(r.identical_partition), r.mean_nvi.toFixed(3)] }), { size: 19 })}</div>` },
 			METHOD_TAB,
 		],
@@ -363,6 +366,9 @@ export function Rq3Extra({ b, still }) {
 		title: 'Q3, all runs', kicker: 'V-C · Q3',
 		tabs: [
 			{ id: 'tokens', label: 'Tokens per model', render: () => Table(['model', ...ARMS.map((a) => ARM_LABEL[a])], MODELS8.map((m) => [m, ...ARMS.map((a) => Math.round(M[m][a].tokens).toLocaleString('en-US'))]), { align: ['left'], size: 18 }) },
+			{ id: 'kind', label: 'What the tokens are', render: () => html`<div>
+				${Table(['', 'input', 'output', 'cache reads', 'median LLM time', 'median end-to-end time'], ARMS.map((a) => { const c = EXT.cost_detail_8x5[a]; return [ARM_LABEL[a], `${(c.mean_input_tokens / 1000).toFixed(1)}k`, `${(c.mean_output_tokens / 1000).toFixed(1)}k`, c.mean_cache_read_tokens ? `${(c.mean_cache_read_tokens / 1000).toFixed(0)}k` : '—', c.median_llm_seconds ? `${c.median_llm_seconds.toFixed(0)} s` : '—', `${c.median_wall_seconds.toFixed(0)} s`] }), { size: 18 })}
+				${P(`Means per run over the eight models. Only OpenCode reports cache reads separately; for single-shot and Final, input counts all prompt tokens, and how cache reads are billed depends on the provider. OpenCode's totals exclude relaunched sessions (${EXT.cost_detail_8x5['OpenCode-B3'].opencode_sessions.runs_relaunched} of ${EXT.cost_detail_8x5['OpenCode-B3'].opencode_sessions.runs_with_harness_record} runs; ${Math.round(EXT.cost_detail_8x5['OpenCode-B3'].opencode_sessions.tokens_final_session_mean / 1000)}k → ${Math.round(EXT.cost_detail_8x5['OpenCode-B3'].opencode_sessions.tokens_all_sessions_mean / 1000)}k tokens with them). Final's end-to-end timer also covers its deterministic evaluation, refinement and the blinded evaluation; the timers differ in scope.`, { fontSize: 17, color: C.dim })}</div>` },
 			{ id: 'stages', label: 'Where Final spends', render: () => html`<div>${Table(['stage', 'mean tokens per run', 'share'], [['evidence', st.evidence], ['domain', st.domain], ['candidate generation', st.candidate_generation]].map(([l, s]) => [l, s.mean_tokens.toLocaleString('en-US'), `${(s.share * 100).toFixed(1)} %`]), { size: 18 })}${P(`Over the ${st.evidence.n_runs} Final runs of the seven primary models other than DeepSeek v4.1 Flash, whose workflow runs are replays of recorded LLM outputs.`, { fontSize: 17, color: C.dim })}</div>` },
 		],
 		source: `Source: ${SRC} · tokens_8_models_5reps_all_recorded, tokens_stage_breakdown_extension_fresh.`,
@@ -376,8 +382,8 @@ export function Rq3Extra({ b, still }) {
 				<div style=${{ fontFamily: F.sans, fontSize: 13, fontWeight: 700 }}>${(M[m][a].tokens / 1000).toFixed(0)}</div></div>`)}</div>`)}
 		<${Box} x=${1270} y=${260} w=${540} h=${330} on=${B >= 1} still=${still}>
 			<div style=${{ fontFamily: F.hand, fontSize: 60, color: C.red, lineHeight: 1 }}>${pct < 0 ? '−' : '+'}${Math.abs(pct).toFixed(1)} %</div>
-			<div style=${{ fontFamily: F.sans, fontSize: 20, lineHeight: 1.5, marginTop: 8 }}>vs 80k concat: cheaper in <b>${t80.losses} of ${t80.n_cells}</b> cells (<${Term} k="wilcoxon">Wilcoxon</${Term}> p ${pfmt(t80.wilcoxon_p)})</div>
-			<div style=${{ fontFamily: F.sans, fontSize: 18, color: C.dim, lineHeight: 1.45, marginTop: 10 }}>vs OpenCode: cheaper in ${toc.losses} of ${toc.n_cells} cells, ${Math.round(-toc.mean_difference).toLocaleString('en-US')} fewer tokens per system on average.</div>
+			<div style=${{ fontFamily: F.sans, fontSize: 20, lineHeight: 1.5, marginTop: 8 }}>vs single-shot: cheaper in <b>${t80.losses} of ${t80.n_cells}</b> cells (<${Term} k="wilcoxon">Wilcoxon</${Term}> p ${pfmt(t80.wilcoxon_p)})</div>
+			<div style=${{ fontFamily: F.sans, fontSize: 18, color: C.dim, lineHeight: 1.45, marginTop: 10 }}>vs OpenCode: fewer tokens in ${toc.losses} of ${toc.n_cells} cells, ${Math.round(-toc.mean_difference).toLocaleString('en-US')} per system on average, but most of OpenCode's tokens are cache reads; outside the cache OpenCode used fewer.</div>
 		</${Box}>
 		<${Box} x=${1270} y=${610} w=${540} h=${280} on=${B >= 2} still=${still}>
 			<div style=${{ fontFamily: F.hand, fontSize: 30 }}>where Final spends</div>
@@ -431,6 +437,10 @@ export function Rq4Extra({ b, still }) {
 				const per = Object.values(A.per_model_mean_difference), up = ['CMod', 'DI', 'C2C-50'].filter((k) => per.every((v) => v[k] > 0))
 				return up.length ? `${up.join(', ')} rise for all ${per.length} models, including the six held-out models that played no part in the decision.` : 'The direction differs between models.'
 			})()}</div>
+			<div style=${{ fontFamily: F.sans, fontSize: 17, lineHeight: 1.45, color: C.dim, marginTop: 12 }}>${(() => {
+				const k = A.pair_kinds, sh = A.share_of_effect_in_coarser_pairs, z = EXT.size_control_8x5.ablation
+				return `Mostly through granularity: of ${A.n_pairs} pairs, ${k.identical} identical, ${k.final_fewer_services} with fewer services (carrying ${Math.round(sh['c2c_cvg 50%'] * 100)}% of the C2C-50 gain), ${k.same_count_different_partition} otherwise different. At equal size: C2C-50 ${sgn(z['c2c_cvg 50%'].adjusted_difference)}, CMod ${sgn(z.CMod.adjusted_difference)}.`
+			})()}</div>
 		</${Box}>
 		<${Inside} x=${1560} y=${196} w=${300} label="The ablation" drawer=${drawer} still=${still} />
 		<${SlideSource}>${SRC} · ablation (replay, no model calls)</${SlideSource}>
@@ -459,7 +469,7 @@ export function Rq4OtherExtra({ b, still }) {
 			<div style=${{ fontFamily: F.sans, fontSize: 20, lineHeight: 1.5, marginTop: 8 }}>The safeguard was exercised: ${raw.raw_invalid_candidates} of ${raw.candidates} raw candidates (${raw.runs_with_any_raw_invalid_candidate} of ${raw.runs} runs) broke the output contract and were <${Term} k="repair">repaired</${Term}> before selection.</div>
 		</${Box}>
 		<${Box} x=${980} y=${540} w=${830} h=${380} on=${B >= 2} still=${still}>
-			<div style=${{ fontFamily: F.hand, fontSize: 34 }}>transfer: design metrics where Final beats 80k</div>
+			<div style=${{ fontFamily: F.hand, fontSize: 34 }}>transfer: design metrics where Final beats single-shot</div>
 			<div style=${{ display: 'grid', gridTemplateColumns: '1fr 1fr', columnGap: 30, rowGap: 6, marginTop: 10 }}>
 				${Object.entries(tr).map(([m, t]) => html`<div key=${m} style=${{ display: 'flex', alignItems: 'center', gap: 10, fontFamily: F.sans, fontSize: 18 }}>
 					<div style=${{ width: 210, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>${m}</div>

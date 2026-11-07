@@ -327,19 +327,19 @@ export const GLOSSARY = {
 	'single-shot': {
 		term: 'Single-shot prompting', family: 'approaches',
 		short: 'One final LLM call produces the whole decomposition from everything placed in its prompt.',
-		body: () => P(html`Our ICSA 2026 pipeline <${Cite} k="sambu2026icsa" /> is of this kind; in this study it is the "80k concat" arm.`),
+		body: () => P(html`Our ICSA 2026 pipeline <${Cite} k="sambu2026icsa" /> is of this kind; in this study it is the Single-shot (ICSA) arm.`),
 		source: '§I, §IV-C', see: ['80k', 'agentic-workflow', 'autonomous-agent'],
 	},
 	'80k': {
-		term: '80k concat', family: 'approaches',
-		short: 'The single-shot arm: pack the source into chunks of about 80,000 tokens, summarise, generate five architectural views, then one final call decomposes.',
-		body: () => P('On these systems the scoped source (11k–41k tokens) fits in one chunk, so the arm makes seven calls plus retries. It is the single-shot representative because the previous study found no benefit from other chunk sizes or from hierarchical summarisation.'),
+		term: 'Single-shot (ICSA)', family: 'approaches',
+		short: 'The single-shot arm, our ICSA pipeline in its 80k-concatenation configuration: pack the source into chunks of about 80,000 tokens, summarise, generate five architectural views, then one final call decomposes.',
+		body: () => P('On these systems the scoped source (11k–41k tokens) fits in one chunk, so the arm makes seven calls plus retries. It is the single-shot representative because the previous study found no significant quality difference among its seven summarisation strategies, and 80k concatenation used the fewest tokens of them (202k per run on average, against 207k–235k for the other chunked strategies and 813k for hierarchical summarisation).'),
 		source: '§IV-C, §IV-D', see: ['single-shot', 'hierarchical', 'views'],
 	},
 	hierarchical: {
 		term: 'Hierarchical summarisation', family: 'approaches',
 		short: 'Summarise files, then summarise the summaries, before deciding.',
-		body: () => P(html`In the matched DeepSeek runs it cost 414,006 tokens per system against 89,516 for 80k concat (4.6×) with lower C2C-50 (51.6 vs 60.8), so it is omitted from the benchmark <${Cite} k="dhulshette2025hierarchical" />.`),
+		body: () => P(html`In the matched DeepSeek runs it cost 414,006 tokens per system against 89,516 for 80k concatenation (4.6×) with lower C2C-50 (51.5 vs 60.8), so it is omitted from the benchmark <${Cite} k="dhulshette2025hierarchical" />.`),
 		source: '§IV-D', see: ['80k'],
 	},
 	views: {

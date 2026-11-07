@@ -175,7 +175,7 @@ export function FirewallScene({ b, still }) {
 export function DesignScene({ b, still }) {
 	const B = still ? 2 : b
 	const arms = [
-		['80k concat', 'single-shot', '80k', 'the ICSA pipeline: summarise, five views, one final call'],
+		['Single-shot (ICSA)', 'single-shot', '80k', 'the ICSA pipeline: summarise, five views, one final call'],
 		['OpenCode', 'autonomous agent', 'opencode', 'an open-source coding agent decides what to read and do'],
 		['Final (ours)', 'agentic workflow', 'agentic-workflow', 'the workflow of §III'],
 	]
@@ -187,16 +187,16 @@ export function DesignScene({ b, still }) {
 				${P(html`For each system a canonical <${Term} k="class-inventory" /> defines the evaluated universe. Every arm receives exactly this set of classes, a source snapshot restricted to them, and the static dependency graph filtered to them, and must return every class assigned to one named service.`)}
 				${P(html`A decomposition is <${Term} k="validity">valid</${Term}> if it assigns every inventory class exactly once, contains no unknown class and no empty service, and has at least three non-empty services.`)}</div>` },
 			{ id: 'arms', label: 'Arms', tabs: [
-				{ id: '80k', label: '80k concat', render: () => html`<div>${P(html`The pipeline of our previous study <${Cite} k="sambu2026icsa" />. Source files are packed into chunks of about 80,000 tokens (300,000 characters) and summarised, five architectural views are generated from the summary, and one final call produces the decomposition from the views, the dependency graph and the class inventory.`)}${P('On these systems the scoped source (11k–41k tokens, depending on the tokenizer) fits in one chunk, so the arm makes seven calls plus retries.')}</div>` },
+				{ id: '80k', label: 'Single-shot (ICSA)', render: () => html`<div>${P(html`The pipeline of our previous study <${Cite} k="sambu2026icsa" />, in its 80k-concatenation configuration. Source files are packed into chunks of about 80,000 tokens (300,000 characters) and summarised, five architectural views are generated from the summary, and one final call produces the decomposition from the views, the dependency graph and the class inventory.`)}${P('On these systems the scoped source (11k–41k tokens, depending on the tokenizer) fits in one chunk, so the arm makes seven calls plus retries.')}</div>` },
 				{ id: 'oc', label: 'OpenCode', render: () => html`<div>${P(html`The open-source coding agent OpenCode <${Cite} k="opencode2026" /> runs in an isolated workspace with the source snapshot and the dependency graph, and must write the decomposition to a file. It decides autonomously which files to read and which tools to use.`)}${P('It exposes no sampling temperature: it runs with the provider default and reasoning effort low. The prompt is baseline-3, chosen by information parity (Part III).')}</div>` },
 				{ id: 'final', label: 'Final (ours)', render: () => P('The workflow of §III: evidence, domain, three candidates, repair, gate, score, local search, freeze.') },
 				{ id: 'tools', label: 'Traditional tools', render: () => P(html`DataCentric, HyDec, Mono2Micro (two configurations) and Log2MS, as measured in the tool comparison <${Cite} k="wang2024comparison" />: deterministic, included for context.`) },
 			], render: () => P('Four arms; the first three share model, inputs and blinded evaluation.') },
 			{ id: 'models', label: 'Models', render: () => html`<div>
-				${Table(['model', 'developer', 'architecture', 'context', 'AA', 'valid 80k', 'OpenCode', 'Final'], models, { align: ['left', 'left', 'left', 'right', 'right', 'right', 'right', 'right'], size: 15 })}
+				${Table(['model', 'developer', 'architecture', 'context', 'AA', 'valid single-shot', 'OpenCode', 'Final'], models, { align: ['left', 'left', 'left', 'right', 'right', 'right', 'right', 'right'], size: 15 })}
 				${P(html`The first eight rows are the primary analysis (five seeds), the rest run once. The models were chosen in two steps: four for diversity of developer, architecture and capability, after a probe for parseable JSON and tool calls; then a screening of the provider's other thirteen models (one run each, including those the probe had excluded), from which the four with all twelve runs valid joined the primary set. All are served by Ollama Cloud <${Cite} k="ollama2026models" />; AA is the Artificial Analysis Intelligence Index <${Cite} k="aa2026index" />; † development model.`, { fontSize: 17 })}
 				${Note('Within each model, all arms use that model: arms are never compared across models.', C.faint)}</div>` },
-			{ id: 'controls', label: 'Controls', render: () => List([html`workflow and 80k: <${Term} k="temperature" /> 0.2, reasoning disabled where supported, at most 16,384 output tokens`, 'retries use the same model and parameters (the generator appends the validation error); no fallback model, no truncated prompt', 'every observation records its frozen inputs, a benchmark-scope fingerprint, every LLM call and a manifest']) },
+			{ id: 'controls', label: 'Controls', render: () => List([html`workflow and single-shot: <${Term} k="temperature" /> 0.2, reasoning disabled where supported, at most 16,384 output tokens`, 'retries use the same model and parameters (the generator appends the validation error); no fallback model, no truncated prompt', 'every observation records its frozen inputs, a benchmark-scope fingerprint, every LLM call and a manifest']) },
 			{ id: 'reps', label: 'Repetitions and runs', render: () => html`<div>
 				${P('All runs follow one frozen protocol, scope and decoding:', { fontSize: 20 })}
 				${List([
@@ -206,7 +206,7 @@ export function DesignScene({ b, still }) {
 					html`the V-measure ablation was re-scored on every stored workflow run by <${Term} k="replay">replaying</${Term}> its LLM outputs (no model calls)`,
 				])}
 				${P(html`<b>Primary analysis:</b> 8 models × 4 systems × 5 seeds (32 cells): the four models chosen first and the four selected by screening.`, { fontSize: 19 })}
-				${Note("DeepSeek v4.1 Flash's seed-1 80k and OpenCode runs were reused from an earlier matched campaign after checking identical frozen inputs, scope fingerprints and byte-identical regenerated prompts; DeepSeek v4.1 Flash's workflow runs, and GLM-5.2's earlier seed-1 workflow runs, replay the preceding version's LLM outputs (the versions differ only in deterministic selection and refinement).", C.faint)}</div>` },
+				${Note("DeepSeek v4.1 Flash's seed-1 single-shot and OpenCode runs were reused from an earlier matched campaign after checking identical frozen inputs, scope fingerprints and byte-identical regenerated prompts; DeepSeek v4.1 Flash's workflow runs, and GLM-5.2's earlier seed-1 workflow runs, replay the preceding version's LLM outputs (the versions differ only in deterministic selection and refinement).", C.faint)}</div>` },
 			{ id: 'devconf', label: 'Development vs confirmation', render: () => html`<div>
 				${P(html`Design decisions were made while observing DeepSeek v4.1 Flash on the four systems, and the last one also GLM-5.2, so both are <${Term} k="development-confirmation">development data</${Term}>. The other six models of the primary analysis, and all nine models run once, ran only after the design was frozen and informed no decision: the held-out view <${Cite} keys=${['cawley2010overfitting', 'dwork2015reusable']} />.`)}
 				${Note('The systems are not out of sample: the workflow was developed on the same four public systems it is evaluated on.', C.amber)}</div>` },
