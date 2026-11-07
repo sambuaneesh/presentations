@@ -1,8 +1,9 @@
-// Part III · how the workflow reached its final form (paper §IV). Only the design experiments that
+// Part III · how the workflow reached its final form (paper §III-E–F, §IV-D, §IV-J). Only the design experiments that
 // taught something that shaped the final design: E1, E2, E5, and E8 → E9.
 import { html, C, F, box, EASE, Stage, Term, Cite, Inside, Card, SHIELD, P, H, List, Note, Code, Quote, Table, rich, reveal, SlideSource, Src } from '../ui.js'
 import { TABLES, PROMPTS, RUN_FILES } from '../data/results.js'
 import { PETCLINIC } from '../data/systems.js'
+import { EXT, ROLES } from '../data/extension.js'
 import { useGo } from './front.js'
 import { SLIDES } from '../deck.js'
 
@@ -31,11 +32,11 @@ const KEY = [
 export function EvolutionScene({ b, still }) {
 	const B = still ? 4 : b
 	const all = {
-		title: 'All nine design experiments (Table VII)', kicker: '§IV-A',
-		tabs: [{ id: 'all', label: 'Table VII', render: () => html`<div>
+		title: 'All nine design experiments (Table IV)', kicker: '§III-E',
+		tabs: [{ id: 'all', label: 'Table IV', render: () => html`<div>
 			${P('Every experiment used DeepSeek v4.1 Flash and blinded evaluation after freezing. E1–E7 and E9 each changed one mechanism; E8 evaluated the interim design. The slide shows the four that shaped the final design.', { fontSize: 19, color: C.dim })}
 			${Table(['', 'question', 'observation', 'decision'], TABLES.evolution.rows.map((r) => [r[0], r[1], r[2], r[3]]), { align: ['left', 'left', 'left', 'left'], size: 17 })}</div>` }],
-		source: 'Source: Table VII, §IV-A.',
+		source: 'Source: Table IV, §III-E.',
 	}
 	return html`<${Stage} still=${still}>
 		<div style=${{ ...box(110, 245, 1400, 50), fontFamily: F.hand, fontSize: 30, color: C.dim }}>one change at a time, on DeepSeek, outcomes blinded, every result kept</div>
@@ -52,7 +53,7 @@ export function EvolutionScene({ b, still }) {
 						${H(`${k.id} · ${e.q}`)}${P(rich(e.obs))}${P(html`<b>Decision:</b> ${e.dec}`)}</div>` },
 					{ id: 'more', label: 'What we learned', render: k.extra },
 				],
-				source: 'Source: Table VII, §IV-A.',
+				source: 'Source: Table IV, §III-E.',
 			}
 			const x = 110 + i * 430
 			return html`<div key=${k.id} style=${{ ...reveal(B >= i + 1 || B === 0, still, { delay: B === 0 ? i * 100 : 0 }) }}>
@@ -65,9 +66,9 @@ export function EvolutionScene({ b, still }) {
 				</${Card}>
 			</div>`
 		})}
-		<${Inside} x=${1560} y=${200} w=${300} label="All nine (Table VII)" drawer=${all} still=${still} color=${C.ink} />
+		<${Inside} x=${1560} y=${200} w=${300} label="All nine (Table IV)" drawer=${all} still=${still} color=${C.ink} />
 		<${Caption} y=${920} still=${still} on=${B >= 4}>click a card: the experiment, what it showed, what it changed</${Caption}>
-		<${SlideSource}>Table VII · §IV-A</${SlideSource}>
+		<${SlideSource}>Table IV · §III-E</${SlideSource}>
 	</${Stage}>`
 }
 
@@ -76,7 +77,7 @@ export function BaselinesScene({ b, still }) {
 	const B = still ? 2 : b
 	const oc = TABLES.opencode.rows
 	const prompts = {
-		title: 'The five OpenCode prompts', kicker: '§IV-B · verbatim',
+		title: 'The five OpenCode prompts', kicker: '§IV-D · verbatim',
 		tabs: oc.map((r, i) => ({ id: `b${i + 1}`, label: `${r[0]} · ${r[1]}`, render: () => html`<div>
 			${Note(html`In the matched runs the benchmark scope was appended to every variant, requiring each inventory class to be assigned exactly once.${i === 4 ? ' One line of this prompt is paraphrased for this deck, marked "edited".' : ''}`, C.faint)}
 			<pre style=${{ margin: 0, padding: '16px 20px', background: '#fffdf8', border: `2px solid ${C.line}`, borderRadius: 12, fontFamily: F.mono, fontSize: 16, lineHeight: 1.5, whiteSpace: 'pre-wrap', userSelect: 'text' }}>${PROMPTS[`baseline-${i + 1}`]}</pre>
@@ -93,11 +94,11 @@ export function BaselinesScene({ b, still }) {
 				'strength: with DeepSeek and across the four agents of the earlier study, baseline-3 is second only to baseline-5; with the pilot model it is mid-range',
 			]) },
 			{ id: 'cost', label: 'The cost of fairness', render: () => P('Choosing baseline-3 rather than the highest-scoring baseline-5 makes the OpenCode baseline somewhat weaker in reference similarity. This work accepts this, because baseline-5\'s advantage comes from knowing how it will be evaluated.') },
-			{ id: 'table', label: 'Table VIII', render: () => html`<div>
+			{ id: 'table', label: 'Table VII', render: () => html`<div>
 				${Table(['variant', 'prompt content', 'DeepSeek', 'pilot (valid)', '4 harnesses (valid)'], oc, { align: ['left', 'left', 'right', 'right', 'right'], hi: (j) => j === 2 })}
 				${P(rich(TABLES.opencode.caption), { fontSize: 17, color: C.dim })}</div>` },
 		],
-		source: 'Source: §IV-B, Table VIII.',
+		source: 'Source: §IV-D, Table VII.',
 	}
 	return html`<${Stage} still=${still}>
 		<div style=${{ ...box(110, 250, 780, 690) }}>
@@ -126,7 +127,7 @@ export function BaselinesScene({ b, still }) {
 				<${Inside} label="Read the prompts" drawer=${prompts} still=${still} color=${C.ink} />
 			</div>
 		</div>
-		<${SlideSource}>§IV-B · Table VIII</${SlideSource}>
+		<${SlideSource}>§IV-D · Table VII</${SlideSource}>
 	</${Stage}>`
 }
 
@@ -140,8 +141,12 @@ function tree(files) {
 }
 export function ExecutionScene({ b, still }) {
 	const B = still ? 1 : b
-	const models = [['DeepSeek v4.1 Flash', 5], ['GLM-5.2', 1], ['gpt-oss:120b', 1], ['gemma4:31b', 1]]
+	// analysed seeds per model (primary: 5, breadth: 1) and the earlier seed-1 runs of the repeatability check
+	const primary = ROLES.primary, others = ROLES.breadth
+	const seeds = (m) => EXT.validity_all_17.per_model[m].Final.attempts / 4
+	const earlier = (m) => (ROLES.repeat.includes(m) ? 1 : 0)
 	const arms = ['80k', 'OpenCode', 'Final']
+	const total = EXT.observation_counts.final_benchmark_v1 + EXT.observation_counts.extension_recorded
 	const drawer = {
 		title: 'One observation, on disk', kicker: 'provenance',
 		tabs: [
@@ -150,25 +155,29 @@ export function ExecutionScene({ b, still }) {
 			{ id: 'what', label: 'What every run stores', render: () => List(['its frozen inputs and a benchmark-scope fingerprint', 'every LLM call with its token usage', 'every intermediate artifact (evidence pack, domain model, candidates, refinement rounds)', 'the validation result and the blinded report', 'a manifest with content hashes']) },
 			{ id: 'runner', label: 'The runner', render: () => P(html`All runs used Ollama Cloud <${Cite} k="ollama2026models" />, executed by a campaign runner that materialises the scoped benchmark for each system, runs one model at a time with at most three concurrent requests, and publishes each observation atomically. Runs are immutable: the controller refuses to overwrite an existing run, and a retry gets a new run.`) },
 		],
-		source: 'Source: §III-B (Process Controller), §IV-C; studies/final-benchmark-v1/runs.',
+		source: 'Source: §III-B (Process Controller), §IV-J; studies/final-benchmark-v1/runs, studies/final-benchmark-extension-v1/runs.',
 	}
 	let n = 0
 	return html`<${Stage} still=${still}>
-		<div style=${{ ...box(110, 245, 1000, 50), fontFamily: F.hand, fontSize: 32 }}>96 observations, each one a sealed folder</div>
-		${models.map(([m, reps], i) => html`<div key=${m} style=${{ ...box(110, 320 + i * 150, 1100, 140) }}>
-			<div style=${{ fontFamily: F.sans, fontSize: 20, fontWeight: 600 }}>${m} <span style=${{ color: C.dim, fontWeight: 400, fontSize: 17 }}>· ${reps === 5 ? '5 repetitions (seeds 1–5)' : '1 run per cell'}</span></div>
-			<div style=${{ display: 'flex', gap: 22, marginTop: 10 }}>
-				${arms.map((a) => html`<div key=${a} style=${{ display: 'flex', flexWrap: 'wrap', gap: 5, width: 330 }}>
-					${Array.from({ length: 4 * reps }, (_, k) => { const d = n++; return html`<div key=${k} style=${{ width: 13, height: 13, borderRadius: 3, background: a === 'Final' ? C.red : C.ink, opacity: a === 'Final' ? 0.85 : 0.5, ...reveal(true, still, { delay: 6 * d, dy: 4 }) }} />` })}
-					<div style=${{ width: '100%', fontFamily: F.sans, fontSize: 15, color: C.dim, marginTop: 2 }}>${a} · ${4 * reps}</div></div>`)}
-			</div></div>`)}
+		<div style=${{ ...box(110, 245, 1100, 50), fontFamily: F.hand, fontSize: 32 }}>${total} recorded runs, each one a sealed folder</div>
+		<div style=${{ ...box(110, 292, 1100, 30), display: 'flex', gap: 300, paddingLeft: 250, fontFamily: F.sans, fontSize: 15, fontWeight: 700, color: C.dim }}>${arms.map((a) => html`<span key=${a}>${a}</span>`)}</div>
+		${[...primary, 'others'].map((m, i) => {
+			const extra = m === 'others' ? 0 : earlier(m)
+			const main = m === 'others' ? others.length : seeds(m)
+			return html`<div key=${m} style=${{ ...box(110, 322 + i * 58, 1120, 54), display: 'flex', alignItems: 'center' }}>
+				<div style=${{ width: 240, fontFamily: F.sans, fontSize: 16, fontWeight: 600, lineHeight: 1.15 }}>${m === 'others' ? `${others.length} more models` : m}<div style=${{ fontWeight: 400, fontSize: 13, color: C.dim }}>${m === 'others' ? 'breadth · seed 1 each' : [`${main} seeds`, extra && 'seed 1 also run earlier'].filter(Boolean).join(' · ')}</div></div>
+				${arms.map((a) => html`<div key=${a} style=${{ display: 'flex', flexWrap: 'wrap', gap: 3, width: 330, marginLeft: 10 }}>
+					${Array.from({ length: 4 * (main + extra) }, (_, k) => { const d = n++; const dark = k < 4 * main; return html`<div key=${k} style=${{ width: 9, height: 9, borderRadius: 2, ...reveal(true, still, { delay: 2 * d, dy: 3 }), background: a === 'Final' ? (dark ? C.red : '#eba79c') : (dark ? C.ink : '#b9b0a4') }} />` })}</div>`)}
+			</div>`
+		})}
+		<div style=${{ ...box(110, 905, 1120, 30), fontFamily: F.sans, fontSize: 15, color: C.dim }}>one square = one run (system × seed) · light: the earlier seed-1 runs, used only for the repeatability check · one protocol throughout</div>
 		<div style=${{ ...box(1260, 320, 550, 560), ...reveal(B >= 1, still) }}>
 			<div style=${{ fontFamily: F.hand, fontSize: 32, color: C.red }}>inside each folder</div>
 			${List(['frozen inputs + scope fingerprint', 'every LLM call and its tokens', 'every intermediate artifact', 'validation + blinded report', 'a manifest with content hashes'], { size: 21 })}
 			<div style=${{ fontFamily: F.sans, fontSize: 18, color: C.dim, marginTop: 8 }}>Every reported number is recomputed from these files by a script, without calling a model.</div>
 			<div style=${{ marginTop: 20 }}><${Inside} label="Open one run" drawer=${drawer} still=${still} /></div>
 		</div>
-		<${SlideSource}>§IV-C</${SlideSource}>
+		<${SlideSource}>§IV-J</${SlideSource}>
 	</${Stage}>`
 }
 
@@ -197,6 +206,6 @@ export function ExampleScene({ b, still }) {
 			${[['the live trace', 'p2-trace'], ['Algorithm 1, step by step', 'p2-algorithm']].map(([l, s]) => idx(s) >= 0 && html`<button key=${s} type="button" ...${SHIELD} onClick=${(e) => { e.stopPropagation(); go(idx(s)) }}
 				style=${{ pointerEvents: 'all', cursor: 'pointer', padding: '0 20px', height: 46, borderRadius: 999, border: `2.5px solid ${C.ink}`, background: '#fffdf8', fontFamily: F.sans, fontSize: 18, fontWeight: 600 }}>← ${l} (slide ${idx(s) + 1})</button>`)}
 		</div>
-		<${SlideSource}>Table IX · §IV-D</${SlideSource}>
+		<${SlideSource}>Table V · §III-F</${SlideSource}>
 	</${Stage}>`
 }

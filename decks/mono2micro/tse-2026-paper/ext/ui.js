@@ -242,7 +242,14 @@ function CiteBody({ keys }) {
 }
 
 // "[6]" or "[42, 43]" inside exported text → citation chips.
+// The paper's removable single-run lesson arrives marked ⟪…⟫ (scripts/export_data.py) and is printed in teal.
+export const TEAL = '#0F7C80'
 export function rich(text) {
+	const parts = String(text).split(/(⟪[^⟫]*⟫)/)
+	if (parts.length > 1) return parts.map((t, i) => (t.startsWith('⟪') ? html`<span key=${i} style=${{ color: TEAL }}>${richPlain(t.slice(1, -1))}</span>` : richPlain(t)))
+	return richPlain(text)
+}
+function richPlain(text) {
 	const out = []
 	let last = 0
 	for (const m of String(text).matchAll(/\s?\[(\d+(?:,\s*\d+)*)\]/g)) {
@@ -301,7 +308,7 @@ export const Src = (s) => html`<div style=${{ marginTop: 18, fontFamily: F.sans,
 
 // A slide's own source line (bottom right, like the house style's `source`).
 export function SlideSource({ children }) {
-	return html`<div style=${{ ...box(860, 1008, 960, 30), textAlign: 'right', fontFamily: F.hand, fontSize: 22, color: C.dim }}>${children}</div>`
+	return html`<div style=${{ ...box(110, 1008, 1710, 30), textAlign: 'right', whiteSpace: 'nowrap', fontFamily: F.hand, fontSize: 22, color: C.dim }}>${children}</div>`
 }
 
 // Smooth reveal on a beat.

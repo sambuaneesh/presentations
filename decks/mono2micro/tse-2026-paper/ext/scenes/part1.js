@@ -82,7 +82,7 @@ export function PartitionScene({ b, still }) {
 	const pos = services.map((g, i) => ({ g, x: 360 + i * 600, y: 760 }))
 	const overlapRows = Object.entries(SYSTEMS).map(([id, s]) => [id, String(s.classes.length), String(s.shared.length), String(s.extraMemberships)])
 	const drawer = {
-		title: 'Why this study produces partitions', kicker: '§III-D',
+		title: 'Why this study produces partitions', kicker: '§IV-G',
 		tabs: [
 			{ id: 'reasons', label: 'Three reasons', render: () => html`<div>
 				${P('Letting the workflow copy shared classes, as the references do, looks natural. This work deliberately does not, for three reasons:')}
@@ -94,9 +94,9 @@ export function PartitionScene({ b, still }) {
 			{ id: 'overlap', label: 'How much the references overlap', render: () => html`<div>
 				${P('Classes the reference lists in more than one service, and the extra memberships they add (restricted to the class inventory, computed from the reference files):')}
 				${Table(['system', 'classes', 'shared classes', 'extra memberships'], overlapRows)}
-				${P('The last column matches the Overlap column of Table IV.', { fontSize: 18, color: C.dim })}</div>` },
+				${P('The last column matches the Overlap column of Table VI.', { fontSize: 18, color: C.dim })}</div>` },
 		],
-		source: 'Source: §II-A, §III-D, Table IV; benchmarks/systems/*/ground-truth.',
+		source: 'Source: §II-A, §IV-G, Table VI; benchmarks/systems/*/ground-truth.',
 	}
 	return html`<${Stage} still=${still}>
 		<div style=${{ ...box(cx - 170, cy - 40, 340, 80), border: `3px solid ${C.red}`, borderRadius: 14, background: C.redGlow, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: F.mono, fontSize: 32 }}>BaseEntity</div>
@@ -116,7 +116,7 @@ export function PartitionScene({ b, still }) {
 			Also shared in PetClinic: ${PC.shared.filter((c) => c !== 'BaseEntity').map((c, i) => html`<span key=${c}>${i ? ', ' : ''}<code style=${{ fontFamily: F.mono }}>${c}</code></span>`)}.</div>
 		<${Caption} y=${900} still=${still} on=${B >= 2}>Every arm must return a <${Term} k="partition" />: each <${Term} k="class-inventory">inventory</${Term}> class in exactly one service</${Caption}>
 		<${Inside} x=${1560} y=${200} w=${300} label="Why partitions" drawer=${drawer} still=${still} />
-		<${SlideSource}>§II-A, §III-D · ground_truth.rsf</${SlideSource}>
+		<${SlideSource}>§II-A, §IV-G · ground_truth.rsf</${SlideSource}>
 	</${Stage}>`
 }
 
@@ -150,7 +150,7 @@ export function TechniquesScene({ b, still }) {
 				${Quote(rich('An independent comparison of such tools on common benchmarks found that their results vary widely across systems and metrics and depend on configuration choices [6].'), '§I')}
 				${P('The tools measured there (DataCentric, HyDec, Mono2Micro in two configurations, Log2MS) are this work\'s traditional-tool context. Tools that need a target number of services were given the reference\'s number, which favours them.')}</div>` },
 		],
-		source: 'Source: §I, §II-A, §III-C, §VII.',
+		source: 'Source: §I, §II-A, §IV, §VII.',
 	}
 	return html`<${Stage} still=${still}>
 		${col(110, 'Evidence', html`<${Term} k="evidence-types">static · dynamic · semantic · data-centric</${Term}><div style=${{ marginTop: 14, color: C.dim, fontSize: 19 }}>what the technique reads</div>`, true, 0)}
@@ -195,7 +195,7 @@ export function BenchmarkScene({ b, still }) {
 					${P(html`The weighted class graph the metric engine scores CMod and CiD on: ${s.graph.length} edges among the ${s.classes.length} inventory classes.`)}
 					${Table(['from', 'to', 'weight'], s.graph.map(([a, bb, w]) => [a, bb, String(w)]), { size: 17 })}</div>` },
 			],
-			source: `Source: Table IV; benchmarks/systems/${id}; docs/research-notes/domain-metric-support-2026-09-22.json.`,
+			source: `Source: Table VI; benchmarks/systems/${id}; docs/research-notes/domain-metric-support-2026-09-22.json.`,
 		}
 		const x = 110 + i * 430
 		return html`<${Card} key=${id} drawer=${drawer} still=${still} delay=${i * 120} style=${{ left: x, top: 270, width: 400, height: 560, padding: '20px 24px' }}>
@@ -211,7 +211,7 @@ export function BenchmarkScene({ b, still }) {
 	return html`<${Stage} still=${still}>
 		${SYS_ORDER.map(([id, i]) => card(id, i))}
 		<${Caption} y=${880} still=${still} on=${B >= 1}>Java systems with a <${Term} k="reference">reference decomposition</${Term}>, from an independent tool comparison <${Cite} k="wang2024comparison" /></${Caption}>
-		<${SlideSource}>Table IV · §II-A</${SlideSource}>
+		<${SlideSource}>Table VI · §II-A</${SlideSource}>
 	</${Stage}>`
 }
 
@@ -256,11 +256,11 @@ export function MetricsScene({ b, still }) {
 		</div>
 		<div style=${{ ...reveal(B >= 1, still) }}>
 			<div style=${{ ...box(X, 244, W, 44), fontFamily: F.hand, fontSize: 30 }}>Try it: click a class to move it to the next service</div>
-			<div style=${{ ...box(X, 288, W, 30), fontFamily: F.sans, fontSize: 16, color: C.dim }}>Spring PetClinic, starting from the workflow's final answer (§IV-D) · metrics recomputed live with the study's formulas</div>
+			<div style=${{ ...box(X, 288, W, 30), fontFamily: F.sans, fontSize: 16, color: C.dim }}>Spring PetClinic, starting from the workflow's final answer (§III-F) · metrics recomputed live with the study's formulas</div>
 			${SERVICES.map((s, i) => {
 				const cs = dec[s]
 				const two = cs.length > 12
-				const chipW = two ? (colW - 26) / 2 : colW - 20
+				const chipW = two ? (colW - 4 - 20 - 5) / 2 - 1 : colW - 24 // inside the 2px borders and 10px insets; two chips and one 5px gap per row
 				return html`<div key=${s} style=${{ ...box(X + i * (colW + 14), colTop, colW, colH), border: `2px ${cs.length ? 'solid' : 'dashed'} ${C.ink}`, borderRadius: 14, background: '#fffdf8', overflow: 'hidden' }}>
 					<div style=${{ position: 'absolute', left: 10, right: 10, top: 8, fontFamily: F.sans, fontSize: 15, fontWeight: 700, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>${s.replace('Service', '')} · ${cs.length}</div>
 					<div style=${{ position: 'absolute', left: 10, right: 10, top: 36, display: 'flex', flexWrap: 'wrap', gap: 5 }}>

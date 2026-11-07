@@ -16,17 +16,17 @@ export const REFS = {
    {
     "sec": "I",
     "label": "sc:intro",
-    "text": "In our previous work [1], we studied Large Language Models (LLMs) as an alternative."
+    "text": "In our previous study [1], a three-phase pipeline summarized a code base, generated architectural views, and asked a single model call for the decomposition."
    },
    {
     "sec": "I",
     "label": "sc:intro",
-    "text": "Building upon our previous conference paper [1], this extension makes the following contributions:"
+    "text": "Building on our conference paper [1], this article makes the following contributions:"
    },
    {
     "sec": "I",
     "label": "sc:intro",
-    "text": "A controlled cross-model evaluation: a matched comparison of the workflow with single-shot prompting [1], an autonomous coding agent, and traditional tools [6], across four LLMs, with a strict separation between online selection and blinded evaluation (Sections IV and V)."
+    "text": "A controlled, multi-model evaluation of the workflow against single-shot prompting [1], an autonomous coding agent, and traditional tools [6]: seventeen LLMs, five runs per cell for eight of them, a strict separation between online selection and blinded evaluation, a declared analysis plan, and robustness checks for the treatment of failed runs, run-level variation, and models not used during development (Sections IV and V)."
    },
    {
     "sec": "II-A",
@@ -36,12 +36,12 @@ export const REFS = {
    {
     "sec": "II-C",
     "label": "sc:sota-llm",
-    "text": "Our previous study is of this kind [1]: it summarized the repository with one of seven strategies (fixed-size chunks with concatenation or LLM merging, or hierarchical summarization [32]), generated five architectural views plus a static dependency graph, and requested the decomposition in one call."
+    "text": "Our previous study is of this kind [1]: it summarized the repository with one of seven strategies (fixed-size chunks with concatenation or LLM merging, or hierarchical summarization [33]), generated five architectural views plus a static dependency graph, and requested the decomposition in one call."
    },
    {
-    "sec": "III-A",
-    "label": "sc:method-gqm",
-    "text": "Second, our previous study showed that single-shot LLM decompositions are promising but offered no guarantees and no alternatives [1]; an agentic organization promises both, but at unknown cost and benefit."
+    "sec": "III-B",
+    "label": "sc:workflow-components",
+    "text": "Its LLM part receives the scoped source code in one context (truncated at 320,000 characters, a limit no system reached), without the separate summarization step of our previous study [1], and returns architectural views: components, API endpoints, persistence entities, interaction scenarios, and a technology map, mirroring the views A1–A5 of that study."
    }
   ],
   "hidden": false
@@ -62,7 +62,7 @@ export const REFS = {
    {
     "sec": "I",
     "label": "sc:intro",
-    "text": "Migrating monolithic systems toward microservice architectures remains one of the most demanding software modernization activities [2, 3]."
+    "text": "Migrating a monolith to microservices is one of the most demanding modernization activities in software engineering [2, 3]."
    }
   ],
   "hidden": false
@@ -83,17 +83,17 @@ export const REFS = {
    {
     "sec": "I",
     "label": "sc:intro",
-    "text": "Migrating monolithic systems toward microservice architectures remains one of the most demanding software modernization activities [2, 3]."
+    "text": "Migrating a monolith to microservices is one of the most demanding modernization activities in software engineering [2, 3]."
    },
    {
     "sec": "I",
     "label": "sc:intro",
-    "text": "Over the last decade, many decomposition approaches have been proposed, based on static analysis, dynamic traces, clustering, repository mining, and domain-driven design [3, 7]."
+    "text": "Decades of research have produced decomposition techniques based on static analysis, execution traces, clustering, and domain-driven design [3, 7], yet an independent comparison of such tools on common benchmarks found that their results vary widely across systems, metrics, and configurations [6]."
    },
    {
     "sec": "II-A",
     "label": "sc:sota-decomp",
-    "text": "Class-level partitions are the most common unit in the literature [3], although method-level and mixed-granularity approaches also exist [17, 10]."
+    "text": "Class-level partitions are the most common unit in the literature [3], although method-level and mixed-granularity approaches also exist [15, 16]."
    },
    {
     "sec": "II-A",
@@ -119,7 +119,7 @@ export const REFS = {
    {
     "sec": "I",
     "label": "sc:intro",
-    "text": "Microservices promote modularity, independent deployment, technological flexibility, and team autonomy [4]."
+    "text": "Microservices promise independent deployment, technological freedom, and team autonomy [4], but only if the service boundaries are right: each boundary must balance structural dependencies, business capabilities, and the effort of the migration itself [5, 6]."
    }
   ],
   "hidden": false
@@ -140,12 +140,12 @@ export const REFS = {
    {
     "sec": "I",
     "label": "sc:intro",
-    "text": "Achieving these benefits, however, depends on identifying appropriate service boundaries—a task that requires balancing structural dependencies, business capabilities, and architectural quality concerns [5, 6]."
+    "text": "Microservices promise independent deployment, technological freedom, and team autonomy [4], but only if the service boundaries are right: each boundary must balance structural dependencies, business capabilities, and the effort of the migration itself [5, 6]."
    },
    {
     "sec": "II-A",
     "label": "sc:sota-decomp",
-    "text": "Domain-driven design contributes the notion of a bounded context, a boundary within which a domain model is consistent [5], and approaches such as Service Cutter distinguish several coupling criteria rather than one generic similarity [20]."
+    "text": "Domain-driven design contributes the notion of a bounded context, a boundary within which a domain model is consistent [5], and approaches such as Service Cutter distinguish several coupling criteria rather than one generic similarity [19]."
    }
   ],
   "hidden": false
@@ -166,22 +166,22 @@ export const REFS = {
    {
     "sec": "I",
     "label": "sc:intro",
-    "text": "Achieving these benefits, however, depends on identifying appropriate service boundaries—a task that requires balancing structural dependencies, business capabilities, and architectural quality concerns [5, 6]."
+    "text": "Microservices promise independent deployment, technological freedom, and team autonomy [4], but only if the service boundaries are right: each boundary must balance structural dependencies, business capabilities, and the effort of the migration itself [5, 6]."
    },
    {
     "sec": "I",
     "label": "sc:intro",
-    "text": "Automated tools such as Mono2Micro [8], CARGO [9], and MOSAIC [10] make these ideas operational, but an independent comparison of such tools on common benchmarks found that their results vary widely across systems and metrics and depend on configuration choices [6]."
+    "text": "Decades of research have produced decomposition techniques based on static analysis, execution traces, clustering, and domain-driven design [3, 7], yet an independent comparison of such tools on common benchmarks found that their results vary widely across systems, metrics, and configurations [6]."
    },
    {
     "sec": "I",
     "label": "sc:intro",
-    "text": "We answer them with a controlled benchmark: four open-source Java systems with reference decompositions from an independent tool comparison [6], four LLMs from different developers, and three matched arms that receive identical inputs."
+    "text": "We answer them with a controlled benchmark (Section IV): four open-source Java systems with reference decompositions from an independent tool comparison [6], three approaches that receive identical inputs and the same model, and seventeen LLMs from eight developers."
    },
    {
     "sec": "I",
     "label": "sc:intro",
-    "text": "A controlled cross-model evaluation: a matched comparison of the workflow with single-shot prompting [1], an autonomous coding agent, and traditional tools [6], across four LLMs, with a strict separation between online selection and blinded evaluation (Sections IV and V)."
+    "text": "A controlled, multi-model evaluation of the workflow against single-shot prompting [1], an autonomous coding agent, and traditional tools [6]: seventeen LLMs, five runs per cell for eight of them, a strict separation between online selection and blinded evaluation, a declared analysis plan, and robustness checks for the treatment of failed runs, run-level variation, and models not used during development (Sections IV and V)."
    },
    {
     "sec": "II-A",
@@ -191,7 +191,7 @@ export const REFS = {
    {
     "sec": "II-A",
     "label": "sc:sota-decomp",
-    "text": "Representative tools include Mono2Micro, which combines static and runtime analysis and clusters classes into non-overlapping partitions [8]; CARGO, which models context-sensitive dependencies and database accesses [9]; MOSAIC, which combines graph clustering with combinatorial optimization and can duplicate classes and methods across services [10, 6]; and MicroMiner, which separates application, entity, and utility classes before clustering [25]."
+    "text": "Representative tools include Mono2Micro, which combines static and runtime analysis and clusters classes into non-overlapping partitions [24]; CARGO, which models context-sensitive dependencies and database accesses [25]; MOSAIC, which combines graph clustering with combinatorial optimization and can duplicate classes and methods across services [16, 6]; and MicroMiner, which separates application, entity, and utility classes before clustering [26]."
    }
   ],
   "hidden": false
@@ -212,7 +212,7 @@ export const REFS = {
    {
     "sec": "I",
     "label": "sc:intro",
-    "text": "Over the last decade, many decomposition approaches have been proposed, based on static analysis, dynamic traces, clustering, repository mining, and domain-driven design [3, 7]."
+    "text": "Decades of research have produced decomposition techniques based on static analysis, execution traces, clustering, and domain-driven design [3, 7], yet an independent comparison of such tools on common benchmarks found that their results vary widely across systems, metrics, and configurations [6]."
    },
    {
     "sec": "II-A",
@@ -222,101 +222,8 @@ export const REFS = {
   ],
   "hidden": false
  },
- "kalia2021mono2micro": {
-  "n": 8,
-  "type": "inproceedings",
-  "authors": "Kalia, Anup K.; Xiao, Jin; Krishna, Rahul; Sinha, Saurabh; Vukovic, Maja; Banerjee, Debasish",
-  "title": "Mono2Micro: A Practical and Effective Tool for Decomposing Monolithic Java Applications to Microservices",
-  "venue": "Proc. 29th ACM Joint European Software Engineering Conf. and Symp. Foundations of Software Engineering (ESEC/FSE)",
-  "year": "2021",
-  "pages": "1214–1224",
-  "doi": "10.1145/3468264.3473915",
-  "url": "https://doi.org/10.1145/3468264.3473915",
-  "note": "",
-  "search": null,
-  "contexts": [
-   {
-    "sec": "I",
-    "label": "sc:intro",
-    "text": "Automated tools such as Mono2Micro [8], CARGO [9], and MOSAIC [10] make these ideas operational, but an independent comparison of such tools on common benchmarks found that their results vary widely across systems and metrics and depend on configuration choices [6]."
-   },
-   {
-    "sec": "II-A",
-    "label": "sc:sota-decomp",
-    "text": "Representative tools include Mono2Micro, which combines static and runtime analysis and clusters classes into non-overlapping partitions [8]; CARGO, which models context-sensitive dependencies and database accesses [9]; MOSAIC, which combines graph clustering with combinatorial optimization and can duplicate classes and methods across services [10, 6]; and MicroMiner, which separates application, entity, and utility classes before clustering [25]."
-   },
-   {
-    "sec": "III-D",
-    "label": "sc:method-similarity",
-    "text": "First, comparability: the traditional tools we compare with [6], the single-shot pipeline, and the autonomous agent all produce partitions, as clustering-based tools such as Mono2Micro do by design [8]; allowing replication in our arm alone would confound the comparison of approaches with a difference in output format."
-   }
-  ],
-  "hidden": false
- },
- "nitin2022cargo": {
-  "n": 9,
-  "type": "inproceedings",
-  "authors": "Nitin, Vikram; Asthana, Shubhi; Ray, Baishakhi; Krishna, Rahul",
-  "title": "CARGO: AI-Guided Dependency Analysis for Migrating Monolithic Applications to Microservices Architecture",
-  "venue": "Proc. 37th IEEE/ACM Int. Conf. Automated Software Engineering (ASE)",
-  "year": "2022",
-  "pages": "20:1–20:12",
-  "doi": "10.1145/3551349.3556960",
-  "url": "https://doi.org/10.1145/3551349.3556960",
-  "note": "",
-  "search": null,
-  "contexts": [
-   {
-    "sec": "I",
-    "label": "sc:intro",
-    "text": "Automated tools such as Mono2Micro [8], CARGO [9], and MOSAIC [10] make these ideas operational, but an independent comparison of such tools on common benchmarks found that their results vary widely across systems and metrics and depend on configuration choices [6]."
-   },
-   {
-    "sec": "II-A",
-    "label": "sc:sota-decomp",
-    "text": "Representative tools include Mono2Micro, which combines static and runtime analysis and clusters classes into non-overlapping partitions [8]; CARGO, which models context-sensitive dependencies and database accesses [9]; MOSAIC, which combines graph clustering with combinatorial optimization and can duplicate classes and methods across services [10, 6]; and MicroMiner, which separates application, entity, and utility classes before clustering [25]."
-   }
-  ],
-  "hidden": false
- },
- "filippone2023mosaic": {
-  "n": 10,
-  "type": "inproceedings",
-  "authors": "Filippone, Gianluca; Qaisar Mehmood, Nadeem; Autili, Marco; Rossi, Fabrizio; Tivoli, Massimo",
-  "title": "From Monolithic to Microservice Architecture: An Automated Approach Based on Graph Clustering and Combinatorial Optimization",
-  "venue": "Proc. IEEE 20th Int. Conf. Software Architecture (ICSA)",
-  "year": "2023",
-  "pages": "47–57",
-  "doi": "10.1109/ICSA56044.2023.00013",
-  "url": "https://doi.org/10.1109/ICSA56044.2023.00013",
-  "note": "",
-  "search": null,
-  "contexts": [
-   {
-    "sec": "I",
-    "label": "sc:intro",
-    "text": "Automated tools such as Mono2Micro [8], CARGO [9], and MOSAIC [10] make these ideas operational, but an independent comparison of such tools on common benchmarks found that their results vary widely across systems and metrics and depend on configuration choices [6]."
-   },
-   {
-    "sec": "II-A",
-    "label": "sc:sota-decomp",
-    "text": "Class-level partitions are the most common unit in the literature [3], although method-level and mixed-granularity approaches also exist [17, 10]."
-   },
-   {
-    "sec": "II-A",
-    "label": "sc:sota-decomp",
-    "text": "Representative tools include Mono2Micro, which combines static and runtime analysis and clusters classes into non-overlapping partitions [8]; CARGO, which models context-sensitive dependencies and database accesses [9]; MOSAIC, which combines graph clustering with combinatorial optimization and can duplicate classes and methods across services [10, 6]; and MicroMiner, which separates application, entity, and utility classes before clustering [25]."
-   },
-   {
-    "sec": "III-D",
-    "label": "sc:method-similarity",
-    "text": "Why we produce partitions. It may seem natural to let the workflow replicate shared classes as the references do, and some approaches do so: MOSAIC can duplicate classes and methods [10, 6], and MicroAgent assigns shared classes to several services [15]."
-   }
-  ],
-  "hidden": false
- },
  "yao2023react": {
-  "n": 11,
+  "n": 8,
   "type": "inproceedings",
   "authors": "Yao, Shunyu; Zhao, Jeffrey; Yu, Dian; Du, Nan; Shafran, Izhak; Narasimhan, Karthik; Cao, Yuan",
   "title": "ReAct: Synergizing Reasoning and Acting in Language Models",
@@ -331,18 +238,18 @@ export const REFS = {
    {
     "sec": "I",
     "label": "sc:intro",
-    "text": "Agent-based LLM systems suggest a different organization [11, 12, 13]."
+    "text": "Agentic LLM systems promise to address exactly these problems [8, 9, 10]: specialized components can gather evidence, interpret the domain, propose alternatives, check constraints, and improve a result."
    },
    {
     "sec": "II-D",
     "label": "sc:sota-agents",
-    "text": "Agents versus workflows. LLM agents interleave reasoning with actions such as tool calls [11]."
+    "text": "Agents versus workflows. LLM agents interleave reasoning with actions such as tool calls [8]."
    }
   ],
   "hidden": false
  },
  "yang2024sweagent": {
-  "n": 12,
+  "n": 9,
   "type": "inproceedings",
   "authors": "Yang, John; Jimenez, Carlos E.; Wettig, Alexander; Lieret, Kilian; Yao, Shunyu; Narasimhan, Karthik; Press, Ofir",
   "title": "SWE-agent: Agent-Computer Interfaces Enable Automated Software Engineering",
@@ -357,18 +264,18 @@ export const REFS = {
    {
     "sec": "I",
     "label": "sc:intro",
-    "text": "Agent-based LLM systems suggest a different organization [11, 12, 13]."
+    "text": "Agentic LLM systems promise to address exactly these problems [8, 9, 10]: specialized components can gather evidence, interpret the domain, propose alternatives, check constraints, and improve a result."
    },
    {
     "sec": "II-D",
     "label": "sc:sota-agents",
-    "text": "In software engineering, autonomous agents navigate repositories, edit files, and run tests through an agent–computer interface [12]; surveys catalogue their rapid growth [13]."
+    "text": "In software engineering, autonomous agents navigate repositories, edit files, and run tests through an agent–computer interface [9]; surveys catalogue their rapid growth [10]."
    }
   ],
   "hidden": false
  },
  "liu2024agentsurvey": {
-  "n": 13,
+  "n": 10,
   "type": "article",
   "authors": "Liu, Junwei; Wang, Kaixin; Chen, Yixuan; Peng, Xin; Chen, Zhenpeng; Zhang, Lingming; Lou, Yiling",
   "title": "Large Language Model-Based Agents for Software Engineering: A Survey",
@@ -383,18 +290,18 @@ export const REFS = {
    {
     "sec": "I",
     "label": "sc:intro",
-    "text": "Agent-based LLM systems suggest a different organization [11, 12, 13]."
+    "text": "Agentic LLM systems promise to address exactly these problems [8, 9, 10]: specialized components can gather evidence, interpret the domain, propose alternatives, check constraints, and improve a result."
    },
    {
     "sec": "II-D",
     "label": "sc:sota-agents",
-    "text": "In software engineering, autonomous agents navigate repositories, edit files, and run tests through an agent–computer interface [12]; surveys catalogue their rapid growth [13]."
+    "text": "In software engineering, autonomous agents navigate repositories, edit files, and run tests through an agent–computer interface [9]; surveys catalogue their rapid growth [10]."
    }
   ],
   "hidden": false
  },
  "anthropic2024agents": {
-  "n": 14,
+  "n": 11,
   "type": "misc",
   "authors": "Schluntz, Erik; Zhang, Barry",
   "title": "Building Effective Agents",
@@ -409,18 +316,18 @@ export const REFS = {
    {
     "sec": "I",
     "label": "sc:intro",
-    "text": "An agentic workflow orchestrates LLM calls and tools along predefined paths [14]."
+    "text": "An autonomous agent, such as a coding assistant, decides for itself what to read and which tools to call; an agentic workflow orchestrates LLM calls and tools along predefined paths [11]."
    },
    {
     "sec": "II-D",
     "label": "sc:sota-agents",
-    "text": "A useful distinction separates agents, in which the LLM dynamically directs its own process and tool use, from workflows, in which LLM calls and tools are orchestrated along predefined code paths [14]."
+    "text": "A useful distinction separates agents, in which the LLM dynamically directs its own process and tool use, from workflows, in which LLM calls and tools are orchestrated along predefined code paths [11]."
    }
   ],
   "hidden": false
  },
  "su2026microagent": {
-  "n": 15,
+  "n": 12,
   "type": "misc",
   "authors": "Su, Zishan; Huang, Junjie; Shan, Shiwen; Chen, Xingyan; Zeng, Hui; Su, Yuxin; Wang, Yanlin; Lyu, Michael R.",
   "title": "MicroAgent: Context-Augmented Multi-Agent Framework for Automatic Microservice Decomposition",
@@ -435,28 +342,69 @@ export const REFS = {
    {
     "sec": "I",
     "label": "sc:intro",
-    "text": "Whether either design actually yields better decompositions than a well-prompted single call—and at what cost—has not been measured under controlled conditions: recent multi-agent decomposition work reports gains over zero-shot prompting, but supplies the target number of services from the reference and uses single runs [15]."
+    "text": "The closest work, a multi-agent decomposition system, reports gains over zero-shot prompting, but supplies the target number of services from the reference decomposition and reports single runs [12]."
    },
    {
     "sec": "II-C",
     "label": "sc:sota-llm",
-    "text": "Closest to this paper, MicroAgent decomposes monoliths with five specialized LLM agents and analytical tools, and reports higher similarity to reference decompositions than zero-shot prompting and traditional tools on ten Java systems that include our four [15]."
+    "text": "Closest to this paper, MicroAgent decomposes monoliths with five specialized LLM agents and analytical tools, and reports higher similarity to reference decompositions than zero-shot prompting and traditional tools on ten Java systems that include our four [12]."
    },
    {
-    "sec": "III-D",
+    "sec": "IV-G",
     "label": "sc:method-similarity",
-    "text": "Why we produce partitions. It may seem natural to let the workflow replicate shared classes as the references do, and some approaches do so: MOSAIC can duplicate classes and methods [10, 6], and MicroAgent assigns shared classes to several services [15]."
+    "text": "Why we produce partitions. Some approaches replicate shared classes as the references do: MOSAIC can duplicate classes and methods [16, 6], and MicroAgent assigns shared classes to several services [12]."
    },
    {
-    "sec": "III-D",
+    "sec": "IV-G",
     "label": "sc:method-similarity",
-    "text": "Why C2C. C2C, introduced for comparing architecture-recovery results [28, 63] and used in the benchmark [6] and by MicroAgent [15], compares services as sets of classes."
+    "text": "Why C2C. C2C, introduced for comparing architecture-recovery results [29, 60] and used in the benchmark [6] and by MicroAgent [12], compares services as sets of classes."
+   }
+  ],
+  "hidden": false
+ },
+ "ouyang2025nondeterminism": {
+  "n": 13,
+  "type": "article",
+  "authors": "Ouyang, Shuyin; Zhang, Jie M.; Harman, Mark; Wang, Meng",
+  "title": "An Empirical Study of the Non-Determinism of ChatGPT in Code Generation",
+  "venue": "ACM Trans. Softw. Eng. Methodol.",
+  "year": "2025",
+  "pages": "42:1–42:28",
+  "doi": "10.1145/3697010",
+  "url": "https://doi.org/10.1145/3697010",
+  "note": "",
+  "search": null,
+  "contexts": [
+   {
+    "sec": "I",
+    "label": "sc:intro",
+    "text": "Single runs are a problem in their own right: LLM outputs vary between runs [13], so a comparison based on one run per model can mistake that variation for an effect, or miss a real one."
+   },
+   {
+    "sec": "II-D",
+    "label": "sc:sota-agents",
+    "text": "Non-determinism. LLM outputs vary between runs even at temperature zero [13, 50], and studies that rely on single runs risk mistaking this variation for effects [51, 52]."
+   },
+   {
+    "sec": "IV-H",
+    "label": "sc:study-collection",
+    "text": "LLM outputs vary between runs [13], even at a fixed seed (Section V-B), so a single run per model and system confounds this variation with the difference between arms."
+   },
+   {
+    "sec": "VI-B",
+    "label": "sc:disc-repeats",
+    "text": "First, the provider did not return the same output for the same seed and inputs, so a “seed” does not make a hosted-model experiment repeatable [13]."
+   },
+   {
+    "sec": "VII",
+    "label": "sc:threats",
+    "text": "Exact re-execution cannot be guaranteed, because hosted models evolve behind stable names and are not fully deterministic [13, 50]; we record model identities, dates, and all responses."
    }
   ],
   "hidden": false
  },
  "sambu2026replication": {
-  "n": 16,
+  "n": 14,
   "type": "misc",
   "authors": "Sambu, Aneesh; Capuano, Roberta; O'Dea, Eoan; Vaidhyanathan, Karthik; Muccini, Henry",
   "title": "Replication Package: Agentic LLM Workflows for Monolith-to-Microservice Decomposition",
@@ -471,23 +419,28 @@ export const REFS = {
    {
     "sec": "I",
     "label": "sc:intro",
-    "text": "An open research workbench: all prompts, protocols, run artifacts, and analysis scripts, enabling exact re-evaluation of every reported number [16]."
+    "text": "An open research workbench with all prompts, protocols, run artifacts, and analysis scripts, from which every reported number, table, and figure is regenerated [14]."
    },
    {
-    "sec": "III-C",
-    "label": "sc:method-design",
-    "text": "All numbers are computed by a script from the immutable run artifacts [16]."
+    "sec": "IV-I",
+    "label": "sc:method-analysis",
+    "text": "All numbers, tables, and figures are generated by scripts from the immutable run artifacts [14]."
    },
    {
     "sec": "VII",
     "label": "sc:threats",
-    "text": "Reliability. All prompts, protocols, run artifacts, raw LLM calls, and analysis scripts are available [16], and every reported number can be regenerated from the stored artifacts without calling a model."
+    "text": "Reliability. All prompts, protocols, run artifacts, raw LLM calls, and analysis scripts are available [14], and every reported number, table, and figure is regenerated from the stored artifacts without calling a model."
+   },
+   {
+    "sec": "",
+    "label": null,
+    "text": "Data Availability The replication package contains the benchmark scopes, all prompts and protocols, every run artifact (frozen inputs, raw LLM calls with token usage, intermediate artifacts, validation results, blinded reports, and manifests), and the scripts that regenerate every number, table, and figure of this article from those artifacts without calling a model [14]."
    }
   ],
   "hidden": false
  },
  "dealwis2025methodlevel": {
-  "n": 17,
+  "n": 15,
   "type": "article",
   "authors": "De Alwis, A. A. C.; Barros, Alistair; Fidge, Colin; Polyvyanyy, Artem",
   "title": "Method-Level Syntactic and Semantic Clustering for Microservice Discovery in Legacy Enterprise Systems",
@@ -502,13 +455,44 @@ export const REFS = {
    {
     "sec": "II-A",
     "label": "sc:sota-decomp",
-    "text": "Class-level partitions are the most common unit in the literature [3], although method-level and mixed-granularity approaches also exist [17, 10]."
+    "text": "Class-level partitions are the most common unit in the literature [3], although method-level and mixed-granularity approaches also exist [15, 16]."
+   }
+  ],
+  "hidden": false
+ },
+ "filippone2023mosaic": {
+  "n": 16,
+  "type": "inproceedings",
+  "authors": "Filippone, Gianluca; Qaisar Mehmood, Nadeem; Autili, Marco; Rossi, Fabrizio; Tivoli, Massimo",
+  "title": "From Monolithic to Microservice Architecture: An Automated Approach Based on Graph Clustering and Combinatorial Optimization",
+  "venue": "Proc. IEEE 20th Int. Conf. Software Architecture (ICSA)",
+  "year": "2023",
+  "pages": "47–57",
+  "doi": "10.1109/ICSA56044.2023.00013",
+  "url": "https://doi.org/10.1109/ICSA56044.2023.00013",
+  "note": "",
+  "search": null,
+  "contexts": [
+   {
+    "sec": "II-A",
+    "label": "sc:sota-decomp",
+    "text": "Class-level partitions are the most common unit in the literature [3], although method-level and mixed-granularity approaches also exist [15, 16]."
+   },
+   {
+    "sec": "II-A",
+    "label": "sc:sota-decomp",
+    "text": "Representative tools include Mono2Micro, which combines static and runtime analysis and clusters classes into non-overlapping partitions [24]; CARGO, which models context-sensitive dependencies and database accesses [25]; MOSAIC, which combines graph clustering with combinatorial optimization and can duplicate classes and methods across services [16, 6]; and MicroMiner, which separates application, entity, and utility classes before clustering [26]."
+   },
+   {
+    "sec": "IV-G",
+    "label": "sc:method-similarity",
+    "text": "Why we produce partitions. Some approaches replicate shared classes as the references do: MOSAIC can duplicate classes and methods [16, 6], and MicroAgent assigns shared classes to several services [12]."
    }
   ],
   "hidden": false
  },
  "krause2020staticdynamic": {
-  "n": 18,
+  "n": 17,
   "type": "inproceedings",
   "authors": "Krause, Alexander; Zirkelbach, Christian; Hasselbring, Wilhelm; Lenga, Stephan; Kröger, Dan",
   "title": "Microservice Decomposition via Static and Dynamic Analysis of the Monolith",
@@ -523,13 +507,13 @@ export const REFS = {
    {
     "sec": "II-A",
     "label": "sc:sota-decomp",
-    "text": "Case studies show that no single evidence type dominates: dynamic traces reveal couplings missed by static analysis, but cost more to collect [18, 19]."
+    "text": "Case studies show that no single evidence type dominates: dynamic traces reveal couplings missed by static analysis, but cost more to collect [17, 18]."
    }
   ],
   "hidden": false
  },
  "andrade2022staticdynamic": {
-  "n": 19,
+  "n": 18,
   "type": "misc",
   "authors": "Andrade, Bernardo; Santos, Samuel; Rito Silva, António",
   "title": "From Monolith to Microservices: Static and Dynamic Analysis Comparison",
@@ -544,13 +528,13 @@ export const REFS = {
    {
     "sec": "II-A",
     "label": "sc:sota-decomp",
-    "text": "Case studies show that no single evidence type dominates: dynamic traces reveal couplings missed by static analysis, but cost more to collect [18, 19]."
+    "text": "Case studies show that no single evidence type dominates: dynamic traces reveal couplings missed by static analysis, but cost more to collect [17, 18]."
    }
   ],
   "hidden": false
  },
  "gysel2016servicecutter": {
-  "n": 20,
+  "n": 19,
   "type": "inproceedings",
   "authors": "Gysel, Michael; Kölbener, Lukas; Giersche, Wolfgang; Zimmermann, Olaf",
   "title": "Service Cutter: A Systematic Approach to Service Decomposition",
@@ -565,13 +549,13 @@ export const REFS = {
    {
     "sec": "II-A",
     "label": "sc:sota-decomp",
-    "text": "Domain-driven design contributes the notion of a bounded context, a boundary within which a domain model is consistent [5], and approaches such as Service Cutter distinguish several coupling criteria rather than one generic similarity [20]."
+    "text": "Domain-driven design contributes the notion of a bounded context, a boundary within which a domain model is consistent [5], and approaches such as Service Cutter distinguish several coupling criteria rather than one generic similarity [19]."
    }
   ],
   "hidden": false
  },
  "mitchell2006bunch": {
-  "n": 21,
+  "n": 20,
   "type": "article",
   "authors": "Mitchell, Brian S.; Mancoridis, Spiros",
   "title": "On the Automatic Modularization of Software Systems Using the Bunch Tool",
@@ -586,23 +570,23 @@ export const REFS = {
    {
     "sec": "II-A",
     "label": "sc:sota-decomp",
-    "text": "The Bunch tool made search-based modularization widely known, hill-climbing over partitions to maximize a modularization quality function [21]; later work treated the problem as multi-objective [22]."
+    "text": "The Bunch tool made search-based modularization widely known, hill-climbing over partitions to maximize a modularization quality function [20]; later work treated the problem as multi-objective [21]."
    },
    {
-    "sec": "III-B",
-    "label": "sc:method-framework",
-    "text": "(5) Decomposition Refiner Agent (tool). The refiner improves the selected candidate by bounded local search in the spirit of search-based modularization [21]."
+    "sec": "III-C",
+    "label": "sc:workflow-select",
+    "text": "Refine. The refiner improves the selected candidate by bounded local search in the spirit of search-based modularization [20]."
    },
    {
-    "sec": "VI-B",
+    "sec": "VI-C",
     "label": "sc:disc-safeguards",
-    "text": "This matches the self-correction literature: LLMs rarely improve their own output without reliable external feedback [43, 44], and even with test feedback the gains of self-repair are modest [45]; and bounded search over an explicit objective has long been effective for modularization [21]."
+    "text": "This matches the self-correction literature: LLMs rarely improve their own output without reliable external feedback [44, 45], and even with test feedback the gains of self-repair are modest [46]; and bounded search over an explicit objective has long been effective for modularization [20]."
    }
   ],
   "hidden": false
  },
  "praditwong2011multiobjective": {
-  "n": 22,
+  "n": 21,
   "type": "article",
   "authors": "Praditwong, Kata; Harman, Mark; Yao, Xin",
   "title": "Software Module Clustering as a Multi-Objective Search Problem",
@@ -617,13 +601,13 @@ export const REFS = {
    {
     "sec": "II-A",
     "label": "sc:sota-decomp",
-    "text": "The Bunch tool made search-based modularization widely known, hill-climbing over partitions to maximize a modularization quality function [21]; later work treated the problem as multi-objective [22]."
+    "text": "The Bunch tool made search-based modularization widely known, hill-climbing over partitions to maximize a modularization quality function [20]; later work treated the problem as multi-objective [21]."
    }
   ],
   "hidden": false
  },
  "blondel2008louvain": {
-  "n": 23,
+  "n": 22,
   "type": "article",
   "authors": "Blondel, Vincent D.; Guillaume, Jean-Loup; Lambiotte, Renaud; Lefebvre, Etienne",
   "title": "Fast Unfolding of Communities in Large Networks",
@@ -638,13 +622,13 @@ export const REFS = {
    {
     "sec": "II-A",
     "label": "sc:sota-decomp",
-    "text": "Community detection algorithms such as Louvain are also common [23], although modularity optimization has a resolution limit below which small communities cannot be detected [24]."
+    "text": "Community detection algorithms such as Louvain are also common [22], although modularity optimization has a resolution limit below which small communities cannot be detected [23]."
    }
   ],
   "hidden": false
  },
  "fortunato2007resolution": {
-  "n": 24,
+  "n": 23,
   "type": "article",
   "authors": "Fortunato, Santo; Barthélemy, Marc",
   "title": "Resolution Limit in Community Detection",
@@ -659,13 +643,60 @@ export const REFS = {
    {
     "sec": "II-A",
     "label": "sc:sota-decomp",
-    "text": "Community detection algorithms such as Louvain are also common [23], although modularity optimization has a resolution limit below which small communities cannot be detected [24]."
+    "text": "Community detection algorithms such as Louvain are also common [22], although modularity optimization has a resolution limit below which small communities cannot be detected [23]."
+   }
+  ],
+  "hidden": false
+ },
+ "kalia2021mono2micro": {
+  "n": 24,
+  "type": "inproceedings",
+  "authors": "Kalia, Anup K.; Xiao, Jin; Krishna, Rahul; Sinha, Saurabh; Vukovic, Maja; Banerjee, Debasish",
+  "title": "Mono2Micro: A Practical and Effective Tool for Decomposing Monolithic Java Applications to Microservices",
+  "venue": "Proc. 29th ACM Joint European Software Engineering Conf. and Symp. Foundations of Software Engineering (ESEC/FSE)",
+  "year": "2021",
+  "pages": "1214–1224",
+  "doi": "10.1145/3468264.3473915",
+  "url": "https://doi.org/10.1145/3468264.3473915",
+  "note": "",
+  "search": null,
+  "contexts": [
+   {
+    "sec": "II-A",
+    "label": "sc:sota-decomp",
+    "text": "Representative tools include Mono2Micro, which combines static and runtime analysis and clusters classes into non-overlapping partitions [24]; CARGO, which models context-sensitive dependencies and database accesses [25]; MOSAIC, which combines graph clustering with combinatorial optimization and can duplicate classes and methods across services [16, 6]; and MicroMiner, which separates application, entity, and utility classes before clustering [26]."
+   },
+   {
+    "sec": "IV-G",
+    "label": "sc:method-similarity",
+    "text": "First, comparability: the traditional tools [6], the single-shot pipeline, and the autonomous agent all produce partitions, as clustering-based tools such as Mono2Micro do by design [24]; allowing replication in our arm alone would confound the comparison with a difference in output format."
+   }
+  ],
+  "hidden": false
+ },
+ "nitin2022cargo": {
+  "n": 25,
+  "type": "inproceedings",
+  "authors": "Nitin, Vikram; Asthana, Shubhi; Ray, Baishakhi; Krishna, Rahul",
+  "title": "CARGO: AI-Guided Dependency Analysis for Migrating Monolithic Applications to Microservices Architecture",
+  "venue": "Proc. 37th IEEE/ACM Int. Conf. Automated Software Engineering (ASE)",
+  "year": "2022",
+  "pages": "20:1–20:12",
+  "doi": "10.1145/3551349.3556960",
+  "url": "https://doi.org/10.1145/3551349.3556960",
+  "note": "",
+  "search": null,
+  "contexts": [
+   {
+    "sec": "II-A",
+    "label": "sc:sota-decomp",
+    "text": "Representative tools include Mono2Micro, which combines static and runtime analysis and clusters classes into non-overlapping partitions [24]; CARGO, which models context-sensitive dependencies and database accesses [25]; MOSAIC, which combines graph clustering with combinatorial optimization and can duplicate classes and methods across services [16, 6]; and MicroMiner, which separates application, entity, and utility classes before clustering [26]."
    }
   ],
   "hidden": false
  },
  "trabelsi2023microminer": {
-  "n": 25,
+  "n": 26,
   "type": "article",
   "authors": "Trabelsi, Imen; Abdellatif, Manel; Abubaker, Abdalgader; Moha, Naouel; Mosser, Sébastien; Ebrahimi-Kahou, Samira; Guéhéneuc, Yann-Ga\\\"el",
   "title": "From Legacy to Microservices: A Type-Based Approach for Microservices Identification Using Machine Learning and Semantic Analysis",
@@ -680,13 +711,13 @@ export const REFS = {
    {
     "sec": "II-A",
     "label": "sc:sota-decomp",
-    "text": "Representative tools include Mono2Micro, which combines static and runtime analysis and clusters classes into non-overlapping partitions [8]; CARGO, which models context-sensitive dependencies and database accesses [9]; MOSAIC, which combines graph clustering with combinatorial optimization and can duplicate classes and methods across services [10, 6]; and MicroMiner, which separates application, entity, and utility classes before clustering [25]."
+    "text": "Representative tools include Mono2Micro, which combines static and runtime analysis and clusters classes into non-overlapping partitions [24]; CARGO, which models context-sensitive dependencies and database accesses [25]; MOSAIC, which combines graph clustering with combinatorial optimization and can duplicate classes and methods across services [16, 6]; and MicroMiner, which separates application, entity, and utility classes before clustering [26]."
    }
   ],
   "hidden": false
  },
  "agarwal2021businessfunction": {
-  "n": 26,
+  "n": 27,
   "type": "inproceedings",
   "authors": "Agarwal, Shivali; Sinha, Raunak; Sridhara, Giriprasad; Das, Pratap; Desai, Utkarsh; Tamilselvam, Srikanth; Singhee, Amith; Nakamuro, Hiroaki",
   "title": "Monolith to Microservice Candidates using Business Functionality Inference",
@@ -701,13 +732,13 @@ export const REFS = {
    {
     "sec": "II-A",
     "label": "sc:sota-decomp",
-    "text": "Business-oriented approaches infer functionality groups [26] or mine processes [27]."
+    "text": "Business-oriented approaches infer functionality groups [27] or mine processes [28]."
    }
   ],
   "hidden": false
  },
  "taibi2019processmining": {
-  "n": 27,
+  "n": 28,
   "type": "inproceedings",
   "authors": "Taibi, Davide; Systä, Kari",
   "title": "From Monolithic Systems to Microservices: A Decomposition Framework Based on Process Mining",
@@ -722,18 +753,18 @@ export const REFS = {
    {
     "sec": "II-A",
     "label": "sc:sota-decomp",
-    "text": "Business-oriented approaches infer functionality groups [26] or mine processes [27]."
+    "text": "Business-oriented approaches infer functionality groups [27] or mine processes [28]."
    },
    {
-    "sec": "III-D",
+    "sec": "IV-G",
     "label": "sc:method-similarity",
-    "text": "Third, separation of decisions: duplicating a class adds size and maintenance cost, because the copies must be kept consistent [27], and deciding when to duplicate is a problem in its own right [6]."
+    "text": "Third, separation of decisions: duplicating a class adds size and maintenance cost, because the copies must be kept consistent [28], and deciding when to duplicate is a problem in its own right [6]."
    }
   ],
   "hidden": false
  },
  "garcia2013comparative": {
-  "n": 28,
+  "n": 29,
   "type": "inproceedings",
   "authors": "Garcia, Joshua; Ivkovic, Igor; Medvidovic, Nenad",
   "title": "A Comparative Analysis of Software Architecture Recovery Techniques",
@@ -746,15 +777,15 @@ export const REFS = {
   "search": null,
   "contexts": [
    {
-    "sec": "III-D",
+    "sec": "IV-G",
     "label": "sc:method-similarity",
-    "text": "Why C2C. C2C, introduced for comparing architecture-recovery results [28, 63] and used in the benchmark [6] and by MicroAgent [15], compares services as sets of classes."
+    "text": "Why C2C. C2C, introduced for comparing architecture-recovery results [29, 60] and used in the benchmark [6] and by MicroAgent [12], compares services as sets of classes."
    }
   ],
   "hidden": false
  },
  "shtern2011multiple": {
-  "n": 29,
+  "n": 30,
   "type": "inproceedings",
   "authors": "Shtern, Mark; Tzerpos, Vassilios",
   "title": "Evaluating Software Clustering Using Multiple Simulated Authoritative Decompositions",
@@ -769,18 +800,18 @@ export const REFS = {
    {
     "sec": "II-B",
     "label": "sc:sota-metrics",
-    "text": "Second, a single reference is only one valid architecture; evaluating against one authoritative decomposition biases results toward that choice [29]."
+    "text": "Second, a single reference is only one valid architecture; evaluating against one authoritative decomposition biases results toward that choice [30]."
    },
    {
     "sec": "VII",
     "label": "sc:threats",
-    "text": "The reference decompositions represent one valid architecture per system [29], and similarity to them is a secondary signal; our main claims rest on design metrics, validity, and cost."
+    "text": "One reference per system. A reference is one valid architecture among several [30], so similarity to it is a secondary signal; our main claims rest on design metrics, validity, and cost."
    }
   ],
   "hidden": false
  },
  "wen2004mojofm": {
-  "n": 30,
+  "n": 31,
   "type": "inproceedings",
   "authors": "Wen, Zhihua; Tzerpos, Vassilios",
   "title": "An Effectiveness Measure for Software Clustering Algorithms",
@@ -795,7 +826,7 @@ export const REFS = {
   "hidden": true
  },
  "sellami2026monoembed": {
-  "n": 31,
+  "n": 32,
   "type": "article",
   "authors": "Sellami, Khaled; Saied, Mohamed Aymen",
   "title": "MonoEmbed: Enhancing LLM Representations for Monolith to Microservices Decomposition through Contrastive Learning",
@@ -810,13 +841,13 @@ export const REFS = {
    {
     "sec": "II-C",
     "label": "sc:sota-llm",
-    "text": "Representation approaches use LLM embeddings as features for clustering; MonoEmbed, for example, fine-tunes embeddings with contrastive learning so that classes of the same service move closer together [31]."
+    "text": "Representation approaches use LLM embeddings as features for clustering; MonoEmbed, for example, fine-tunes embeddings with contrastive learning so that classes of the same service move closer together [32]."
    }
   ],
   "hidden": false
  },
  "dhulshette2025hierarchical": {
-  "n": 32,
+  "n": 33,
   "type": "inproceedings",
   "authors": "Dhulshette, Nilesh; Shah, Sapan; Kulkarni, Vinay",
   "title": "Hierarchical Repository-Level Code Summarization for Business Applications Using Local LLMs",
@@ -831,13 +862,13 @@ export const REFS = {
    {
     "sec": "II-C",
     "label": "sc:sota-llm",
-    "text": "Our previous study is of this kind [1]: it summarized the repository with one of seven strategies (fixed-size chunks with concatenation or LLM merging, or hierarchical summarization [32]), generated five architectural views plus a static dependency graph, and requested the decomposition in one call."
+    "text": "Our previous study is of this kind [1]: it summarized the repository with one of seven strategies (fixed-size chunks with concatenation or LLM merging, or hierarchical summarization [33]), generated five architectural views plus a static dependency graph, and requested the decomposition in one call."
    }
   ],
   "hidden": false
  },
  "kasdallah2026mlstractor": {
-  "n": 33,
+  "n": 34,
   "type": "inproceedings",
   "authors": "Kasdallah, Ilyes; Ghorab, Mostafa Anouar; Jebbar, Oussama; Sellami, Khaled; Sayagh, Mohammed; Ouni, Ali; Saied, Mohamed Aymen",
   "title": "MLStractor: LLM-Powered Search-Based Monolith-to-Microservice Decomposition",
@@ -852,13 +883,13 @@ export const REFS = {
    {
     "sec": "II-C",
     "label": "sc:sota-llm",
-    "text": "Hybrid approaches combine LLMs with search or clustering: MLStractor, for example, uses LLM-derived representations inside a multi-objective search [33], and SemRef uses an LLM to refine the output of architecture-recovery clustering [34]."
+    "text": "Hybrid approaches combine LLMs with search or clustering: MLStractor, for example, uses LLM-derived representations inside a multi-objective search [34], and SemRef uses an LLM to refine the output of architecture-recovery clustering [35]."
    }
   ],
   "hidden": false
  },
  "zhang2026semref": {
-  "n": 34,
+  "n": 35,
   "type": "inproceedings",
   "authors": "Zhang, Yiran; Liu, Chengwei; Sun, Yuqiang; Xu, Zhengzi; Sun, Weisong; Li, Wenke; Jin, Wuxia; Liu, Yang",
   "title": "Semantic-Enhanced Automatic Refinement of Architecture Recovery Results Using LLMs",
@@ -873,13 +904,13 @@ export const REFS = {
    {
     "sec": "II-C",
     "label": "sc:sota-llm",
-    "text": "Hybrid approaches combine LLMs with search or clustering: MLStractor, for example, uses LLM-derived representations inside a multi-objective search [33], and SemRef uses an LLM to refine the output of architecture-recovery clustering [34]."
+    "text": "Hybrid approaches combine LLMs with search or clustering: MLStractor, for example, uses LLM-derived representations inside a multi-objective search [34], and SemRef uses an LLM to refine the output of architecture-recovery clustering [35]."
    }
   ],
   "hidden": false
  },
  "sellami2025beyond": {
-  "n": 35,
+  "n": 36,
   "type": "inproceedings",
   "authors": "Sellami, Khaled; Jebbar, Oussama; Gannoun, Ayyoub; Saied, Mohamed Aymen",
   "title": "Beyond Decomposition: A LLM-Powered Automated Approach to Refactoring Monoliths Into Microservices",
@@ -894,13 +925,13 @@ export const REFS = {
    {
     "sec": "II-C",
     "label": "sc:sota-llm",
-    "text": "Refactoring approaches take a decomposition as given and generate the corresponding service code [35]."
+    "text": "Refactoring approaches take a decomposition as given and generate the corresponding service code [36]."
    }
   ],
   "hidden": false
  },
  "silva2026structural": {
-  "n": 36,
+  "n": 37,
   "type": "misc",
   "authors": "Silva, Daniel; Alves, Renan; Dantas Filho, Emanuel; Sousa Neto, Ademar; Perkusich, Mirko; Albuquerque, Danyllo Wagner; Gorg\\^onio, Kyller; Perkusich, Angelo",
   "title": "Structural Validation of LLM-Generated Microservice Decompositions Using Source-Code Dependencies",
@@ -915,13 +946,13 @@ export const REFS = {
    {
     "sec": "II-C",
     "label": "sc:sota-llm",
-    "text": "Recent studies also question whether LLM-generated decompositions respect the code's dependencies [36], and surveys map the growing use of LLMs in software architecture more broadly [37, 38]."
+    "text": "Recent studies also question whether LLM-generated decompositions respect the code's dependencies [37], and surveys map the growing use of LLMs in software architecture more broadly [38, 39]."
    }
   ],
   "hidden": false
  },
  "bucaioni2025aisa": {
-  "n": 37,
+  "n": 38,
   "type": "misc",
   "authors": "Bucaioni, Alessio; Weyssow, Martin; He, Junda; Lyu, Yunbo; Lo, David",
   "title": "Artificial Intelligence for Software Architecture: Literature Review and the Road Ahead",
@@ -936,13 +967,13 @@ export const REFS = {
    {
     "sec": "II-C",
     "label": "sc:sota-llm",
-    "text": "Recent studies also question whether LLM-generated decompositions respect the code's dependencies [36], and surveys map the growing use of LLMs in software architecture more broadly [37, 38]."
+    "text": "Recent studies also question whether LLM-generated decompositions respect the code's dependencies [37], and surveys map the growing use of LLMs in software architecture more broadly [38, 39]."
    }
   ],
   "hidden": false
  },
  "schmid2025slr": {
-  "n": 38,
+  "n": 39,
   "type": "misc",
   "authors": "Schmid, Larissa; Hey, Tobias; Armbruster, Martin; Corallo, Sophie; Fuch, Dominik; Keim, Jan; Liu, Haoyu; Koziolek, Anne",
   "title": "Software Architecture Meets LLMs: A Systematic Literature Review",
@@ -957,13 +988,13 @@ export const REFS = {
    {
     "sec": "II-C",
     "label": "sc:sota-llm",
-    "text": "Recent studies also question whether LLM-generated decompositions respect the code's dependencies [36], and surveys map the growing use of LLMs in software architecture more broadly [37, 38]."
+    "text": "Recent studies also question whether LLM-generated decompositions respect the code's dependencies [37], and surveys map the growing use of LLMs in software architecture more broadly [38, 39]."
    }
   ],
   "hidden": false
  },
  "xia2024agentless": {
-  "n": 39,
+  "n": 40,
   "type": "article",
   "authors": "Xia, Chunqiu Steven; Deng, Yinlin; Dunn, Soren; Zhang, Lingming",
   "title": "Demystifying LLM-Based Software Engineering Agents",
@@ -978,18 +1009,18 @@ export const REFS = {
    {
     "sec": "II-D",
     "label": "sc:sota-agents",
-    "text": "Workflows trade flexibility for predictability, and on repository-level issue resolution a fixed three-phase pipeline outperformed open-source autonomous agents at a fraction of their cost [39]."
+    "text": "Workflows trade flexibility for predictability, and on repository-level issue resolution a fixed three-phase pipeline outperformed open-source autonomous agents at a fraction of their cost [40]."
    },
    {
     "sec": "VI-A",
     "label": "sc:disc-buys",
-    "text": "A workflow gives up that flexibility in exchange for guarantees, echoing findings in repository-level issue resolution, where a fixed pipeline outperformed open-source autonomous agents at a fraction of their cost [39]."
+    "text": "A workflow gives up that flexibility in exchange for guarantees, echoing findings in repository-level issue resolution, where a fixed pipeline outperformed open-source autonomous agents at a fraction of their cost [40]."
    }
   ],
   "hidden": false
  },
  "vaidhyanathan2025agentic": {
-  "n": 40,
+  "n": 41,
   "type": "inproceedings",
   "authors": "Vaidhyanathan, Karthik; Muccini, Henry",
   "title": "Software Architecture in the Age of Agentic AI",
@@ -1004,13 +1035,13 @@ export const REFS = {
    {
     "sec": "II-D",
     "label": "sc:sota-agents",
-    "text": "For software architecture, agentic AI raises the question of which architectural decisions can be delegated to agents and which must remain under human control [40]."
+    "text": "For software architecture, agentic AI raises the question of which architectural decisions can be delegated to agents and which must remain under human control [41]."
    }
   ],
   "hidden": false
  },
  "opencode2026": {
-  "n": 41,
+  "n": 42,
   "type": "misc",
   "authors": "OpenCode",
   "title": "OpenCode: An Open-Source AI Coding Agent",
@@ -1025,18 +1056,18 @@ export const REFS = {
    {
     "sec": "II-D",
     "label": "sc:sota-agents",
-    "text": "In this paper, the agentic workflow is our approach and the autonomous coding agent OpenCode [41] is a baseline; we use agent for a role-specialized component of the workflow, whether or not it calls an LLM."
+    "text": "In this paper, the agentic workflow is our approach and the autonomous coding agent OpenCode [42] is a baseline; we use agent for a role-specialized component of the workflow, whether or not it calls an LLM."
    },
    {
-    "sec": "III-C",
-    "label": "sc:method-design",
-    "text": "OpenCode (autonomous agent): the open-source coding agent OpenCode [41] runs in an isolated workspace containing the source snapshot and the dependency graph, and must write the decomposition to a file."
+    "sec": "IV-C",
+    "label": "sc:study-arms",
+    "text": "OpenCode (autonomous agent): the open-source coding agent OpenCode [42] runs in a workspace containing the source snapshot and the dependency graph, and must write the decomposition to a file."
    }
   ],
   "hidden": false
  },
  "madaan2023selfrefine": {
-  "n": 42,
+  "n": 43,
   "type": "inproceedings",
   "authors": "Madaan, Aman; others",
   "title": "Self-Refine: Iterative Refinement with Self-Feedback",
@@ -1051,13 +1082,13 @@ export const REFS = {
    {
     "sec": "II-D",
     "label": "sc:sota-agents",
-    "text": "Self-Refine reported gains from iterative self-feedback across several tasks [42], but later work found that LLMs struggle to correct their own reasoning without external feedback [43], that reported benefits often rely on reliable external signals [44], and that even with test feedback the gains of self-repair in code generation are modest once cost is considered [45]."
+    "text": "Self-Refine reported gains from iterative self-feedback across several tasks [43], but later work found that LLMs struggle to correct their own reasoning without external feedback [44], that reported benefits often rely on reliable external signals [45], and that even with test feedback the gains of self-repair in code generation are modest once cost is considered [46]."
    }
   ],
   "hidden": false
  },
  "huang2024cannot": {
-  "n": 43,
+  "n": 44,
   "type": "inproceedings",
   "authors": "Huang, Jie; Chen, Xinyun; Mishra, Swaroop; Zheng, Huaixiu Steven; Yu, Adams Wei; Song, Xinying; Zhou, Denny",
   "title": "Large Language Models Cannot Self-Correct Reasoning Yet",
@@ -1072,23 +1103,23 @@ export const REFS = {
    {
     "sec": "II-D",
     "label": "sc:sota-agents",
-    "text": "Self-Refine reported gains from iterative self-feedback across several tasks [42], but later work found that LLMs struggle to correct their own reasoning without external feedback [43], that reported benefits often rely on reliable external signals [44], and that even with test feedback the gains of self-repair in code generation are modest once cost is considered [45]."
+    "text": "Self-Refine reported gains from iterative self-feedback across several tasks [43], but later work found that LLMs struggle to correct their own reasoning without external feedback [44], that reported benefits often rely on reliable external signals [45], and that even with test feedback the gains of self-repair in code generation are modest once cost is considered [46]."
    },
    {
-    "sec": "III-B",
-    "label": "sc:method-framework",
-    "text": "Checking, scoring, choosing, and improving are performed by deterministic code, because LLM self-critique without reliable external feedback is unreliable [43, 44]."
+    "sec": "III-A",
+    "label": "sc:workflow-principles",
+    "text": "Checking, scoring, choosing, and improving are performed by deterministic code, because LLM self-critique without reliable external feedback is unreliable [44, 45]."
    },
    {
-    "sec": "VI-B",
+    "sec": "VI-C",
     "label": "sc:disc-safeguards",
-    "text": "This matches the self-correction literature: LLMs rarely improve their own output without reliable external feedback [43, 44], and even with test feedback the gains of self-repair are modest [45]; and bounded search over an explicit objective has long been effective for modularization [21]."
+    "text": "This matches the self-correction literature: LLMs rarely improve their own output without reliable external feedback [44, 45], and even with test feedback the gains of self-repair are modest [46]; and bounded search over an explicit objective has long been effective for modularization [20]."
    }
   ],
   "hidden": false
  },
  "kamoi2024selfcorrection": {
-  "n": 44,
+  "n": 45,
   "type": "article",
   "authors": "Kamoi, Ryo; Zhang, Yusen; Zhang, Nan; Han, Jiawei; Zhang, Rui",
   "title": "When Can LLMs Actually Correct Their Own Mistakes? A Critical Survey of Self-Correction of LLMs",
@@ -1103,23 +1134,23 @@ export const REFS = {
    {
     "sec": "II-D",
     "label": "sc:sota-agents",
-    "text": "Self-Refine reported gains from iterative self-feedback across several tasks [42], but later work found that LLMs struggle to correct their own reasoning without external feedback [43], that reported benefits often rely on reliable external signals [44], and that even with test feedback the gains of self-repair in code generation are modest once cost is considered [45]."
+    "text": "Self-Refine reported gains from iterative self-feedback across several tasks [43], but later work found that LLMs struggle to correct their own reasoning without external feedback [44], that reported benefits often rely on reliable external signals [45], and that even with test feedback the gains of self-repair in code generation are modest once cost is considered [46]."
    },
    {
-    "sec": "III-B",
-    "label": "sc:method-framework",
-    "text": "Checking, scoring, choosing, and improving are performed by deterministic code, because LLM self-critique without reliable external feedback is unreliable [43, 44]."
+    "sec": "III-A",
+    "label": "sc:workflow-principles",
+    "text": "Checking, scoring, choosing, and improving are performed by deterministic code, because LLM self-critique without reliable external feedback is unreliable [44, 45]."
    },
    {
-    "sec": "VI-B",
+    "sec": "VI-C",
     "label": "sc:disc-safeguards",
-    "text": "This matches the self-correction literature: LLMs rarely improve their own output without reliable external feedback [43, 44], and even with test feedback the gains of self-repair are modest [45]; and bounded search over an explicit objective has long been effective for modularization [21]."
+    "text": "This matches the self-correction literature: LLMs rarely improve their own output without reliable external feedback [44, 45], and even with test feedback the gains of self-repair are modest [46]; and bounded search over an explicit objective has long been effective for modularization [20]."
    }
   ],
   "hidden": false
  },
  "olausson2024selfrepair": {
-  "n": 45,
+  "n": 46,
   "type": "inproceedings",
   "authors": "Olausson, Theo X.; Inala, Jeevana Priya; Wang, Chenglong; Gao, Jianfeng; Solar-Lezama, Armando",
   "title": "Is Self-Repair a Silver Bullet for Code Generation?",
@@ -1134,18 +1165,18 @@ export const REFS = {
    {
     "sec": "II-D",
     "label": "sc:sota-agents",
-    "text": "Self-Refine reported gains from iterative self-feedback across several tasks [42], but later work found that LLMs struggle to correct their own reasoning without external feedback [43], that reported benefits often rely on reliable external signals [44], and that even with test feedback the gains of self-repair in code generation are modest once cost is considered [45]."
+    "text": "Self-Refine reported gains from iterative self-feedback across several tasks [43], but later work found that LLMs struggle to correct their own reasoning without external feedback [44], that reported benefits often rely on reliable external signals [45], and that even with test feedback the gains of self-repair in code generation are modest once cost is considered [46]."
    },
    {
-    "sec": "VI-B",
+    "sec": "VI-C",
     "label": "sc:disc-safeguards",
-    "text": "This matches the self-correction literature: LLMs rarely improve their own output without reliable external feedback [43, 44], and even with test feedback the gains of self-repair are modest [45]; and bounded search over an explicit objective has long been effective for modularization [21]."
+    "text": "This matches the self-correction literature: LLMs rarely improve their own output without reliable external feedback [44, 45], and even with test feedback the gains of self-repair are modest [46]; and bounded search over an explicit objective has long been effective for modularization [20]."
    }
   ],
   "hidden": false
  },
  "pan2024rewardhacking": {
-  "n": 46,
+  "n": 47,
   "type": "misc",
   "authors": "Pan, Jane; He, He; Bowman, Samuel R.; Feng, Shi",
   "title": "Spontaneous Reward Hacking in Iterative Self-Refinement",
@@ -1160,23 +1191,23 @@ export const REFS = {
    {
     "sec": "II-D",
     "label": "sc:sota-agents",
-    "text": "When a generator and its evaluator share a model and context, optimization can raise the evaluator's score while true quality stagnates—a form of reward hacking [46]; LLM judges also tend to prefer their own generations [47, 48]."
+    "text": "When a generator and its evaluator share a model and context, optimization can raise the evaluator's score while true quality stagnates—a form of reward hacking [47]; LLM judges also tend to prefer their own generations [48, 49]."
    },
    {
     "sec": "V-D",
     "label": "sc:results-rq4",
-    "text": "This is analogous to reward hacking when a generator and its evaluator share a model [46]: the score measured how closely a candidate followed its own recipe."
+    "text": "This is analogous to reward hacking when a generator and its evaluator share a model [47]: the score measured how closely a candidate followed its own recipe."
    },
    {
-    "sec": "VI-C",
+    "sec": "VI-D",
     "label": "sc:disc-selfref",
-    "text": "The same trap applies wherever LLM-generated artifacts are judged by signals derived from the same model's output, including LLM-as-judge set-ups, where judges favor their own generations [46, 47]."
+    "text": "The same trap applies wherever LLM-generated artifacts are judged by signals derived from the same model's output, including LLM-as-judge set-ups, where judges favor their own generations [47, 48]."
    }
   ],
   "hidden": false
  },
  "panickssery2024selfpreference": {
-  "n": 47,
+  "n": 48,
   "type": "inproceedings",
   "authors": "Panickssery, Arjun; Bowman, Samuel R.; Feng, Shi",
   "title": "LLM Evaluators Recognize and Favor Their Own Generations",
@@ -1191,18 +1222,18 @@ export const REFS = {
    {
     "sec": "II-D",
     "label": "sc:sota-agents",
-    "text": "When a generator and its evaluator share a model and context, optimization can raise the evaluator's score while true quality stagnates—a form of reward hacking [46]; LLM judges also tend to prefer their own generations [47, 48]."
+    "text": "When a generator and its evaluator share a model and context, optimization can raise the evaluator's score while true quality stagnates—a form of reward hacking [47]; LLM judges also tend to prefer their own generations [48, 49]."
    },
    {
-    "sec": "VI-C",
+    "sec": "VI-D",
     "label": "sc:disc-selfref",
-    "text": "The same trap applies wherever LLM-generated artifacts are judged by signals derived from the same model's output, including LLM-as-judge set-ups, where judges favor their own generations [46, 47]."
+    "text": "The same trap applies wherever LLM-generated artifacts are judged by signals derived from the same model's output, including LLM-as-judge set-ups, where judges favor their own generations [47, 48]."
    }
   ],
   "hidden": false
  },
  "zheng2023judging": {
-  "n": 48,
+  "n": 49,
   "type": "inproceedings",
   "authors": "Zheng, Lianmin; Chiang, Wei-Lin; Sheng, Ying; Zhuang, Siyuan; Wu, Zhanghao; Zhuang, Yonghao; Lin, Zi; Li, Zhuohan; Li, Dacheng; Xing, Eric P.; Zhang, Hao; Gonzalez, Joseph E.; Stoica, Ion",
   "title": "Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena",
@@ -1217,38 +1248,7 @@ export const REFS = {
    {
     "sec": "II-D",
     "label": "sc:sota-agents",
-    "text": "When a generator and its evaluator share a model and context, optimization can raise the evaluator's score while true quality stagnates—a form of reward hacking [46]; LLM judges also tend to prefer their own generations [47, 48]."
-   }
-  ],
-  "hidden": false
- },
- "ouyang2025nondeterminism": {
-  "n": 49,
-  "type": "article",
-  "authors": "Ouyang, Shuyin; Zhang, Jie M.; Harman, Mark; Wang, Meng",
-  "title": "An Empirical Study of the Non-Determinism of ChatGPT in Code Generation",
-  "venue": "ACM Trans. Softw. Eng. Methodol.",
-  "year": "2025",
-  "pages": "42:1–42:28",
-  "doi": "10.1145/3697010",
-  "url": "https://doi.org/10.1145/3697010",
-  "note": "",
-  "search": null,
-  "contexts": [
-   {
-    "sec": "II-D",
-    "label": "sc:sota-agents",
-    "text": "Non-determinism. LLM outputs vary between runs even at temperature zero [49, 50], and studies that rely on single runs risk mistaking variation for effects [51, 52]."
-   },
-   {
-    "sec": "III-C",
-    "label": "sc:method-design",
-    "text": "Repetitions and reuse. LLM outputs vary between runs [49]."
-   },
-   {
-    "sec": "VII",
-    "label": "sc:threats",
-    "text": "Exact re-execution cannot be guaranteed, because hosted models evolve and are not fully deterministic [49, 50]."
+    "text": "When a generator and its evaluator share a model and context, optimization can raise the evaluator's score while true quality stagnates—a form of reward hacking [47]; LLM judges also tend to prefer their own generations [48, 49]."
    }
   ],
   "hidden": false
@@ -1269,12 +1269,12 @@ export const REFS = {
    {
     "sec": "II-D",
     "label": "sc:sota-agents",
-    "text": "Non-determinism. LLM outputs vary between runs even at temperature zero [49, 50], and studies that rely on single runs risk mistaking variation for effects [51, 52]."
+    "text": "Non-determinism. LLM outputs vary between runs even at temperature zero [13, 50], and studies that rely on single runs risk mistaking this variation for effects [51, 52]."
    },
    {
     "sec": "VII",
     "label": "sc:threats",
-    "text": "Exact re-execution cannot be guaranteed, because hosted models evolve and are not fully deterministic [49, 50]."
+    "text": "Exact re-execution cannot be guaranteed, because hosted models evolve behind stable names and are not fully deterministic [13, 50]; we record model identities, dates, and all responses."
    }
   ],
   "hidden": false
@@ -1295,10 +1295,10 @@ export const REFS = {
    {
     "sec": "II-D",
     "label": "sc:sota-agents",
-    "text": "Non-determinism. LLM outputs vary between runs even at temperature zero [49, 50], and studies that rely on single runs risk mistaking variation for effects [51, 52]."
+    "text": "Non-determinism. LLM outputs vary between runs even at temperature zero [13, 50], and studies that rely on single runs risk mistaking this variation for effects [51, 52]."
    },
    {
-    "sec": "VI-E",
+    "sec": "VI-F",
     "label": "sc:disc-convergence",
     "text": "Different developers, architectures, and sizes arrived at the same split, which suggests that the models share a strong prior about how these widely published systems should be decomposed; memorization of the systems or their microservice versions cannot be excluded [51]."
    }
@@ -1321,44 +1321,23 @@ export const REFS = {
    {
     "sec": "II-D",
     "label": "sc:sota-agents",
-    "text": "Non-determinism. LLM outputs vary between runs even at temperature zero [49, 50], and studies that rely on single runs risk mistaking variation for effects [51, 52]."
+    "text": "Non-determinism. LLM outputs vary between runs even at temperature zero [13, 50], and studies that rely on single runs risk mistaking this variation for effects [51, 52]."
    },
    {
-    "sec": "III-C",
-    "label": "sc:method-design",
-    "text": "To compare arms across all models, we pair observations by (model, system) cell, giving 16 pairs, and apply the two-sided Wilcoxon signed-rank test [59] with Cliff's δ as effect size [60], in line with the use of non-parametric tests and effect sizes recommended for randomized algorithms in software engineering [52]."
+    "sec": "IV-I",
+    "label": "sc:method-analysis",
+    "text": "We report the mean difference with a 95% interval from a two-level bootstrap that resamples cells and then runs within each cell (10,000 draws, fixed seed), Cliff's δ [63], and win/tie/loss counts, following the recommendations for randomized algorithms in software engineering [52]."
    },
    {
-    "sec": "VI-F",
+    "sec": "VI-G",
     "label": "sc:disc-implications",
-    "text": "Repeat stochastic runs, report variation, and disclose development on the evaluation systems [52, 64, 57]."
-   }
-  ],
-  "hidden": false
- },
- "basili1994gqm": {
-  "n": 53,
-  "type": "incollection",
-  "authors": "Basili, Victor R.; Caldiera, Gianluigi; Rombach, H. Dieter",
-  "title": "The Goal Question Metric Approach",
-  "venue": "Encyclopedia of Software Engineering",
-  "year": "1994",
-  "pages": "528–532",
-  "doi": null,
-  "url": null,
-  "note": "",
-  "search": "https://scholar.google.com/scholar?q=The+Goal+Question+Metric+Approach",
-  "contexts": [
-   {
-    "sec": "III-A",
-    "label": "sc:method-gqm",
-    "text": "We structure the study with the Goal Question Metric paradigm [53]."
+    "text": "Repeat stochastic runs, use enough models and systems for the tests to have power, analyze cells rather than runs, declare the analysis and the treatment of failed runs before looking at the results, correct for multiple metrics, and disclose development on the evaluation systems [52, 67, 65]."
    }
   ],
   "hidden": false
  },
  "rosenberg2007vmeasure": {
-  "n": 54,
+  "n": 53,
   "type": "inproceedings",
   "authors": "Rosenberg, Andrew; Hirschberg, Julia",
   "title": "V-Measure: A Conditional Entropy-Based External Cluster Evaluation Measure",
@@ -1371,9 +1350,30 @@ export const REFS = {
   "search": "https://scholar.google.com/scholar?q=V-Measure:+A+Conditional+Entropy-Based+External+Cluster+Evaluation+Measure",
   "contexts": [
    {
-    "sec": "III-B",
-    "label": "sc:method-framework",
-    "text": "The evaluator also records diagnostics that are reported but not optimized, among them the agreement of each candidate with the capability map (V-measure [54]) and the label-invariant distance between candidates."
+    "sec": "III-C",
+    "label": "sc:workflow-select",
+    "text": "The evaluator also records diagnostics that are reported but not optimized, among them each candidate's agreement with the capability map (V-measure [53]) and the label-invariant distance between candidates."
+   }
+  ],
+  "hidden": false
+ },
+ "basili1994gqm": {
+  "n": 54,
+  "type": "incollection",
+  "authors": "Basili, Victor R.; Caldiera, Gianluigi; Rombach, H. Dieter",
+  "title": "The Goal Question Metric Approach",
+  "venue": "Encyclopedia of Software Engineering",
+  "year": "1994",
+  "pages": "528–532",
+  "doi": null,
+  "url": null,
+  "note": "",
+  "search": "https://scholar.google.com/scholar?q=The+Goal+Question+Metric+Approach",
+  "contexts": [
+   {
+    "sec": "IV-A",
+    "label": "sc:method-gqm",
+    "text": "We structure the study with the Goal Question Metric paradigm [54]."
    }
   ],
   "hidden": false
@@ -1392,7 +1392,7 @@ export const REFS = {
   "search": null,
   "contexts": [
    {
-    "sec": "IV-C",
+    "sec": "IV-J",
     "label": "sc:application-exec",
     "text": "All runs used Ollama Cloud [55] and were executed by a campaign runner that materializes the scoped benchmark for each system, executes one model at a time with at most three concurrent requests, and publishes each observation atomically."
    }
@@ -1414,102 +1414,29 @@ export const REFS = {
   "contexts": [],
   "hidden": false
  },
- "cawley2010overfitting": {
+ "meila2007comparing": {
   "n": 57,
   "type": "article",
-  "authors": "Cawley, Gavin C.; Talbot, Nicola L. C.",
-  "title": "On Over-fitting in Model Selection and Subsequent Selection Bias in Performance Evaluation",
-  "venue": "J. Mach. Learn. Res.",
-  "year": "2010",
-  "pages": "2079–2107",
-  "doi": null,
-  "url": null,
-  "note": "",
-  "search": "https://scholar.google.com/scholar?q=On+Over-fitting+in+Model+Selection+and+Subsequent+Selection+Bias+in+Performance+Evaluation",
-  "contexts": [
-   {
-    "sec": "III-C",
-    "label": "sc:method-design",
-    "text": "Reusing an evaluation set for design choices biases later estimates [57, 58]; we therefore treat DeepSeek as development data, GLM-5.2 as well—its workflow observations were produced by the version before the last design change and replayed under the final version—and gpt-oss:120b and gemma4:31b, which were run only after the design was frozen, as confirmation."
-   },
-   {
-    "sec": "VI-F",
-    "label": "sc:disc-implications",
-    "text": "Repeat stochastic runs, report variation, and disclose development on the evaluation systems [52, 64, 57]."
-   },
-   {
-    "sec": "VII",
-    "label": "sc:threats",
-    "text": "Internal validity. The workflow was developed on the same four systems with one model, and design decisions were taken while observing blinded outcomes, which biases estimates for that model [57]."
-   }
-  ],
-  "hidden": false
- },
- "dwork2015reusable": {
-  "n": 58,
-  "type": "article",
-  "authors": "Dwork, Cynthia; Feldman, Vitaly; Hardt, Moritz; Pitassi, Toniann; Reingold, Omer; Roth, Aaron",
-  "title": "The Reusable Holdout: Preserving Validity in Adaptive Data Analysis",
-  "venue": "Science",
-  "year": "2015",
-  "pages": "636–638",
-  "doi": "10.1126/science.aaa9375",
-  "url": "https://doi.org/10.1126/science.aaa9375",
+  "authors": "Meila, Marina",
+  "title": "Comparing Clusterings—An Information Based Distance",
+  "venue": "Journal of Multivariate Analysis",
+  "year": "2007",
+  "pages": "873–895",
+  "doi": "10.1016/j.jmva.2006.11.013",
+  "url": "https://doi.org/10.1016/j.jmva.2006.11.013",
   "note": "",
   "search": null,
   "contexts": [
    {
-    "sec": "III-C",
-    "label": "sc:method-design",
-    "text": "Reusing an evaluation set for design choices biases later estimates [57, 58]; we therefore treat DeepSeek as development data, GLM-5.2 as well—its workflow observations were produced by the version before the last design change and replayed under the final version—and gpt-oss:120b and gemma4:31b, which were run only after the design was frozen, as confirmation."
-   }
-  ],
-  "hidden": false
- },
- "wilcoxon1945": {
-  "n": 59,
-  "type": "article",
-  "authors": "Wilcoxon, Frank",
-  "title": "Individual Comparisons by Ranking Methods",
-  "venue": "Biometrics Bulletin",
-  "year": "1945",
-  "pages": "80–83",
-  "doi": null,
-  "url": null,
-  "note": "",
-  "search": "https://scholar.google.com/scholar?q=Individual+Comparisons+by+Ranking+Methods",
-  "contexts": [
-   {
-    "sec": "III-C",
-    "label": "sc:method-design",
-    "text": "To compare arms across all models, we pair observations by (model, system) cell, giving 16 pairs, and apply the two-sided Wilcoxon signed-rank test [59] with Cliff's δ as effect size [60], in line with the use of non-parametric tests and effect sizes recommended for randomized algorithms in software engineering [52]."
-   }
-  ],
-  "hidden": false
- },
- "cliff1993dominance": {
-  "n": 60,
-  "type": "article",
-  "authors": "Cliff, Norman",
-  "title": "Dominance Statistics: Ordinal Analyses to Answer Ordinal Questions",
-  "venue": "Psychol. Bull.",
-  "year": "1993",
-  "pages": "494–509",
-  "doi": null,
-  "url": null,
-  "note": "",
-  "search": "https://scholar.google.com/scholar?q=Dominance+Statistics:+Ordinal+Analyses+to+Answer+Ordinal+Questions",
-  "contexts": [
-   {
-    "sec": "III-C",
-    "label": "sc:method-design",
-    "text": "To compare arms across all models, we pair observations by (model, system) cell, giving 16 pairs, and apply the two-sided Wilcoxon signed-rank test [59] with Cliff's δ as effect size [60], in line with the use of non-parametric tests and effect sizes recommended for randomized algorithms in software engineering [52]."
+    "sec": "IV-F",
+    "label": "sc:study-measures",
+    "text": "Stability is measured on the five runs of each cell as the number of distinct partitions and their mean pairwise normalized variation of information (NVI), which is 0 for identical partitions [57]."
    }
   ],
   "hidden": false
  },
  "mitchell2001comparing": {
-  "n": 61,
+  "n": 58,
   "type": "inproceedings",
   "authors": "Mitchell, Brian S.; Mancoridis, Spiros",
   "title": "Comparing the Decompositions Produced by Software Clustering Algorithms Using Similarity Measurements",
@@ -1522,15 +1449,15 @@ export const REFS = {
   "search": null,
   "contexts": [
    {
-    "sec": "III-D",
+    "sec": "IV-G",
     "label": "sc:method-similarity",
-    "text": "Second, measurability: the design metrics, like most software-clustering measures [61], are defined over an assignment of each class to one service."
+    "text": "Second, measurability: the design metrics, like most software-clustering measures [58], assign each class to one service."
    }
   ],
   "hidden": false
  },
  "desai2021cogcn": {
-  "n": 62,
+  "n": 59,
   "type": "inproceedings",
   "authors": "Desai, Utkarsh; Bandyopadhyay, Sambaran; Tamilselvam, Srikanth",
   "title": "Graph Neural Network to Dilute Outliers for Refactoring Monolith Application",
@@ -1543,15 +1470,15 @@ export const REFS = {
   "search": null,
   "contexts": [
    {
-    "sec": "III-D",
+    "sec": "IV-G",
     "label": "sc:method-similarity",
-    "text": "A partition leaves each shared class in one place and exposes its use by other services as explicit cross-service dependencies, which an architect can then decide to replicate, extract into a library, or keep behind an interface—much as earlier work flags such classes for expert attention rather than resolving them automatically [62]."
+    "text": "A partition leaves each shared class in one place and exposes its use by other services as explicit cross-service dependencies, which an architect can then decide to replicate, extract into a library, or keep behind an interface—much as earlier work flags such classes for expert attention rather than resolving them automatically [59]."
    }
   ],
   "hidden": false
  },
  "lutellier2018dependencies": {
-  "n": 63,
+  "n": 60,
   "type": "article",
   "authors": "Lutellier, Thibaud; Chollak, Devin; Garcia, Joshua; Tan, Lin; Rayside, Derek; Medvidovic, Nenad; Kroeger, Robert",
   "title": "Measuring the Impact of Code Dependencies on Software Architecture Recovery Techniques",
@@ -1564,15 +1491,151 @@ export const REFS = {
   "search": null,
   "contexts": [
    {
-    "sec": "III-D",
+    "sec": "IV-G",
     "label": "sc:method-similarity",
-    "text": "Why C2C. C2C, introduced for comparing architecture-recovery results [28, 63] and used in the benchmark [6] and by MicroAgent [15], compares services as sets of classes."
+    "text": "Why C2C. C2C, introduced for comparing architecture-recovery results [29, 60] and used in the benchmark [6] and by MicroAgent [12], compares services as sets of classes."
+   }
+  ],
+  "hidden": false
+ },
+ "wilcoxon1945": {
+  "n": 61,
+  "type": "article",
+  "authors": "Wilcoxon, Frank",
+  "title": "Individual Comparisons by Ranking Methods",
+  "venue": "Biometrics Bulletin",
+  "year": "1945",
+  "pages": "80–83",
+  "doi": null,
+  "url": null,
+  "note": "",
+  "search": "https://scholar.google.com/scholar?q=Individual+Comparisons+by+Ranking+Methods",
+  "contexts": [
+   {
+    "sec": "IV-I",
+    "label": "sc:method-analysis",
+    "text": "For each metric, the workflow is compared with each baseline by the two-sided Wilcoxon signed-rank test over the 32 cells [61], and the eight p-values of each comparison (five design metrics, three C2C thresholds) are Holm-corrected [62] at α = 0.05."
+   }
+  ],
+  "hidden": false
+ },
+ "holm1979simple": {
+  "n": 62,
+  "type": "article",
+  "authors": "Holm, Sture",
+  "title": "A Simple Sequentially Rejective Multiple Test Procedure",
+  "venue": "Scandinavian Journal of Statistics",
+  "year": "1979",
+  "pages": "65–70",
+  "doi": null,
+  "url": null,
+  "note": "",
+  "search": "https://scholar.google.com/scholar?q=A+Simple+Sequentially+Rejective+Multiple+Test+Procedure",
+  "contexts": [
+   {
+    "sec": "IV-I",
+    "label": "sc:method-analysis",
+    "text": "For each metric, the workflow is compared with each baseline by the two-sided Wilcoxon signed-rank test over the 32 cells [61], and the eight p-values of each comparison (five design metrics, three C2C thresholds) are Holm-corrected [62] at α = 0.05."
+   }
+  ],
+  "hidden": false
+ },
+ "cliff1993dominance": {
+  "n": 63,
+  "type": "article",
+  "authors": "Cliff, Norman",
+  "title": "Dominance Statistics: Ordinal Analyses to Answer Ordinal Questions",
+  "venue": "Psychol. Bull.",
+  "year": "1993",
+  "pages": "494–509",
+  "doi": null,
+  "url": null,
+  "note": "",
+  "search": "https://scholar.google.com/scholar?q=Dominance+Statistics:+Ordinal+Analyses+to+Answer+Ordinal+Questions",
+  "contexts": [
+   {
+    "sec": "IV-I",
+    "label": "sc:method-analysis",
+    "text": "We report the mean difference with a 95% interval from a two-level bootstrap that resamples cells and then runs within each cell (10,000 draws, fixed seed), Cliff's δ [63], and win/tie/loss counts, following the recommendations for randomized algorithms in software engineering [52]."
+   }
+  ],
+  "hidden": false
+ },
+ "cameron2015practitioner": {
+  "n": 64,
+  "type": "article",
+  "authors": "Cameron, A. Colin; Miller, Douglas L.",
+  "title": "A Practitioner's Guide to Cluster-Robust Inference",
+  "venue": "Journal of Human Resources",
+  "year": "2015",
+  "pages": "317–372",
+  "doi": "10.3368/jhr.50.2.317",
+  "url": "https://doi.org/10.3368/jhr.50.2.317",
+  "note": "",
+  "search": null,
+  "contexts": [
+   {
+    "sec": "IV-I",
+    "label": "sc:method-analysis",
+    "text": "Robustness checks: two other treatments of failed runs (invalid runs kept with their measured values; every failure scored at the worst value of that metric observed on that system), and a regression on every individual run with one fixed effect per cell and cluster-robust standard errors [64], clustered by cell and, more strictly, by model, which asks whether an effect generalizes over models rather than over cells."
+   }
+  ],
+  "hidden": false
+ },
+ "cawley2010overfitting": {
+  "n": 65,
+  "type": "article",
+  "authors": "Cawley, Gavin C.; Talbot, Nicola L. C.",
+  "title": "On Over-fitting in Model Selection and Subsequent Selection Bias in Performance Evaluation",
+  "venue": "J. Mach. Learn. Res.",
+  "year": "2010",
+  "pages": "2079–2107",
+  "doi": null,
+  "url": null,
+  "note": "",
+  "search": "https://scholar.google.com/scholar?q=On+Over-fitting+in+Model+Selection+and+Subsequent+Selection+Bias+in+Performance+Evaluation",
+  "contexts": [
+   {
+    "sec": "IV-I",
+    "label": "sc:method-analysis",
+    "text": "Reusing an evaluation set for design choices biases later estimates [65, 66], so we also report the six other primary models alone: they ran only after the design was frozen and informed no decision."
+   },
+   {
+    "sec": "VI-G",
+    "label": "sc:disc-implications",
+    "text": "Repeat stochastic runs, use enough models and systems for the tests to have power, analyze cells rather than runs, declare the analysis and the treatment of failed runs before looking at the results, correct for multiple metrics, and disclose development on the evaluation systems [52, 67, 65]."
+   },
+   {
+    "sec": "VII",
+    "label": "sc:threats",
+    "text": "itemize Development on the evaluation systems. The workflow was developed on the four benchmark systems with DeepSeek v4.1 Flash, and its last change was also informed by GLM-5.2; decisions taken while observing blinded outcomes bias estimates for those models [65]."
+   }
+  ],
+  "hidden": false
+ },
+ "dwork2015reusable": {
+  "n": 66,
+  "type": "article",
+  "authors": "Dwork, Cynthia; Feldman, Vitaly; Hardt, Moritz; Pitassi, Toniann; Reingold, Omer; Roth, Aaron",
+  "title": "The Reusable Holdout: Preserving Validity in Adaptive Data Analysis",
+  "venue": "Science",
+  "year": "2015",
+  "pages": "636–638",
+  "doi": "10.1126/science.aaa9375",
+  "url": "https://doi.org/10.1126/science.aaa9375",
+  "note": "",
+  "search": null,
+  "contexts": [
+   {
+    "sec": "IV-I",
+    "label": "sc:method-analysis",
+    "text": "Reusing an evaluation set for design choices biases later estimates [65, 66], so we also report the six other primary models alone: they ran only after the design was frozen and informed no decision."
    }
   ],
   "hidden": false
  },
  "ralph2020standards": {
-  "n": 64,
+  "n": 67,
   "type": "misc",
   "authors": "Ralph, Paul; others",
   "title": "Empirical Standards for Software Engineering Research",
@@ -1585,9 +1648,9 @@ export const REFS = {
   "search": null,
   "contexts": [
    {
-    "sec": "VI-F",
+    "sec": "VI-G",
     "label": "sc:disc-implications",
-    "text": "Repeat stochastic runs, report variation, and disclose development on the evaluation systems [52, 64, 57]."
+    "text": "Repeat stochastic runs, use enough models and systems for the tests to have power, analyze cells rather than runs, declare the analysis and the treatment of failed runs before looking at the results, correct for multiple metrics, and disclose development on the evaluation systems [52, 67, 65]."
    }
   ],
   "hidden": false
@@ -1601,16 +1664,15 @@ export const ORDER = [
  "evans2003ddd",
  "wang2024comparison",
  "oumoussa2024evolution",
- "kalia2021mono2micro",
- "nitin2022cargo",
- "filippone2023mosaic",
  "yao2023react",
  "yang2024sweagent",
  "liu2024agentsurvey",
  "anthropic2024agents",
  "su2026microagent",
+ "ouyang2025nondeterminism",
  "sambu2026replication",
  "dealwis2025methodlevel",
+ "filippone2023mosaic",
  "krause2020staticdynamic",
  "andrade2022staticdynamic",
  "gysel2016servicecutter",
@@ -1618,6 +1680,8 @@ export const ORDER = [
  "praditwong2011multiobjective",
  "blondel2008louvain",
  "fortunato2007resolution",
+ "kalia2021mono2micro",
+ "nitin2022cargo",
  "trabelsi2023microminer",
  "agarwal2021businessfunction",
  "taibi2019processmining",
@@ -1642,20 +1706,22 @@ export const ORDER = [
  "pan2024rewardhacking",
  "panickssery2024selfpreference",
  "zheng2023judging",
- "ouyang2025nondeterminism",
  "atil2024nondeterminism",
  "sallou2024breaking",
  "arcuri2014hitchhiker",
- "basili1994gqm",
  "rosenberg2007vmeasure",
+ "basili1994gqm",
  "ollama2026models",
  "aa2026index",
- "cawley2010overfitting",
- "dwork2015reusable",
- "wilcoxon1945",
- "cliff1993dominance",
+ "meila2007comparing",
  "mitchell2001comparing",
  "desai2021cogcn",
  "lutellier2018dependencies",
+ "wilcoxon1945",
+ "holm1979simple",
+ "cliff1993dominance",
+ "cameron2015practitioner",
+ "cawley2010overfitting",
+ "dwork2015reusable",
  "ralph2020standards"
 ]

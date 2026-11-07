@@ -1,8 +1,9 @@
-// Part II · how the workflow and the study are built (paper §III).
+// Part II · how the workflow and the study are built (paper §III–IV).
 import { html, C, F, box, EASE, Stage, Term, Cite, Inside, Card, SHIELD, P, H, List, Note, Code, Quote, Table, Formula, rich, reveal, SlideSource, Src, useShared } from '../ui.js'
 import { SYSTEMS, PETCLINIC } from '../data/systems.js'
 import { PAPER, AGENTS_TABLE } from '../data/paper.js'
 import { TABLES } from '../data/results.js'
+import { EXT, ROLES } from '../data/extension.js'
 import { DETAILS } from '../trace/detailsData.js'
 import { c2c, overlap } from '../metrics.js'
 import { useGo } from './front.js'
@@ -34,7 +35,7 @@ export function GqmScene({ b, still }) {
 				<div style=${{ fontFamily: F.sans, fontSize: 19, lineHeight: 1.45, marginTop: 6 }}>${r.q}</div>
 				<div style=${{ position: 'absolute', bottom: 12, right: 18, fontFamily: F.sans, fontSize: 15, color: C.dim }}>${idx(RQ_SLIDES[r.id]) >= 0 ? `answer: slide ${idx(RQ_SLIDES[r.id]) + 1} →` : ''}</div></div>`)}
 		</div>
-		<${SlideSource}>§III-A</${SlideSource}>
+		<${SlideSource}>§IV-A</${SlideSource}>
 	</${Stage}>`
 }
 
@@ -52,7 +53,7 @@ export function PrinciplesScene({ b, still }) {
 			<div style=${{ position: 'absolute', left: 28, top: 18, fontFamily: F.hand, fontSize: 90, color: i === 2 ? C.red : C.faint, lineHeight: 1 }}>${i + 1}</div>
 			<div style=${{ position: 'absolute', left: 28, top: 120, right: 24, fontFamily: F.hand, fontSize: 40, lineHeight: 1.15 }}>${t}</div>
 			<div style=${{ position: 'absolute', left: 28, top: 250, right: 26, fontFamily: F.sans, fontSize: 22, lineHeight: 1.5 }}>${s}</div></div>`)}
-		<${SlideSource}>§III-B</${SlideSource}>
+		<${SlideSource}>§III-A</${SlideSource}>
 	</${Stage}>`
 }
 
@@ -127,7 +128,7 @@ export function AlgorithmScene({ b, still }) {
 			${panel[B]}
 		</div>
 		<style>${`@keyframes tp-in { from { opacity: 0; transform: translateY(14px) } to { opacity: 1; transform: none } }`}</style>
-		<${SlideSource}>Algorithm 1 · §III-B (4)(5) · §IV-D</${SlideSource}>
+		<${SlideSource}>Algorithm 1 · §III-C · §III-F</${SlideSource}>
 	</${Stage}>`
 }
 
@@ -149,10 +150,10 @@ export function FirewallScene({ b, still }) {
 			{ id: 'files', label: 'Files', render: () => P(html`The legacy metric engine prepares a fresh workspace per evaluation and copies the ground truth into it only in ${Code('blinded')} mode (${Code('include_ground_truth=(mode == "blinded")')}); online mode computes only the structural and statistics groups.`) },
 			{ id: 'flow', label: 'Order', render: () => List(['evidence → domain → generator → evaluator (select)', 'refinement rounds (each re-evaluated online)', 'final quality gate, then output/decomposition.json is written: the freeze', 'only then evaluate_blinded(selected) → evaluation/blinded-report.json', 'the report goes to the manifest, never back to an agent'], { ordered: true }) },
 			{ id: 'why', label: 'Why it matters', render: () => html`<div>
-				${Quote('The separation between online selection and reference-based evaluation is enforced in code, not by prompt wording.', '§III-B')}
+				${Quote('The separation between online selection and reference-based evaluation is enforced in code, not by prompt wording.', '§III-D')}
 				${P(html`A method that saw the reference, or even the number of services in it, would be graded against an answer it was shown. MicroAgent, for example, receives the reference's service count <${Cite} k="su2026microagent" />.`)}</div>` },
 		],
-		source: 'Source: §III-B; packages/decomplab-metrics, packages/decomplab-agentic (agents/process_controller.py), vendor/legacy-metrics-engine.',
+		source: 'Source: §III-D; packages/decomplab-metrics, packages/decomplab-agentic (agents/process_controller.py), vendor/legacy-metrics-engine.',
 	}
 	return html`<${Stage} still=${still}>
 		<div style=${{ ...box(110, 250, 740, 110), fontFamily: F.hand, fontSize: 30, lineHeight: 1.3 }}>agents: evidence · domain · generator · evaluator · refiner</div>
@@ -166,7 +167,7 @@ export function FirewallScene({ b, still }) {
 			<div style=${{ position: 'absolute', left: 22, top: 14, fontFamily: F.hand, fontSize: 34 }}>🔒 ${t}</div>
 			<div style=${{ position: 'absolute', left: 22, top: 70, right: 20, fontFamily: F.sans, fontSize: 19, lineHeight: 1.45 }}>${s}</div></div>`)}
 		<${Inside} x=${1560} y=${200} w=${300} label="In the code" drawer=${drawer} still=${still} />
-		<${SlideSource}>§III-B</${SlideSource}>
+		<${SlideSource}>§III-D</${SlideSource}>
 	</${Stage}>`
 }
 
@@ -176,11 +177,11 @@ export function DesignScene({ b, still }) {
 	const arms = [
 		['80k concat', 'single-shot', '80k', 'the ICSA pipeline: summarise, five views, one final call'],
 		['OpenCode', 'autonomous agent', 'opencode', 'an open-source coding agent decides what to read and do'],
-		['Final (ours)', 'agentic workflow', 'agentic-workflow', 'the workflow of §III-B'],
+		['Final (ours)', 'agentic workflow', 'agentic-workflow', 'the workflow of §III'],
 	]
 	const models = TABLES.models.rows
 	const drawer = {
-		title: 'The experiment, in detail', kicker: '§III-C',
+		title: 'The experiment, in detail', kicker: '§IV',
 		tabs: [
 			{ id: 'inputs', label: 'Same inputs', render: () => html`<div>
 				${P(html`For each system a canonical <${Term} k="class-inventory" /> defines the evaluated universe. Every arm receives exactly this set of classes, a source snapshot restricted to them, and the static dependency graph filtered to them, and must return every class assigned to one named service.`)}
@@ -188,20 +189,29 @@ export function DesignScene({ b, still }) {
 			{ id: 'arms', label: 'Arms', tabs: [
 				{ id: '80k', label: '80k concat', render: () => html`<div>${P(html`The pipeline of our previous study <${Cite} k="sambu2026icsa" />. Source files are packed into chunks of about 80,000 tokens (300,000 characters) and summarised, five architectural views are generated from the summary, and one final call produces the decomposition from the views, the dependency graph and the class inventory.`)}${P('On these systems the scoped source (11k–41k tokens, depending on the tokenizer) fits in one chunk, so the arm makes seven calls plus retries.')}</div>` },
 				{ id: 'oc', label: 'OpenCode', render: () => html`<div>${P(html`The open-source coding agent OpenCode <${Cite} k="opencode2026" /> runs in an isolated workspace with the source snapshot and the dependency graph, and must write the decomposition to a file. It decides autonomously which files to read and which tools to use.`)}${P('It exposes no sampling temperature: it runs with the provider default and reasoning effort low. The prompt is baseline-3, chosen by information parity (Part III).')}</div>` },
-				{ id: 'final', label: 'Final (ours)', render: () => P('The workflow of §III-B: evidence, domain, three candidates, repair, gate, score, local search, freeze.') },
+				{ id: 'final', label: 'Final (ours)', render: () => P('The workflow of §III: evidence, domain, three candidates, repair, gate, score, local search, freeze.') },
 				{ id: 'tools', label: 'Traditional tools', render: () => P(html`DataCentric, HyDec, Mono2Micro (two configurations) and Log2MS, as measured in the tool comparison <${Cite} k="wang2024comparison" />: deterministic, included for context.`) },
 			], render: () => P('Four arms; the first three share model, inputs and blinded evaluation.') },
 			{ id: 'models', label: 'Models', render: () => html`<div>
-				${Table(['model', 'developer', 'architecture', 'context', 'AA index'], models, { align: ['left', 'left', 'left', 'right', 'right'] })}
-				${P(html`Chosen for diversity of developer, architecture and capability. A short probe excluded models that could not return parseable JSON or make tool calls with reasoning disabled. All are served by Ollama Cloud <${Cite} k="ollama2026models" />; AA is the Artificial Analysis Intelligence Index <${Cite} k="aa2026index" />.`)}
+				${Table(['model', 'developer', 'architecture', 'context', 'AA', 'valid 80k', 'OpenCode', 'Final'], models, { align: ['left', 'left', 'left', 'right', 'right', 'right', 'right', 'right'], size: 15 })}
+				${P(html`The first eight rows are the primary analysis (five seeds), the rest run once. The models were chosen in two steps: four for diversity of developer, architecture and capability, after a probe for parseable JSON and tool calls; then a screening of the provider's other thirteen models (one run each, including those the probe had excluded), from which the four with all twelve runs valid joined the primary set. All are served by Ollama Cloud <${Cite} k="ollama2026models" />; AA is the Artificial Analysis Intelligence Index <${Cite} k="aa2026index" />; † development model.`, { fontSize: 17 })}
 				${Note('Within each model, all arms use that model: arms are never compared across models.', C.faint)}</div>` },
 			{ id: 'controls', label: 'Controls', render: () => List([html`workflow and 80k: <${Term} k="temperature" /> 0.2, reasoning disabled where supported, at most 16,384 output tokens`, 'retries use the same model and parameters (the generator appends the validation error); no fallback model, no truncated prompt', 'every observation records its frozen inputs, a benchmark-scope fingerprint, every LLM call and a manifest']) },
-			{ id: 'reps', label: 'Repetitions and reuse', render: () => html`<div>
-				${List(['DeepSeek v4.1 Flash: five repetitions per system and arm (seeds 1–5) to measure variation', 'GLM-5.2, gpt-oss:120b, gemma4:31b: one run per system and arm, to bound cost; cross-model comparisons use repetition 1', "DeepSeek's first 80k and OpenCode runs were reused from an earlier matched campaign after checking identical frozen inputs, scope fingerprints and byte-identical regenerated 80k prompts", html`for DeepSeek and GLM-5.2 the final workflow was obtained by <${Term} k="replay">replaying</${Term}> the recorded LLM outputs of the preceding version (the versions differ only in deterministic selection and refinement)`])}
-				${P('That gives 60 DeepSeek observations (3 arms × 4 systems × 5 repetitions) and 12 per other model: 96 in total.', { fontWeight: 600 })}</div>` },
-			{ id: 'devconf', label: 'Development vs confirmation', render: () => P(html`Design decisions were made while observing DeepSeek on the four systems, so DeepSeek is <${Term} k="development-confirmation">development data</${Term}>, and GLM-5.2 too (its observations replay the version before the last change). gpt-oss:120b and gemma4:31b ran only after the design was frozen: confirmation <${Cite} keys=${['cawley2010overfitting', 'dwork2015reusable']} />.`) },
+			{ id: 'reps', label: 'Repetitions and runs', render: () => html`<div>
+				${P('All runs follow one frozen protocol, scope and decoding:', { fontSize: 20 })}
+				${List([
+					`primary: ${ROLES.primary.length} models × 4 systems × 5 seeds × 3 arms`,
+					`breadth: ${ROLES.breadth.length} more models, seed 1 only`,
+					`repeatability: seed 1 run twice, three weeks apart, for ${ROLES.repeat.join(', ')}; the earlier run serves only this check`,
+					html`the V-measure ablation was re-scored on every stored workflow run by <${Term} k="replay">replaying</${Term}> its LLM outputs (no model calls)`,
+				])}
+				${P(html`<b>Primary analysis:</b> 8 models × 4 systems × 5 seeds (32 cells): the four models chosen first and the four selected by screening.`, { fontSize: 19 })}
+				${Note("DeepSeek v4.1 Flash's seed-1 80k and OpenCode runs were reused from an earlier matched campaign after checking identical frozen inputs, scope fingerprints and byte-identical regenerated prompts; DeepSeek v4.1 Flash's workflow runs, and GLM-5.2's earlier seed-1 workflow runs, replay the preceding version's LLM outputs (the versions differ only in deterministic selection and refinement).", C.faint)}</div>` },
+			{ id: 'devconf', label: 'Development vs confirmation', render: () => html`<div>
+				${P(html`Design decisions were made while observing DeepSeek v4.1 Flash on the four systems, and the last one also GLM-5.2, so both are <${Term} k="development-confirmation">development data</${Term}>. The other six models of the primary analysis, and all nine models run once, ran only after the design was frozen and informed no decision: the held-out view <${Cite} keys=${['cawley2010overfitting', 'dwork2015reusable']} />.`)}
+				${Note('The systems are not out of sample: the workflow was developed on the same four public systems it is evaluated on.', C.amber)}</div>` },
 		],
-		source: 'Source: §III-C, Table V.',
+		source: 'Source: §IV-E, Table VIII.',
 	}
 	return html`<${Stage} still=${still}>
 		<div style=${{ ...box(110, 250, 400, 400), border: `2.5px solid ${C.ink}`, borderRadius: 18, background: '#fffdf8', padding: '18px 22px', boxSizing: 'border-box' }}>
@@ -217,47 +227,47 @@ export function DesignScene({ b, still }) {
 			${[0, 1, 2].map((i) => html`<path key=${i} d=${`M510 ${450} C 570 450, 580 ${310 + i * 140}, 636 ${310 + i * 140}`} fill="none" stroke=${C.ink} strokeWidth="3" />`)}
 			<line x1="110" y1="700" x2="1810" y2="700" stroke=${C.red} strokeWidth="4" strokeDasharray="14 10" />
 		</svg>
-		<div style=${{ ...box(1380, 250, 430, 400), ...reveal(B >= 1, still, { delay: 400 }) }}>
-			<div style=${{ fontFamily: F.hand, fontSize: 34 }}>four models</div>
-			${models.map((m) => html`<div key=${m[0]} style=${{ fontFamily: F.mono, fontSize: 21, margin: '12px 0 0' }}>${m[0]} <span style=${{ fontFamily: F.sans, fontSize: 16, color: C.dim }}>${m[1]}</span></div>`)}
-			<div style=${{ fontFamily: F.sans, fontSize: 17, color: C.dim, marginTop: 16 }}>all arms of one model run with that model</div>
+		<div style=${{ ...box(1380, 250, 430, 440), ...reveal(B >= 1, still, { delay: 400 }) }}>
+			<div style=${{ fontFamily: F.hand, fontSize: 34 }}>eight models × five seeds</div>
+			${Object.keys(EXT.models8_5reps.arm_means).map((m) => html`<div key=${m} style=${{ fontFamily: F.mono, fontSize: 18, margin: '6px 0 0' }}>${m}</div>`)}
+			<div style=${{ fontFamily: F.sans, fontSize: 17, color: C.dim, marginTop: 12 }}>+ ${Object.keys(EXT.models17_seed1.arm_means).length - 8} more models, one seed · all arms of one model run with that model</div>
 		</div>
 		<div style=${{ ...box(110, 720, 1700, 200), ...reveal(B >= 2, still) }}>
 			<div style=${{ fontFamily: F.hand, fontSize: 30, color: C.red }}>after freezing only</div>
 			<div style=${{ fontFamily: F.hand, fontSize: 34, marginTop: 8 }}><${Term} k="blinded-evaluation">blinded evaluation</${Term}>: design metrics, C2C against the reference, <${Term} k="validity">validity</${Term}>, tokens</div>
-			<div style=${{ fontFamily: F.sans, fontSize: 20, color: C.dim, marginTop: 12 }}>96 observations: DeepSeek 3 arms × 4 systems × 5 repetitions, the other three models once per cell</div>
+			<div style=${{ fontFamily: F.sans, fontSize: 20, color: C.dim, marginTop: 12 }}>${EXT.observation_counts.final_benchmark_v1 + EXT.observation_counts.extension_recorded} recorded observations and ${EXT.observation_counts.extension_unrecorded} unreadable outputs counted as failures</div>
 		</div>
 		<${Inside} x=${1560} y=${200} w=${300} label="The experiment" drawer=${drawer} still=${still} />
-		<${SlideSource}>Fig. 2 · §III-C · Table V</${SlideSource}>
+		<${SlideSource}>Fig. 2 · §IV · Table VIII</${SlideSource}>
 	</${Stage}>`
 }
 
 // ------------------------------------------------------------------ III-C · analysis
-const MODELS = ['DeepSeek', 'GLM-5.2', 'gpt-oss', 'gemma4']
+const MODELS = ['DeepSeek v4.1', 'GLM-5.2', 'gpt-oss:120b', 'gemma4', 'DeepSeek v4 Pro', 'Mistral L4', 'Kimi K2.7', 'Kimi K3']
 const SYSTEMS_SHORT = ['Demo', 'JPetStore', 'PartsUnl.', 'PetClinic']
 export function AnalysisScene({ b, still }) {
 	const B = still ? 2 : b
-	const cell = 90
+	const cell = 52
 	return html`<${Stage} still=${still}>
 		<div style=${{ ...box(110, 250, 720, 60), fontFamily: F.hand, fontSize: 32 }}>one pair per (model, system) cell</div>
-		<div style=${{ ...box(260, 320, 4 * cell, 30), display: 'flex' }}>${SYSTEMS_SHORT.map((s) => html`<div key=${s} style=${{ width: cell, textAlign: 'center', fontFamily: F.sans, fontSize: 15, color: C.dim }}>${s}</div>`)}</div>
-		${MODELS.map((m, i) => html`<div key=${m} style=${{ ...box(110, 355 + i * cell, 140, cell), display: 'flex', alignItems: 'center', justifyContent: 'flex-end', fontFamily: F.sans, fontSize: 18 }}>${m}</div>`)}
-		${MODELS.flatMap((m, i) => SYSTEMS_SHORT.map((s, j) => html`<div key=${m + s} style=${{ ...box(260 + j * cell + 6, 355 + i * cell + 6, cell - 12, cell - 12), borderRadius: 12, border: `2px solid ${C.ink}`, background: '#fffdf8',
-			display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: F.hand, fontSize: 22, ...reveal(true, still, { delay: 30 * (i * 4 + j) }) }}>A · B</div>`))}
-		<div style=${{ ...box(110, 725, 720, 120), fontFamily: F.sans, fontSize: 20, lineHeight: 1.5, color: C.dim }}>16 pairs: the same model and system under two arms (repetition 1). Means use valid observations only; invalid ones are reported separately, never as zeros.</div>
+		<div style=${{ ...box(330, 316, 4 * 100, 30), display: 'flex' }}>${SYSTEMS_SHORT.map((s) => html`<div key=${s} style=${{ width: 100, textAlign: 'center', fontFamily: F.sans, fontSize: 15, color: C.dim }}>${s}</div>`)}</div>
+		${MODELS.map((m, i) => html`<div key=${m} style=${{ ...box(110, 350 + i * cell, 210, cell), display: 'flex', alignItems: 'center', justifyContent: 'flex-end', fontFamily: F.sans, fontSize: 17, color: i < 4 ? C.ink : C.dim }}>${m}</div>`)}
+		${MODELS.flatMap((m, i) => SYSTEMS_SHORT.map((s, j) => html`<div key=${m + s} style=${{ ...box(330 + j * 100 + 5, 350 + i * cell + 4, 90, cell - 8), borderRadius: 10, border: `2px solid ${C.ink}`, background: '#fffdf8',
+			display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: F.hand, fontSize: 19, ...reveal(true, still, { delay: 20 * (i * 4 + j) }) }}>A · B ×5</div>`))}
+		<div style=${{ ...box(110, 780, 720, 160), fontFamily: F.sans, fontSize: 19, lineHeight: 1.5, color: C.dim }}>32 cells (the primary analysis): the same model and system under two arms, five seeds each, averaged per cell, because seeds of one cell are not independent. Metric tests use valid observations; failures are counted under validity and checked in a worst-case treatment.</div>
 		<div style=${{ ...box(900, 250, 910, 700) }}>
 			${[
-				['is the difference systematic?', html`<${Term} k="wilcoxon">Wilcoxon signed-rank</${Term}> test, two-sided <${Cite} k="wilcoxon1945" />`, 0],
-				['how large is it?', html`<${Term} k="cliffs-delta">Cliff's δ</${Term}> effect size <${Cite} k="cliff1993dominance" />`, 1],
-				['how often does each arm win?', html`<${Term} k="win-tie-loss">win / tie / loss</${Term}> counts`, 1],
-				['can 16 pairs see small effects?', html`no: limited <${Term} k="power">power</${Term}>, so non-significant ≠ equivalent`, 2],
-				['how repeatable is one arm?', html`distinct partitions and mean pairwise <${Term} k="nvi">NVI</${Term}> over five DeepSeek runs`, 2],
+				['is the difference systematic?', html`<${Term} k="wilcoxon">Wilcoxon signed-rank</${Term}> test over cells, two-sided <${Cite} k="wilcoxon1945" />, <${Term} k="holm">Holm</${Term}> across eight metrics`, 0],
+				['how large is it?', html`mean difference with a <${Term} k="bootstrap-ci">bootstrap 95% interval</${Term}>, <${Term} k="cliffs-delta">Cliff's δ</${Term}> <${Cite} k="cliff1993dominance" />, <${Term} k="win-tie-loss">win / tie / loss</${Term}>`, 1],
+				['does it depend on the analysis?', html`declared primary analysis; failures scored at worst; a regression on every run, clustered by cell and by model`, 1],
+				['can 32 cells see small effects?', html`better than 16, still limited <${Term} k="power">power</${Term}>: non-significant ≠ equivalent`, 2],
+				['how repeatable is one arm?', html`distinct partitions and mean pairwise <${Term} k="nvi">NVI</${Term}> over five seeds, eight models`, 2],
 			].map(([q, a, beat], i) => html`<div key=${q} style=${{ marginBottom: 26, ...reveal(B >= beat, still, { delay: 80 * i }) }}>
 				<div style=${{ fontFamily: F.hand, fontSize: 30, color: C.red }}>${q}</div>
 				<div style=${{ fontFamily: F.sans, fontSize: 22, marginTop: 4 }}>${a}</div></div>`)}
 			<div style=${{ fontFamily: F.sans, fontSize: 18, color: C.dim, ...reveal(B >= 2, still) }}>Non-parametric tests and effect sizes, as recommended for randomised algorithms in software engineering <${Cite} k="arcuri2014hitchhiker" />. Every number is computed by a script from the immutable run artifacts.</div>
 		</div>
-		<${SlideSource}>§III-C Analysis</${SlideSource}>
+		<${SlideSource}>§IV-I</${SlideSource}>
 	</${Stage}>`
 }
 
@@ -272,7 +282,7 @@ export function C2cScene({ b, still }) {
 	const best = Math.max(...rows.map((r) => r.o))
 	const selfRows = Object.entries(SYSTEMS).map(([id, s]) => [id, ...[0.1, 0.33, 0.5].map((t) => f1(c2c(s.disjoint, s.reference, t).value))])
 	const drawer = {
-		title: 'C2C in detail', kicker: '§III-D',
+		title: 'C2C in detail', kicker: '§IV-G',
 		tabs: [
 			{ id: 'def', label: 'Definition', render: () => html`<div>
 				${Formula(html`overlap(A, B) = |A ∩ B| / max(|A|, |B|)`)}
@@ -281,11 +291,11 @@ export function C2cScene({ b, still }) {
 			{ id: 'self', label: 'The reference against itself', render: () => html`<div>
 				${P('The reference scores 100 against itself at every threshold. A disjoint copy (each shared class kept only in the first service that lists it) agrees with the reference on every class:')}
 				${Table(['system', 'C2C-10', 'C2C-33', 'C2C-50'], selfRows)}
-				${P('C2C notices that a partition cannot reproduce a replicated design exactly, but counts the difference once per service, not once per shared class. Values recomputed here from the reference files; they match Table VI.', { fontSize: 19, color: C.dim })}</div>` },
+				${P('C2C notices that a partition cannot reproduce a replicated design exactly, but counts the difference once per service, not once per shared class. Values recomputed here from the reference files; they match Table IX.', { fontSize: 19, color: C.dim })}</div>` },
 			{ id: 'limits', label: 'Its limits', render: () => List(['it counts produced services, not classes, so services are not weighted by size', 'it does not penalise a decomposition for missing a reference service', 'the implementation needs strictly more than x % (the benchmark paper says "at least"), so a service overlapping by exactly half does not count at C2C-50', 'the thresholds do not always agree, so no conclusion rests on one cut-off']) },
 			{ id: 'refs', label: 'Where it comes from', render: () => P(html`Introduced for comparing architecture-recovery results <${Cite} keys=${['garcia2013comparative', 'lutellier2018dependencies']} />, used by the benchmark <${Cite} k="wang2024comparison" /> and by MicroAgent <${Cite} k="su2026microagent" />.`) },
 		],
-		source: 'Source: §III-D, §VII, Table VI; vendor/legacy-metrics-engine/calculator/c2c.py.',
+		source: 'Source: §IV-G, §VII, Table IX; vendor/legacy-metrics-engine/calculator/c2c.py.',
 	}
 	return html`<${Stage} still=${still}>
 		<div style=${{ ...box(110, 245, 760, 220), fontFamily: F.hand, fontSize: 28, lineHeight: 1.35 }}>
@@ -314,6 +324,6 @@ export function C2cScene({ b, still }) {
 			<div style=${{ fontFamily: F.sans, fontSize: 18, color: C.dim, marginTop: 16 }}>C2C-x is the share of produced services that count. Over all four services here: ${[0.1, 0.33, 0.5].map((t) => f1(c2c(FIN, REF, t).value)).join(' / ')}.</div>
 		</div>
 		<${Inside} x=${1560} y=${200} w=${300} label="C2C in detail" drawer=${drawer} still=${still} />
-		<${SlideSource}>§III-D · Table VI</${SlideSource}>
+		<${SlideSource}>§IV-G · Table IX</${SlideSource}>
 	</${Stage}>`
 }

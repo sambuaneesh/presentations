@@ -127,11 +127,11 @@ const STEPS = [
 export const AGENTIC_BEATS = STEPS.length - 1
 
 // Screen regions (design px).
-const VIEW_FULL = { x: 30, y: 150, w: 1860, h: 910 }
-const VIEW_LEFT = { x: 30, y: 170, w: 840, h: 880 }
+const VIEW_FULL = { x: 110, y: 150, w: 1780, h: 910 } // x from 110: the navigation bar owns the left edge
+const VIEW_LEFT = { x: 110, y: 170, w: 770, h: 880 }
 const PANEL = { x: 900, y: 170, w: 990, h: 880 }
 
-const VIEW_SUMMARY = { x: 20, y: 160, w: 1400, h: 900 }
+const VIEW_SUMMARY = { x: 110, y: 160, w: 1310, h: 900 }
 function camera(step) {
 	const r = step.cam === 'all' ? [20, 30, 1880, 1110] : step.cam
 	const v = step.summary ? VIEW_SUMMARY : step.cam === 'all' ? VIEW_FULL : VIEW_LEFT

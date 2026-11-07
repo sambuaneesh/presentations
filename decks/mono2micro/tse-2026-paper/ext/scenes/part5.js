@@ -1,4 +1,5 @@
 // Part V · what it means (paper §VI–VIII) and the appendix (the research record behind the paper).
+import { EXT } from '../data/extension.js'
 import { html, C, F, box, EASE, Stage, Term, Cite, Inside, Card, SHIELD, P, H, List, Note, Code, Quote, Table, rich, reveal, SlideSource, Src } from '../ui.js'
 import { PROSE, TABLES, ANALYSIS } from '../data/results.js'
 import { REFS, ORDER } from '../data/refs.js'
@@ -12,8 +13,9 @@ const body = (label) => paras(label).map((e, i) => html`<div key=${i}>${e.head &
 // ------------------------------------------------------------------ VI-A · what the agentic organisation buys
 export function BuysScene({ b, still }) {
 	const B = still ? 2 : b
-	const yes = [html`a complete assignment, guaranteed <${Term} k="repair">by construction</${Term}>`, 'lower and more predictable cost', 'up to three explicit alternatives (often only one or two distinct)', 'a complete audit trail from evidence to decision']
-	const no = ['designs better than a well-prompted single call', 'more repeatable results']
+	const v = EXT.validity_per_model_8x5, m8 = Object.keys(v), fin = m8.reduce((a, m) => [a[0] + v[m].Final.valid, a[1] + v[m].Final.attempts], [0, 0])
+	const yes = [html`a complete assignment, guaranteed <${Term} k="repair">by construction</${Term}> (${fin[0]} of ${fin[1]} runs valid)`, `a third fewer tokens, cheaper than 80k in ${EXT.tokens_8_models_5reps_all_recorded.final_vs_80k.losses} of ${EXT.tokens_8_models_5reps_all_recorded.final_vs_80k.n_cells} cells`, 'modest design gains: BCP and DI higher, CMod higher (partly by construction)', 'up to three explicit alternatives and a complete audit trail']
+	const no = ['decompositions closer to the developers\' reference', 'more repeatable results', 'valid output with every model']
 	const drawer = { title: 'What the agentic organisation buys', kicker: '§VI-A', tabs: [{ id: 'text', label: 'The argument', render: () => html`<div>${body('sc:disc-buys')}</div>` }], source: 'Source: §VI-A.' }
 	return html`<${Stage} still=${still}>
 		<div style=${{ ...box(110, 260, 820, 560) }}>
@@ -21,18 +23,19 @@ export function BuysScene({ b, still }) {
 			${yes.map((t, i) => html`<div key=${i} style=${{ fontFamily: F.hand, fontSize: 32, lineHeight: 1.3, margin: '20px 0 0', ...reveal(true, still, { delay: 120 * i }) }}>• ${t}</div>`)}
 		</div>
 		<div style=${{ ...box(990, 260, 820, 560), ...reveal(B >= 1, still) }}>
-			<div style=${{ fontFamily: F.hand, fontSize: 44, color: C.red }}>no quality benefit ✗</div>
+			<div style=${{ fontFamily: F.hand, fontSize: 44, color: C.red }}>not bought ✗</div>
 			${no.map((t, i) => html`<div key=${i} style=${{ fontFamily: F.hand, fontSize: 32, lineHeight: 1.3, margin: '20px 0 0' }}>• ${t}</div>`)}
-			<div style=${{ fontFamily: F.sans, fontSize: 20, color: C.dim, lineHeight: 1.5, marginTop: 30 }}>An autonomous agent received the same inputs and goals, yet once collapsed a system into one service and once silently dropped three classes: flexibility without guarantees <${Cite} k="xia2024agentless" />.</div>
+			<div style=${{ fontFamily: F.sans, fontSize: 20, color: C.dim, lineHeight: 1.5, marginTop: 30 }}>An autonomous agent received the same inputs and goals, yet collapsed a system into one service, silently dropped classes, and with gpt-oss:120b wrote an unreadable result in ${EXT.validity_per_model_8x5['gpt-oss:120b']['OpenCode-B3'].unrecorded} of ${EXT.validity_per_model_8x5['gpt-oss:120b']['OpenCode-B3'].attempts} runs: flexibility without guarantees <${Cite} k="xia2024agentless" />.</div>
 		</div>
-		<div style=${{ ...box(110, 860, 1700, 60), textAlign: 'center', fontFamily: F.hand, fontSize: 34, ...reveal(B >= 2, still) }}>Much of an architect's cost is checking LLM output: a well-formed, auditable answer lowers it even when it is no better.</div>
+		<div style=${{ ...box(110, 860, 1700, 60), textAlign: 'center', fontFamily: F.hand, fontSize: 34, ...reveal(B >= 2, still) }}>Much of an architect's cost is checking LLM output: a well-formed, auditable answer lowers it, and here it is also modestly better.</div>
 		<${Inside} x=${1560} y=${196} w=${300} label="The argument" drawer=${drawer} still=${still} />
 		<${SlideSource}>§VI-A</${SlideSource}>
 	</${Stage}>`
 }
 
-// ------------------------------------------------------------------ VI-B…E · four lessons
+// ------------------------------------------------------------------ VI-B…F · five lessons
 const LESSONS = [
+	['sc:disc-repeats', 'Single runs are not enough', 'One run per model hid real gains and showed a gain that later vanished; plan for many cells and repeated runs.'],
 	['sc:disc-safeguards', 'Safeguards matter more than reasoning', 'The components with measurable effects were deterministic; let the LLM interpret and propose, and let code check, compare and improve.'],
 	['sc:disc-selfref', 'Never grade a candidate by its own construction', 'For every selection criterion, ask whether any candidate was built to satisfy it.'],
 	['sc:disc-proxies', 'Structural proxies are not business cohesion', 'Inheritance coupling looks like cohesion to CMod: decision support, not an autonomous replacement.'],
@@ -42,14 +45,14 @@ export function LessonsScene({ b, still }) {
 	return html`<${Stage} still=${still}>
 		${LESSONS.map(([label, t, s], i) => {
 			const drawer = { title: t, kicker: `§${LABELS[label]}`, tabs: [{ id: 'text', label: 'The current write-up', render: () => html`<div>${body(label)}</div>` }], source: `Source: §${LABELS[label]}.` }
-			return html`<${Card} key=${label} drawer=${drawer} still=${still} delay=${i * 120} style=${{ left: 110 + (i % 2) * 865, top: 260 + Math.floor(i / 2) * 350, width: 835, height: 320, padding: '22px 28px' }}>
+			return html`<${Card} key=${label} drawer=${drawer} still=${still} delay=${i * 120} style=${{ left: 110 + (i % 3) * 573, top: 260 + Math.floor(i / 3) * 340, width: 553, height: 315, padding: '20px 24px' }}>
 				<div style=${{ fontFamily: F.hand, fontSize: 26, color: C.red }}>§${LABELS[label]}</div>
-				<div style=${{ fontFamily: F.hand, fontSize: 40, lineHeight: 1.15, margin: '6px 0 14px' }}>${t}</div>
-				<div style=${{ fontFamily: F.sans, fontSize: 20, lineHeight: 1.5, color: C.dim }}>${s}</div>
+				<div style=${{ fontFamily: F.hand, fontSize: 34, lineHeight: 1.15, margin: '6px 0 12px' }}>${t}</div>
+				<div style=${{ fontFamily: F.sans, fontSize: 19, lineHeight: 1.45, color: C.dim }}>${s}</div>
 				<div style=${{ position: 'absolute', bottom: 16, right: 24, fontFamily: F.sans, fontSize: 16, color: C.red, fontWeight: 600 }}>⌕ read the section</div>
 			</${Card}>`
 		})}
-		<${SlideSource}>§VI-B–E</${SlideSource}>
+		<${SlideSource}>§VI-B–F</${SlideSource}>
 	</${Stage}>`
 }
 
@@ -70,17 +73,17 @@ export function ImplicationsScene({ b, still }) {
 
 // ------------------------------------------------------------------ VII · threats to validity
 const THREAT_LINES = {
-	'Construct validity.': 'Metrics capture parts of quality; coarse partitions inflate some; references are one valid answer; DTP, DI, BCP see only part of each system.',
-	'Internal validity.': 'Developed on the same systems with one model; last change prompted by a blinded outcome; replayed outputs; OpenCode settings differ.',
-	'External validity.': 'Small (23–53 classes), Java, public systems the models may know; one provider; class-level partitions only.',
-	'Conclusion validity.': '16 paired cells: small differences undetectable; no correction across metrics; three models run once per cell.',
-	'Reliability.': 'Everything is released and every number regenerates from stored artifacts, but hosted models evolve.',
+	'Construct validity.': 'Metrics capture parts of quality; the workflow optimizes CMod and CiD itself; coarse partitions inflate some; references are one valid answer; DTP, DI, BCP see only part of each system.',
+	'Internal validity.': 'Developed on the four systems with DeepSeek (and GLM-5.2 for the last change); six held-out models share those systems; last change prompted by a blinded outcome; plan declared after the first report; OpenCode settings and workspace differ.',
+	'External validity.': 'Small (23–53 classes), Java, public systems the models may know; 17 models, one provider; class-level partitions only.',
+	'Conclusion validity.': '32 cells × five seeds, Holm across metrics; DI does not survive clustering by model; nine models run once; the provider is not deterministic at a fixed seed.',
+	'Reliability.': 'Every run is stored and every number regenerates from the artifacts without model calls, but hosted models evolve.',
 }
 export function ThreatsScene({ still }) {
 	const items = paras('sc:threats').filter((e) => e.head)
 	return html`<${Stage} still=${still}>
 		${items.map((e, i) => {
-			const drawer = { title: e.head.replace(/\.$/, ''), kicker: 'threats to validity · §VII', tabs: [{ id: 't', label: 'The current write-up', render: () => P(rich(e.text)) }], source: 'Source: §VII.' }
+			const drawer = { title: e.head.replace(/\.$/, ''), kicker: 'threats to validity · §VII', tabs: [{ id: 't', label: 'The current write-up', render: () => html`<div>${P(rich(e.text))}${e.items.length > 0 && List(e.items.map(rich))}</div>` }], source: 'Source: §VII.' }
 			const x = 110 + (i % 3) * 575, y = 260 + Math.floor(i / 3) * 340
 			return html`<${Card} key=${e.head} drawer=${drawer} still=${still} delay=${i * 100} style=${{ left: x, top: y, width: 545, height: 310, padding: '20px 26px' }}>
 				<div style=${{ fontFamily: F.hand, fontSize: 38 }}>${e.head.replace(/\.$/, '').replace(' validity', '')}</div>
@@ -97,7 +100,7 @@ export function ConclusionScene({ b, still }) {
 	const B = still ? 2 : b
 	const c = paras('sc:conclusion')
 	const drawer = { title: 'Conclusion', kicker: '§VIII', tabs: [{ id: 'c', label: 'The current write-up', render: () => html`<div>${body('sc:conclusion')}</div>` }], source: 'Source: §VIII.' }
-	const future = ['instantiate the Quality Agent for stakeholder constraints', 'replace LLM-inferred ownership links with source-verified evidence', 'add explicit refactoring operations, such as replicating shared classes', 'evaluate on larger, less-exposed systems, together with practising architects']
+	const future = ['a human evaluation with practising architects (planned)', 'evaluate on larger, less-exposed systems not used during development', 'replace LLM-inferred ownership links with source-verified evidence', 'add explicit refactoring operations, such as replicating shared classes; instantiate the Quality Agent']
 	return html`<${Stage} still=${still}>
 		<div style=${{ ...box(110, 270, 1700, 300), display: 'flex', gap: 40, alignItems: 'center' }}>
 			<div style=${{ flex: 1, border: `3px solid #2e9e6e`, borderRadius: 22, padding: '26px 30px', background: '#fffdf8' }}>
@@ -125,18 +128,19 @@ const STUDIES = [
 	{ id: 'matched-agentic-v1', t: 'First matched campaign', role: 'superseded', what: 'The first comparison of all arms with a locally served Qwen model. Generation and validation used different class universes, which led to the canonical class scope (ADR 0005).', status: 'superseded' },
 	{ id: 'matched-agentic-v2', t: 'qwen-35B pilot', role: 'pilot', what: 'The same comparison with the canonical scope and NVIDIA\'s NVFP4 build of Qwen 3.6 35B-A3B (32 runs). Here repair mattered: 3 of 12 raw candidates were invalid and were repaired.', status: 'kept' },
 	{ id: 'matched-ollama-deepseek-v1', t: 'Matched DeepSeek campaign', role: 'baseline choice', what: 'All eight treatments with DeepSeek v4.1 Flash (32 runs, all valid). The evidence for choosing 80k concat and OpenCode baseline-3; its first 80k and OpenCode runs are reused in the benchmark.', status: 'archived' },
-	{ id: 'agentic-improvement-lab-v1', t: 'Improvement lab', role: 'design experiments', what: 'One change at a time on DeepSeek (trials T000–T008): the source of the design experiments in Table VII.', status: 'archived' },
+	{ id: 'agentic-improvement-lab-v1', t: 'Improvement lab', role: 'design experiments', what: 'One change at a time on DeepSeek (trials T000–T008): the source of the design experiments in Table IV.', status: 'archived' },
 	{ id: 'agentic-development-loop-v1', t: 'Development loop', role: 'selection tests', what: 'Replayed the recorded LLM outputs to test selection and refinement changes cheaply; it produced the final version (v1b), checked once on GLM-5.2 as a hold-out (2 of 5 design metrics better there).', status: 'kept' },
-	{ id: 'final-benchmark-v1', t: 'Final benchmark', role: 'the current results', what: 'Four models × four systems × three arms, five DeepSeek repetitions: the 96 observations behind every result, plus the earlier workflow version kept for the ablation.', status: 'current' },
+	{ id: 'final-benchmark-v1', t: 'Benchmark runs (I)', role: 'the results', what: 'DeepSeek v4.1 Flash with five seeds and the earlier seed-1 runs of GLM-5.2, gpt-oss:120b and gemma4:31b (96 runs, three arms, four systems), plus the earlier workflow version kept for the ablation. One protocol with the folder below.', status: 'current' },
+	{ id: 'final-benchmark-extension-v1', t: 'Benchmark runs (II)', role: 'the results', what: 'The rest of the benchmark under the same protocol: five seeds for the other seven primary models, one run of the nine breadth models (497 runs, 31 unreadable outputs), the V-measure ablation replayed on every stored workflow run (139 replays), and the read-only analysis behind every result.', status: 'current' },
 ]
 export function StudiesScene({ still }) {
 	return html`<${Stage} still=${still}>
-		<div style=${{ ...box(110, 245, 1700, 40), fontFamily: F.sans, fontSize: 18, color: C.dim }}>every study lives in studies/&lt;id&gt; with its runs, manifests and README; click one</div>
+		<div style=${{ ...box(110, 245, 1700, 40), fontFamily: F.sans, fontSize: 18, color: C.dim }}>every study lives in studies/${"<"}id${">"} with its runs, manifests and README; click one</div>
 		${STUDIES.map((s, i) => {
 			const drawer = { title: s.t, kicker: `studies/${s.id} · ${s.status}`, tabs: [{ id: 'w', label: 'What it was', render: () => html`<div>${P(s.what, { fontSize: 23 })}${Src(`studies/${s.id}/README.md`)}</div>` }] }
-			const x = 110 + (i % 3) * 575, y = 300 + Math.floor(i / 3) * 215
+			const x = 110 + (i % 3) * 575, y = 296 + Math.floor(i / 3) * 172
 			const hot = s.status === 'current'
-			return html`<${Card} key=${s.id} drawer=${drawer} still=${still} delay=${i * 60} color=${hot ? C.red : s.status === 'archived' || s.status === 'superseded' ? C.faint : C.ink} style=${{ left: x, top: y, width: 545, height: 196, padding: '14px 22px' }}>
+			return html`<${Card} key=${s.id} drawer=${drawer} still=${still} delay=${i * 60} color=${hot ? C.red : s.status === 'archived' || s.status === 'superseded' ? C.faint : C.ink} style=${{ left: x, top: y, width: 545, height: 160, padding: '12px 22px' }}>
 				<div style=${{ fontFamily: F.sans, fontSize: 15, color: hot ? C.red : C.dim, fontWeight: 700, letterSpacing: 0.4 }}>${i + 1} · ${s.role.toUpperCase()} · ${s.status}</div>
 				<div style=${{ fontFamily: F.hand, fontSize: 32, marginTop: 2, lineHeight: 1.15 }}>${s.t}</div>
 				<div style=${{ fontFamily: F.mono, fontSize: 14, color: C.dim, marginTop: 2 }}>${s.id}</div>
@@ -162,15 +166,15 @@ export function NotAdoptedScene({ still }) {
 			<div style=${{ fontFamily: F.sans, fontSize: 15, fontWeight: 700, color: C.dim }}>${id === 'loop' ? 'DEVELOPMENT LOOP' : `DESIGN EXPERIMENT ${id}`}</div>
 			<div style=${{ fontFamily: F.hand, fontSize: 34, marginTop: 4 }}>${t}</div>
 			<div style=${{ fontFamily: F.sans, fontSize: 19, lineHeight: 1.45, color: C.dim, marginTop: 6 }}>${s}</div></div>`)}
-		<${SlideSource}>Table VII · studies/agentic-development-loop-v1/loop-log.jsonl</${SlideSource}>
+		<${SlideSource}>Table IV · studies/agentic-development-loop-v1/loop-log.jsonl</${SlideSource}>
 	</${Stage}>`
 }
 
 // ------------------------------------------------------------------ appendix · reproducing the paper
 export function ReproduceScene({ still }) {
 	const steps = [
-		['every run is a folder', 'studies/final-benchmark-v1/runs/<run-id>: inputs, all LLM calls, artifacts, blinded report, manifest'],
-		['every number is recomputed', 'tools/analyze_final_benchmark.py reads the runs and writes analysis/final-benchmark-analysis.json, without calling a model'],
+		['every run is a folder', 'studies/final-benchmark-v1/runs/ and studies/final-benchmark-extension-v1/runs/<run-id>: inputs, all LLM calls, artifacts, blinded report, manifest'],
+		['every number is recomputed', 'tools/analyze_final_benchmark.py (the runs in final-benchmark-v1) and studies/final-benchmark-extension-v1/analysis/analyze_extension.py (all runs) read the runs and write their analysis JSON, without calling a model'],
 		['every prompt and protocol is versioned', 'protocols/campaigns/*.yaml and protocols/decomposer-configs/*: a protocol is never changed after it has produced observations'],
 		['a replication package links it all', html`the replication package <${Cite} k="sambu2026replication" />, to be archived before submission`],
 	]

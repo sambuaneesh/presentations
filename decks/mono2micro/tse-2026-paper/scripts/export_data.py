@@ -6,6 +6,7 @@ Sources (all read-only):
                                           (citation numbers) and .aux (section/table/figure numbers)
   benchmarks/systems/<system>/            class inventories and reference decompositions
   studies/final-benchmark-v1/             run artifacts and analysis/final-benchmark-analysis.json
+  studies/final-benchmark-extension-v1/   run artifacts and analysis/extension-analysis.json (the paper's results)
 
 Run from the repository root:
 
@@ -19,7 +20,9 @@ ROOT = Path(__file__).resolve().parents[3]
 MS = ROOT / "papers/tse-2026/manuscript"
 OUT = Path(__file__).resolve().parents[1] / "ext/data"
 OUT.mkdir(parents=True, exist_ok=True)
-MAIN = "0.Main_bare_jrnl_new_sample4"
+MAIN = "main"
+SEC = {"abstract": "00-abstract", "intro": "01-introduction", "results": "05-results",
+       "prose": ("05-results", "06-discussion", "07-threats", "08-conclusion", "03-workflow", "04-study-design")}
 src = lambda ext: MS / (MAIN + ext)
 
 
@@ -74,6 +77,16 @@ ACCENTS = {r"\'e": "é", r"\'a": "á", r"\'i": "í", r"\'o": "ó", r'\"o': "ö",
 def detex(s, cite_numbers=None):
     """LaTeX fragment → plain text (enough for titles, captions and sentences of this paper)."""
     s = re.sub(r"(?<!\\)%.*", "", s)
+    # \singlerun{...}: the removable single-run lesson; marked with ⟪…⟫ so the deck prints it in teal
+    while "\\singlerun{" in s:
+        i = s.index("\\singlerun{")
+        inner, end = braced(s, i + len("\\singlerun"))
+        s = s[:i] + "⟪" + inner + "⟫" + s[end:]
+    # the paper's result numbers are macros generated from the analysis (tables/numbers.tex)
+    s = re.sub(r"\\(R[A-Za-z]+)(\{\})?", lambda m: NUMBERS.get(m.group(1), m.group(0)), s)
+    # the paper's vocabulary macros (preamble.tex); the deck calls the workflow "Final"
+    for macro, text in ((r"\theours", "Final"), (r"\singleshot", "single-shot prompting"), (r"\llmarms", "LLM arms")):
+        s = s.replace(macro + "{}", text).replace(macro, text)
     s = s.replace(r"\ours{}", "Final").replace(r"\ours", "Final")
     for a, b in ACCENTS.items():
         s = s.replace("{" + a + "}", b).replace(a, b)
@@ -87,18 +100,20 @@ def detex(s, cite_numbers=None):
     s = s.replace("---", "—").replace("--", "–").replace("``", "“").replace("''", "”").replace("~", " ")
     s = s.replace(r"\%", "%").replace(r"\&", "&").replace(r"\_", "_").replace(r"\$", "$").replace(r"\,", " ").replace(r"\\", " ")
     s = re.sub(r"\$([^$]*)\$", lambda m: m.group(1).replace("\\times", "×").replace("\\le", "≤").replace("\\delta", "δ")
-               .replace("\\alpha", "α").replace("\\max", "max").replace("\\sqrt", "√").replace("^", "").replace("\\", ""), s)
+               .replace("\\alpha", "α").replace("\\dagger", "†").replace("\\ast", "*").replace("\\diamond", "◆").replace("\\pm", "±").replace("\\max", "max").replace("\\sqrt", "√").replace("^", "").replace("\\", ""), s)
     s = re.sub(r"\\[a-zA-Z]+\*?", "", s)
     s = s.replace("{", "").replace("}", "")
     return re.sub(r"\s+", " ", s).strip()
 
 
+NUMBERS = {m.group(1): m.group(2) for m in re.finditer(r"\\newcommand\{\\(R[A-Za-z]+)\}\{(.*)\}", (MS / "tables/numbers.tex").read_text())} \
+    if (MS / "tables/numbers.tex").exists() else {}
 bib = parse_bib((MS / "refs.bib").read_text())
 order = re.findall(r"\\bibitem\{([^}]+)\}", src(".bbl").read_text())
 NUM = {k: i + 1 for i, k in enumerate(order)}
 
 # Where each reference is cited: the sentence around each \cite, per section.
-SECTION_FILES = sorted((MS / "sections").glob("*.tex"), key=lambda p: int(p.name.split(".")[0]))
+SECTION_FILES = sorted((MS / "sections").glob("*.tex"), key=lambda p: int(re.match(r"\d+", p.name).group(0)))
 contexts = {k: [] for k in order}
 for f in SECTION_FILES:
     tex = f.read_text()
@@ -143,12 +158,12 @@ main_tex = src(".tex").read_text()
 title = detex(re.search(r"\\title\{(.*?)\}\n", main_tex).group(1))
 authors = [a.strip() for a in detex(re.search(r"\\author\{([^%]*)%", main_tex).group(1)).replace(" and ", ", ").split(",") if a.strip()]
 affil = [detex(braced(main_tex, m.end() - 1)[0]) for m in re.finditer(r"\\thanks\{", main_tex)]
-abstract_tex = (MS / "sections/0.abstract.tex").read_text()
+abstract_tex = (MS / f"sections/{SEC['abstract']}.tex").read_text()
 abstract = [{"head": detex(h), "text": detex(t, NUM)} for h, t in
             re.findall(r"\\textbf\{\\textit\{([^}]*)\}\}:\s*(.*?)(?=\n\s*\n|\\end\{abstract\})", abstract_tex, re.S)]
 keywords = [k.strip() for k in detex(re.search(r"\\begin\{IEEEkeywords\}(.*?)\\end\{IEEEkeywords\}", abstract_tex, re.S).group(1)).split(",")]
 
-intro = (MS / "sections/1.introduction.tex").read_text()
+intro = (MS / f"sections/{SEC['intro']}.tex").read_text()
 def items(block):
     return [detex(x, NUM) for x in re.findall(r"\\item\s*(.*?)(?=\\item|\\end\{(?:itemize|enumerate)\})", block, re.S)]
 rqs = items(re.search(r"We address four research questions:(.*?)\\end\{itemize\}", intro, re.S).group(0) + "")
@@ -165,8 +180,13 @@ def table_rows(name):
     head_block = t[t.index("\\toprule") + 8:t.index("\\midrule")]
     body = t[t.index("\\midrule") + 8:t.index("\\bottomrule")]
     split = lambda line: [detex(c, NUM) for c in re.split(r"(?<!\\)&", line)]
-    head = split(head_block.replace("\\\\", "").strip())
-    rows = [split(r) for r in re.split(r"\\\\", body.replace("\\midrule", "")) if r.strip()]
+    lines = [re.sub(r"\\cmidrule(\([^)]*\))?\{[^}]*\}", "", x).strip() for x in head_block.split("\\\\")]
+    lines = [x for x in lines if x]
+    head = split(lines[-1])
+    if len(lines) > 1 and "C2C" in lines[0]:
+        head = [("C2C-" + h) if h.isdigit() else h for h in head]
+    # \\multicolumn rows are group headings (e.g. "Primary analysis"), not data
+    rows = [split(r) for r in re.split(r"\\\\", body.replace("\\midrule", "")) if r.strip() and not r.strip().startswith("\\multicolumn")]
     return {"caption": cap, "head": head, "rows": rows, "label": LABELS.get(re.search(r"\\label\{([^}]+)\}", t).group(1))}
 
 
@@ -289,7 +309,7 @@ js("paper", PAPER={"title": title, "authors": authors, "affiliations": affil, "a
    LABELS=LABELS, POSITIONING=pos, SYSTEMS_TABLE=systems, METRICS_TABLE=metrics_table, AGENTS_TABLE=agents_table)
 js("systems", SYSTEMS=SYS, PETCLINIC={"edges": petclinic_edges, "packages": petclinic_packages, "final": petclinic_final,
                                      "finalMetrics": petclinic_final_metrics, "run": v1b.name})
-results_tex = (MS / "sections/5.results.tex").read_text()
+results_tex = (MS / f"sections/{SEC['results']}.tex").read_text()
 rq_answers = {m.group(1): detex(m.group(2), NUM) for m in re.finditer(r"\\rqanswer\{(RQ\d)\}\{(.*?)\}\n", results_tex, re.S)}
 
 
@@ -317,9 +337,29 @@ def drop_mojo(text):
 
 
 PROSE = {}
-for name in ("5.results", "6.discussion", "7.threats", "8.conclusion", "4.application"):
+for name in SEC["prose"]:
     PROSE.update(paragraphs_by_label((MS / f"sections/{name}.tex").read_text()))
 assert not any("mojo" in json.dumps(v).lower() for k, v in PROSE.items() if k != "sc:method-similarity") or True
 
 js("results", TABLES=RESULT_TABLES, ANALYSIS=analysis, PROMPTS=prompts, RUN_FILES=run_files, SECTION_TITLES=section_text, RQ_ANSWERS=rq_answers,
    PROSE={k: [{**e, "text": drop_mojo(e["text"]), "items": [drop_mojo(x) for x in e["items"] if drop_mojo(x)]} for e in v] for k, v in PROSE.items()})
+
+
+# ------------------------------------------------------------------ the results: all runs of the study
+# The paper's results come from studies/final-benchmark-extension-v1/analysis/extension-analysis.json (read-only).
+EXT_STUDY = ROOT / "studies/final-benchmark-extension-v1"
+ext_analysis = json.loads((EXT_STUDY / "analysis/extension-analysis.json").read_text())
+assert "mojo" not in json.dumps(ext_analysis).lower()
+# Run roles: the eight primary models (seeds 1-5), the breadth models (seed 1), and the models whose seed 1 also
+# ran earlier, for the repeatability check (the first-benchmark models with only repetition 1 on disk).
+bench_reps = {}
+for run in (ROOT / "studies/final-benchmark-v1/runs").iterdir():
+    m = json.loads((run / "manifest.json").read_text())
+    bench_reps.setdefault(m["model"]["requested"], set()).add(m["repetition"])
+roles = {
+    "primary": list(ext_analysis["models8_5reps"]["arm_means"]),
+    "breadth": ext_analysis["validity_all_17"]["breadth_models"],
+    "repeat": sorted(mo for mo, reps in bench_reps.items() if reps == {1}),
+}
+assert len(roles["primary"]) == 8 and len(roles["breadth"]) == 9 and len(roles["repeat"]) == 3
+js("extension", EXT=ext_analysis, ROLES=roles)

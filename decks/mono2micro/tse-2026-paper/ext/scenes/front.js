@@ -35,8 +35,8 @@ export function TitleScene({ still }) {
 	return html`<${Stage} still=${still}>
 		<div style=${{ ...box(140, 190, 1640, 400), animation: still ? 'none' : `tp-in 800ms ${EASE} both` }}>
 			<div style=${{ fontFamily: F.hand, fontSize: 30, color: C.red, marginBottom: 18 }}>Research experiments so far</div>
-			<div style=${{ fontFamily: F.hand, fontSize: 76, lineHeight: 1.08, color: C.ink }}>Agentic LLM Workflows for Monolith-to-Microservice Decomposition</div>
-			<div style=${{ fontFamily: F.hand, fontSize: 40, lineHeight: 1.2, color: C.dim, marginTop: 18 }}>An Empirical Study of Quality, Validity, and Cost</div>
+			<div style=${{ fontFamily: F.hand, fontSize: 76, lineHeight: 1.08, color: C.ink }}>${PAPER.title.split(': ')[0]}</div>
+			<div style=${{ fontFamily: F.hand, fontSize: 40, lineHeight: 1.2, color: C.dim, marginTop: 18 }}>${PAPER.title.split(': ').slice(1).join(': ')}</div>
 		</div>
 		<div style=${{ ...box(140, 640, 1640, 60), fontFamily: F.hand, fontSize: 40, color: C.ink, ...reveal(true, still, { delay: 300 }) }}>Aneesh</div>
 		<div style=${{ ...box(140, 700, 1640, 50), fontFamily: F.sans, fontSize: 21, color: C.dim, ...reveal(true, still, { delay: 400 }) }}>

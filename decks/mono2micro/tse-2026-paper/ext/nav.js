@@ -85,7 +85,7 @@ export function Compass({ index }) {
 		window.addEventListener('keydown', onKey, true)
 		return () => window.removeEventListener('keydown', onKey, true)
 	}, [open])
-	return html`<div ref=${host}>
+	return html`<div ref=${host} data-nav="1">
 		<${Dock} index=${index} onMap=${() => setOpen(true)} />
 		${open && html`<${Panel} index=${index} close=${() => setOpen(false)} />`}
 	</div>`

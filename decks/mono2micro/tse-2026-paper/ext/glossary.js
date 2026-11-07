@@ -157,14 +157,14 @@ export const GLOSSARY = {
 		term: 'Partition', family: 'the task',
 		short: 'A split of a set into groups where every element is in exactly one group.',
 		body: () => html`<div>${P('Every decomposition this study produces or compares is a partition of the class inventory. The benchmark\'s reference decompositions are not: they put some shared classes in several services.')}
-			${P(html`Why produce partitions anyway: comparability with the tools and baselines, metrics that assume one service per class, and keeping "should this class be duplicated?" as a separate later decision (§III-D).`)}</div>`,
-		source: '§II-A, §III-D', see: ['overlap', 'reference', 'c2c'],
+			${P(html`Why produce partitions anyway: comparability with the tools and baselines, metrics that assume one service per class, and keeping "should this class be duplicated?" as a separate later decision (§IV-G).`)}</div>`,
+		source: '§II-A, §IV-G', see: ['overlap', 'reference', 'c2c'],
 	},
 	overlap: {
 		term: 'Overlapping reference', family: 'the benchmark',
 		short: 'A reference decomposition that lists some classes in more than one service, as real systems do when they copy shared code into each service.',
 		body: () => P('Shared classes are base entities, exceptions, factories and utilities. In 7ep Demo, 12 of 47 classes appear in more than one service, adding 23 extra memberships; in Spring PetClinic, BaseEntity, NamedEntity, Person and PetClinicApplication each appear in several services.'),
-		source: '§III-D, Table IV; benchmarks/systems/*/ground-truth', see: ['partition', 'c2c', 'reference'],
+		source: '§IV-G, Table VI; benchmarks/systems/*/ground-truth', see: ['partition', 'c2c', 'reference'],
 	},
 	reference: {
 		term: 'Reference decomposition', family: 'the benchmark',
@@ -177,7 +177,7 @@ export const GLOSSARY = {
 		term: 'Class inventory', family: 'the benchmark',
 		short: 'The fixed list of classes that counts for a system: the evaluated universe. Every arm gets exactly this list.',
 		body: () => P('Each arm also gets a source snapshot restricted to these classes and the static dependency graph filtered to them. 47, 24, 53 and 23 classes for 7ep Demo, JPetStore, PartsUnlimitedMRP and Spring PetClinic.'),
-		source: '§III-C, Table IV; benchmarks/systems/*/evidence/application/classes.txt', see: ['validity', 'dependency-graph'],
+		source: '§IV-B, Table VI; benchmarks/systems/*/evidence/application/classes.txt', see: ['validity', 'dependency-graph'],
 	},
 	'dependency-graph': {
 		term: 'Static dependency graph', family: 'evidence',
@@ -201,13 +201,13 @@ export const GLOSSARY = {
 		term: 'Search-based modularization', family: 'techniques',
 		short: 'Treat decomposition as optimisation: search over partitions for one that maximises a quality function.',
 		body: () => P(html`Bunch hill-climbs over partitions to maximise modularization quality <${Cite} k="mitchell2006bunch" />; later work made it multi-objective <${Cite} k="praditwong2011multiobjective" />. The workflow's refiner is a small, bounded search of this kind.`),
-		source: '§II-A, §III-B (5)', see: ['local-search', 'louvain'],
+		source: '§II-A, §III-C', see: ['local-search', 'louvain'],
 	},
 	louvain: {
 		term: 'Louvain community detection', family: 'techniques',
 		short: 'A fast graph-clustering algorithm that groups nodes to maximise modularity.',
 		body: () => P(html`Common in decomposition tools <${Cite} k="blondel2008louvain" />. Modularity optimisation has a resolution limit: below a certain size, small communities cannot be found <${Cite} k="fortunato2007resolution" />. Louvain-based seeds were tried as a design experiment (E2) and not adopted.`),
-		source: '§II-A, Table VII', see: ['search-based'],
+		source: '§II-A, Table IV', see: ['search-based'],
 	},
 
 	// ---- metrics
@@ -221,7 +221,7 @@ export const GLOSSARY = {
 		term: 'Similarity metric', family: 'metrics',
 		short: 'Compares a produced decomposition with the reference decomposition. Computed only after the answer is frozen.',
 		body: () => P(html`This work uses <${Term} k="c2c" /> at three thresholds.`),
-		source: '§II-B, §III-D', see: ['c2c', 'blinded-evaluation'],
+		source: '§II-B, §IV-G', see: ['c2c', 'blinded-evaluation'],
 	},
 	cmod: {
 		term: 'CMod · Code Modularity', family: 'design metric',
@@ -271,7 +271,7 @@ export const GLOSSARY = {
 			${List(['C2C-10: does a produced service correspond to any reference service at all?', 'C2C-33: does it capture a substantial part of one?', 'C2C-50: does it match one closely? (the strictest)'])}
 			${P('Limits: it counts services, not classes (a big service weighs the same as a small one); it does not penalise missing a reference service; the implementation needs strictly more than x %.', { fontSize: 19, color: C.dim })}</div>`,
 		example: () => html`<${ToyC2C} />`,
-		source: 'Table I, §III-D, §VII; vendor/legacy-metrics-engine/calculator/c2c.py', see: ['overlap', 'similarity-metric'],
+		source: 'Table I, §IV-G, §VII; vendor/legacy-metrics-engine/calculator/c2c.py', see: ['overlap', 'similarity-metric'],
 	},
 	coarse: {
 		term: 'Coarse-partition inflation', family: 'metrics',
@@ -286,7 +286,7 @@ export const GLOSSARY = {
 		formula: html`MF = 100 · (1 − 0.6·s<sub>max</sub> − 0.4·s<sub>1</sub>), clipped at 0`,
 		body: () => P(html`s<sub>max</sub>: share of classes in the largest service; s<sub>1</sub>: share of services with exactly one class. It counters the preference of CMod and CiD for coarse partitions. It is not a measured migration effort.`),
 		example: () => html`<${ToyMetric} metric="mf" />`,
-		source: '§III-B (4), Eq. 1; agents/decomposition_evaluator.py (_migration_feasibility)', see: ['composite', 'coarse'],
+		source: '§III-C, Eq. 1; agents/decomposition_evaluator.py (_migration_feasibility)', see: ['composite', 'coarse'],
 	},
 
 	// ---- LLMs and agents
@@ -294,7 +294,7 @@ export const GLOSSARY = {
 		term: 'LLM · large language model', family: 'LLMs',
 		short: 'A neural network trained on large amounts of text that continues a prompt; here it reads code and writes structured JSON answers.',
 		body: () => P('The study uses four hosted models from different developers (DeepSeek v4.1 Flash, GLM-5.2, gpt-oss:120b, gemma4:31b), all served by Ollama Cloud.'),
-		source: '§III-C, Table V', see: ['token', 'temperature', 'prompt'],
+		source: '§IV-E, Table VIII', see: ['token', 'temperature', 'prompt'],
 	},
 	prompt: {
 		term: 'Prompt', family: 'LLMs',
@@ -305,18 +305,18 @@ export const GLOSSARY = {
 		term: 'Token', family: 'LLMs',
 		short: 'The unit an LLM reads and writes, roughly three to four characters of English or code. Cost is counted in input plus output tokens.',
 		body: () => P('The study reports total input and output tokens per system for each run (Q3).'),
-		source: '§III-A, Q3', see: ['llm'],
+		source: '§IV-A, Q3', see: ['llm'],
 	},
 	temperature: {
 		term: 'Temperature', family: 'LLMs',
 		short: 'A sampling setting: 0 always picks the most likely next token, higher values add randomness.',
 		body: () => P(html`All workflow and single-shot calls use 0.2. Even at temperature 0, hosted LLMs are not fully deterministic <${Cite} keys=${['ouyang2025nondeterminism', 'atil2024nondeterminism']} />.`),
-		source: '§III-C Controls', see: ['nondeterminism', 'seed'],
+		source: '§IV-C', see: ['nondeterminism', 'seed'],
 	},
 	seed: {
 		term: 'Seed · repetition', family: 'LLMs',
 		short: 'A number that fixes the random choices of a run. The study repeats DeepSeek five times per cell with seeds 1–5.',
-		source: '§III-C Repetitions', see: ['nondeterminism', 'temperature'],
+		source: '§IV-H', see: ['nondeterminism', 'temperature'],
 	},
 	nondeterminism: {
 		term: 'Non-determinism', family: 'LLMs',
@@ -328,19 +328,19 @@ export const GLOSSARY = {
 		term: 'Single-shot prompting', family: 'approaches',
 		short: 'One final LLM call produces the whole decomposition from everything placed in its prompt.',
 		body: () => P(html`Our ICSA 2026 pipeline <${Cite} k="sambu2026icsa" /> is of this kind; in this study it is the "80k concat" arm.`),
-		source: '§I, §III-C Arms', see: ['80k', 'agentic-workflow', 'autonomous-agent'],
+		source: '§I, §IV-C', see: ['80k', 'agentic-workflow', 'autonomous-agent'],
 	},
 	'80k': {
 		term: '80k concat', family: 'approaches',
 		short: 'The single-shot arm: pack the source into chunks of about 80,000 tokens, summarise, generate five architectural views, then one final call decomposes.',
 		body: () => P('On these systems the scoped source (11k–41k tokens) fits in one chunk, so the arm makes seven calls plus retries. It is the single-shot representative because the previous study found no benefit from other chunk sizes or from hierarchical summarisation.'),
-		source: '§III-C Arms, §IV-B', see: ['single-shot', 'hierarchical', 'views'],
+		source: '§IV-C, §IV-D', see: ['single-shot', 'hierarchical', 'views'],
 	},
 	hierarchical: {
 		term: 'Hierarchical summarisation', family: 'approaches',
 		short: 'Summarise files, then summarise the summaries, before deciding.',
 		body: () => P(html`In the matched DeepSeek runs it cost 414,006 tokens per system against 89,516 for 80k concat (4.6×) with lower C2C-50 (51.6 vs 60.8), so it is omitted from the benchmark <${Cite} k="dhulshette2025hierarchical" />.`),
-		source: '§IV-B', see: ['80k'],
+		source: '§IV-D', see: ['80k'],
 	},
 	views: {
 		term: 'Architectural views A1–A6', family: 'approaches',
@@ -369,7 +369,7 @@ export const GLOSSARY = {
 		term: 'OpenCode', family: 'approaches',
 		short: 'An open-source autonomous coding agent, used as the "autonomous agent" arm. It works in an isolated folder and must write the decomposition to a file.',
 		body: () => P('It does not expose a temperature, so it runs with the provider default and reasoning effort low. Of five prompt variants, the study reports baseline-3, chosen by information parity.'),
-		source: html`§III-C Arms, §IV-B <${Cite} k="opencode2026" />`, see: ['information-parity', 'autonomous-agent'],
+		source: html`§IV-C, §IV-D <${Cite} k="opencode2026" />`, see: ['information-parity', 'autonomous-agent'],
 	},
 	'self-correction': {
 		term: 'Self-correction', family: 'agents',
@@ -407,7 +407,7 @@ export const GLOSSARY = {
 		term: 'Candidate collapse', family: 'workflow',
 		short: 'Different strategy prompts return the same partition, so "three candidates" are really one or two.',
 		body: () => P('Observed in design experiment E1: domain-first and balanced were identical on all four systems. Forcing diversity algorithmically (E2) gave distinct but not better candidates.'),
-		source: '§IV-A, Table VII', see: ['strategies'],
+		source: '§III-E, Table IV', see: ['strategies'],
 	},
 	repair: {
 		term: 'Repair', family: 'workflow',
@@ -419,19 +419,19 @@ export const GLOSSARY = {
 		term: 'Quality gate', family: 'workflow',
 		short: 'Structural checks a candidate must pass: non-empty services, at least three of them, names and responsibilities present; cyclic service dependencies are flagged.',
 		body: () => P('Candidates that pass are always preferred to those that fail.'),
-		source: '§III-B (4)', see: ['validity', 'composite'],
+		source: '§III-C', see: ['validity', 'composite'],
 	},
 	composite: {
 		term: 'Composite score', family: 'workflow',
 		short: 'How the evaluator ranks candidates: a weighted mean of three reference-free measures.',
 		formula: 'score = (0.3·CMod + 0.2·CiD + 0.2·MF) / 0.7',
-		source: '§III-B (4)', see: ['mf', 'cmod', 'cid', 'self-referential'],
+		source: '§III-C', see: ['mf', 'cmod', 'cid', 'self-referential'],
 	},
 	'v-measure': {
 		term: 'V-measure', family: 'workflow diagnostic',
 		short: 'How well a candidate agrees with the capability map: the harmonic mean of homogeneity (each service holds one capability) and completeness (each capability sits in one service).',
 		body: () => P(html`<${Cite} k="rosenberg2007vmeasure" />. Recorded as a diagnostic but not optimised: scoring it rewarded the candidate built from that same map (Q4).`),
-		source: '§III-B (4), §V-D', see: ['self-referential', 'capability-map'],
+		source: '§III-C, §V-D', see: ['self-referential', 'capability-map'],
 	},
 	'self-referential': {
 		term: 'Self-referential scoring', family: 'finding',
@@ -443,59 +443,59 @@ export const GLOSSARY = {
 		term: 'Strict Pareto improvement', family: 'optimisation',
 		short: 'A change that makes no objective worse and at least one better.',
 		body: () => P('The refiner accepts a move only if none of CMod, CiD and MF decreases and at least one increases, and the result stays valid.'),
-		source: '§III-B (5), Alg. 1', see: ['local-search'],
+		source: '§III-C, Alg. 1', see: ['local-search'],
 	},
 	'local-search': {
 		term: 'Bounded local search', family: 'optimisation',
 		short: 'Improve a solution by trying small changes near it and keeping the best improving one, for a limited number of rounds.',
 		body: () => P('The refiner tries single-class moves (top 12 by signal strength), applies the strict Pareto move with the largest total gain, and stops when no move is admissible or after five rounds.'),
-		source: '§III-B (5), Alg. 1', see: ['pareto', 'search-based'],
+		source: '§III-C, Alg. 1', see: ['pareto', 'search-based'],
 	},
 	'blinded-evaluation': {
 		term: 'Blinded evaluation', family: 'protocol',
 		short: 'Reference-based metrics are computed only after a result is frozen, and never fed back to any component.',
-		source: '§III-B, §III-C', see: ['oracle-firewall', 'reference'],
+		source: '§III-D, §IV-I', see: ['oracle-firewall', 'reference'],
 	},
 	'oracle-firewall': {
 		term: 'Oracle firewall', family: 'protocol',
 		short: 'The code-level separation between online selection and reference-based evaluation.',
 		body: () => List(['the metric library rejects reference-dependent metrics in any online objective', 'the reference files are physically absent from the online evaluation workspace', 'the blinded report is never passed back to any agent', 'prompts never mention the reference or the expected number of services']),
-		source: '§III-B', see: ['blinded-evaluation'],
+		source: '§III-D', see: ['blinded-evaluation'],
 	},
 	validity: {
 		term: 'Valid decomposition', family: 'protocol',
 		short: 'Every inventory class assigned exactly once, no unknown class, no empty service, at least three non-empty services. Checked deterministically, never with the reference.',
-		source: '§III-C', see: ['repair', 'quality-gate', 'class-inventory'],
+		source: '§IV-B', see: ['repair', 'quality-gate', 'class-inventory'],
 	},
 	'information-parity': {
 		term: 'Information parity', family: 'protocol',
 		short: 'Every arm gets the same information: same model, inventory, source snapshot and dependency graph, and the same design goals.',
 		body: () => P('The criterion, declared before comparing scores, that picked OpenCode\'s baseline-3 prompt: the only variant with the same inputs and design goals as the other arms.'),
-		source: '§IV-B', see: ['opencode'],
+		source: '§IV-D', see: ['opencode'],
 	},
 	replay: {
 		term: 'Replay', family: 'protocol',
 		short: 'Re-running a workflow version by feeding it the recorded LLM outputs of an earlier version, instead of calling the model again.',
-		body: () => P('Exact when the two versions differ only in deterministic stages, as the final workflow and its predecessor do (selection and refinement). Used for DeepSeek and GLM-5.2.'),
-		source: '§III-C Repetitions and reuse', see: ['development-confirmation'],
+		body: () => P('Exact when the two versions differ only in deterministic stages, as the final workflow and its predecessor do (selection and refinement). Used for DeepSeek v4.1 Flash\'s workflow runs and GLM-5.2\'s earlier seed-1 runs, and for the ablation: every stored workflow run of the other seven primary models re-scored with the superseded selection, without model calls.'),
+		source: '§IV-H', see: ['development-confirmation'],
 	},
 	'development-confirmation': {
 		term: 'Development vs confirmation data', family: 'protocol',
 		short: 'Results a design was tuned on are optimistic; results from models run only after the design was frozen are a fairer check.',
-		body: () => P(html`DeepSeek and GLM-5.2 are development data; gpt-oss:120b and gemma4:31b are confirmation <${Cite} keys=${['cawley2010overfitting', 'dwork2015reusable']} />.`),
-		source: '§III-C', see: ['replay'],
+		body: () => P(html`DeepSeek v4.1 Flash and GLM-5.2 are development data: design decisions were made while observing them. The other six primary models (gpt-oss:120b, gemma4:31b, DeepSeek v4 Pro, Mistral Large 4, Kimi K2.7 Code, Kimi K3) informed no decision and form the held-out view; all models share the four development systems <${Cite} keys=${['cawley2010overfitting', 'dwork2015reusable']} />.`),
+		source: '§IV-I', see: ['replay'],
 	},
 	gqm: {
 		term: 'Goal Question Metric (GQM)', family: 'method',
 		short: 'A way to structure a study: state the goal, derive questions from it, and pick metrics that answer each question.',
 		body: () => P(html`<${Cite} k="basili1994gqm" />. The goal is written as analyse … for the purpose of … with respect to … from the viewpoint of … in the context of ….`),
-		source: '§III-A', see: [],
+		source: '§IV-A', see: [],
 	},
 	nvi: {
 		term: 'Normalised variation of information (NVI)', family: 'statistics',
 		short: 'A distance between two partitions of the same classes: 0 means identical, 1 means as different as possible. It ignores service names.',
 		body: () => P('Used to measure how much five repeated runs differ from each other.'),
-		source: '§III-C Analysis, Table XIV', see: ['nondeterminism'],
+		source: '§IV-I, Table XVI', see: ['nondeterminism'],
 	},
 
 	// ---- statistics
@@ -503,14 +503,14 @@ export const GLOSSARY = {
 		term: 'p-value', family: 'statistics',
 		short: 'If there were truly no difference, how likely would a result at least this extreme be? Small p (below α = 0.05 here) counts as significant.',
 		body: () => P('A non-significant p is not evidence of equivalence, especially with few pairs: this work reads such results as "no evidence of a difference".'),
-		source: '§III-C Analysis', see: ['wilcoxon', 'power', 'bonferroni'],
+		source: '§IV-I', see: ['wilcoxon', 'power', 'bonferroni'],
 	},
 	wilcoxon: {
 		term: 'Wilcoxon signed-rank test', family: 'statistics',
 		short: 'A paired, non-parametric test: rank the absolute differences between paired observations and check whether positive and negative ranks balance.',
-		body: () => P(html`<${Cite} k="wilcoxon1945" />. The study pairs observations by (model, system) cell, 16 pairs, two-sided, as recommended for randomised algorithms in software engineering <${Cite} k="arcuri2014hitchhiker" />.`),
+		body: () => P(html`<${Cite} k="wilcoxon1945" />. The study pairs observations by (model, system) cell (32 cells in the primary analysis, five seeds averaged per cell), two-sided, as recommended for randomised algorithms in software engineering <${Cite} k="arcuri2014hitchhiker" />.`),
 		example: () => html`<${ToyWilcoxon} />`,
-		source: '§III-C Analysis; tools/analyze_final_benchmark.py (scipy.stats.wilcoxon, zero_method="zsplit")', see: ['cliffs-delta', 'p-value', 'win-tie-loss'],
+		source: '§IV-I; tools/analyze_final_benchmark.py (scipy.stats.wilcoxon, zero_method="zsplit")', see: ['cliffs-delta', 'p-value', 'win-tie-loss'],
 	},
 	'cliffs-delta': {
 		term: "Cliff's δ", family: 'statistics',
@@ -518,12 +518,24 @@ export const GLOSSARY = {
 		formula: 'δ = (#{a > b} − #{a < b}) / (n_A · n_B)',
 		body: () => P(html`<${Cite} k="cliff1993dominance" />. The study's script compares every value of one arm with every value of the other (all pairs, not only matched cells).`),
 		example: () => html`<${ToyCliff} />`,
-		source: '§III-C Analysis; tools/analyze_final_benchmark.py', see: ['wilcoxon', 'effect-size'],
+		source: '§IV-I; tools/analyze_final_benchmark.py', see: ['wilcoxon', 'effect-size'],
 	},
 	'effect-size': {
 		term: 'Effect size', family: 'statistics',
 		short: 'How big a difference is, separate from whether it is significant. This work reports Cliff\'s δ; all cross-model effects were small (|δ| ≤ 0.28).',
 		source: '§V-A', see: ['cliffs-delta', 'p-value'],
+	},
+	holm: {
+		term: 'Holm correction', family: 'statistics',
+		short: 'A step-down version of Bonferroni for testing several metrics at once: sort the p-values, multiply the smallest by m, the next by m − 1, and so on (never letting an adjusted value fall below the one before).',
+		body: () => P('Holm controls the chance of any false positive exactly as Bonferroni does but is never less powerful. The side-study analysis applies it across the eight metrics of each comparison; "Holm p" is the adjusted p-value, significant when below 0.05.'),
+		source: 'Holm (1979); studies/final-benchmark-extension-v1/analysis/analyze_extension.py (holm)', see: ['bonferroni', 'p-value', 'wilcoxon'],
+	},
+	'bootstrap-ci': {
+		term: 'Bootstrap confidence interval', family: 'statistics',
+		short: 'An interval for a statistic found by resampling the data many times and taking the middle 95% of the recomputed values.',
+		body: () => P('The side-study analysis resamples in two levels: first the (model, system) cells, then the runs inside each cell, 10,000 times, and recomputes the mean difference between two arms each time. An interval that excludes 0 says the difference is unlikely to be noise.'),
+		source: 'studies/final-benchmark-extension-v1/analysis/analyze_extension.py (paired_cells)', see: ['holm', 'effect-size', 'nondeterminism'],
 	},
 	bonferroni: {
 		term: 'Bonferroni correction', family: 'statistics',
@@ -533,12 +545,12 @@ export const GLOSSARY = {
 	},
 	'win-tie-loss': {
 		term: 'Win / tie / loss', family: 'statistics',
-		short: 'Across paired cells, how often one arm was better, equal, or worse. Shown next to tests because 16 pairs give limited power.',
-		source: '§III-C Analysis, Table XI', see: ['wilcoxon', 'power'],
+		short: 'Across paired cells, how often one arm was better, equal, or worse. Shown next to tests because a few dozen cells still give limited power.',
+		source: '§IV-I, Table XII', see: ['wilcoxon', 'power'],
 	},
 	power: {
 		term: 'Statistical power', family: 'statistics',
-		short: 'The chance a test detects a real difference. With 16 pairs, small differences usually go undetected.',
-		source: '§III-C Analysis, §VII', see: ['p-value', 'win-tie-loss'],
+		short: 'The chance a test detects a real difference. With few cells or one run per cell, small differences usually go undetected; 32 cells with five seeds each detect moderate ones, as the primary analysis shows.',
+		source: '§IV-I, §VII', see: ['p-value', 'win-tie-loss'],
 	},
 }

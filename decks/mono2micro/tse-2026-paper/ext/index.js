@@ -4,7 +4,7 @@ import { TitleScene, HowtoScene, MapScene as MapInner } from './scenes/front.js'
 import { MonolithScene, PartitionScene, TechniquesScene, BenchmarkScene, MetricsScene, IcsaScene, LlmScene, AgentsScene, PositionScene } from './scenes/part1.js'
 import { GqmScene, PrinciplesScene, RolesScene, AlgorithmScene, ALG_BEATS, FirewallScene, DesignScene, AnalysisScene, C2cScene } from './scenes/part2.js'
 import { EvolutionScene, BaselinesScene, ExecutionScene, ExampleScene } from './scenes/part3.js'
-import { Rq1MainScene, Rq1PairedScene, Rq1ToolsScene, Rq2Scene, Rq3Scene, Rq4Scene, Rq4OtherScene } from './scenes/part4.js'
+import { CollectionScene, Rq1MainScene, Rq1PairedScene, Rq1ToolsScene, Rq2Scene, Rq3Scene, Rq4Scene, Rq4OtherScene } from './scenes/partx.js'
 import { BuysScene, LessonsScene, ImplicationsScene, ThreatsScene, ConclusionScene, StudiesScene, NotAdoptedScene, ReproduceScene, RefsScene, GlossaryScene } from './scenes/part5.js'
 import { AgenticTrace, AGENTIC_BEATS } from './trace/agentic.js'
 import { SLIDES } from './deck.js'
@@ -28,10 +28,15 @@ function withHead(id, Scene) {
 	const slide = SLIDES[i] ?? {}
 	return (props) => html`<${SlideCtx.Provider} value=${id}><${SlideRoot}>
 		${slide.kicker && html`<div style=${{ ...box(120, 58, 1680, 40), fontFamily: F.hand, fontSize: 26, color: C.red, whiteSpace: 'nowrap' }}>${slide.kicker}</div>`}
-		${slide.title && html`<div style=${{ ...box(120, 92, 1680, 96), fontFamily: F.hand, fontSize: 64, lineHeight: 1.25, color: C.ink, whiteSpace: 'nowrap' }}>${slide.title}</div>`}
+		<${Title} slide=${slide} />
 		<${Scene} ...${props} />
 		${i >= 0 && !props.frozen && html`<${Stage} still=${props.still} name="nav"><${Compass} index=${i} /></${Stage}>`}
 	</${SlideRoot}></${SlideCtx.Provider}>`
+}
+
+function Title({ slide }) {
+	const title = slide.title
+	return title ? html`<div style=${{ ...box(120, 92, 1680, 96), fontFamily: F.hand, fontSize: 64, lineHeight: 1.25, color: C.ink, whiteSpace: 'nowrap' }}>${title}</div>` : null
 }
 
 const SCENES = {
@@ -60,6 +65,7 @@ const SCENES = {
 	'p3-baselines': { name: 'Choosing the baselines', beats: 2, render: BaselinesScene },
 	'p3-execution': { name: 'Execution', beats: 1, render: ExecutionScene },
 	'p3-example': { name: 'Worked example', beats: 3, render: ExampleScene },
+	'px-collection': { name: 'The runs behind the results', beats: 2, render: CollectionScene },
 	'p4-rq1-main': { name: 'Q1 per model', beats: 1, render: Rq1MainScene },
 	'p4-rq1-paired': { name: 'Q1 paired', beats: 0, render: Rq1PairedScene },
 	'p4-rq1-tools': { name: 'Q1 tools', beats: 1, render: Rq1ToolsScene },
@@ -68,7 +74,7 @@ const SCENES = {
 	'p4-rq4': { name: 'Q4 ablation', beats: 2, render: Rq4Scene },
 	'p4-rq4-other': { name: 'Q4 other', beats: 2, render: Rq4OtherScene },
 	'p5-buys': { name: 'What it buys', beats: 2, render: BuysScene },
-	'p5-lessons': { name: 'Four lessons', beats: 0, render: LessonsScene },
+	'p5-lessons': { name: 'Five lessons', beats: 0, render: LessonsScene },
 	'p5-implications': { name: 'Implications', beats: 1, render: ImplicationsScene },
 	'p5-threats': { name: 'Threats', beats: 0, render: ThreatsScene },
 	'p5-conclusion': { name: 'Conclusion', beats: 2, render: ConclusionScene },
