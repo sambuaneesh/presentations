@@ -1,5 +1,6 @@
 // The contributions as the paper lists them (papers/tse-2026/manuscript/sections/01-introduction.tex): only the bold
-// titles are drawn (the presenter explains the rest; the paper's wording is kept here for reference). One per click.
+// titles are drawn (the presenter explains the rest; the paper's wording is kept here for reference, minus the ablation,
+// which this deck leaves out). One per click.
 // 2 and 4 are greyed, with a tilted question mark: still open for discussion. Slide 4 (design.js) reuses Block.
 import { html, C, F, EASE, box } from '@pack/scenes/kit.js'
 import { useArrival } from './arrive.js'
@@ -7,7 +8,7 @@ import { useArrival } from './arrive.js'
 export const ITEMS = [
 	['An agentic decomposition workflow', 'in which LLM components construct evidence, infer provisional domain knowledge, and propose alternative candidates, while deterministic components repair, validate, select, and refine the result without access to reference data.'],
 	['A controlled, multi-model evaluation', 'of the workflow against single-shot prompting, an autonomous coding agent, and traditional tools: seventeen LLMs, five runs per cell for eight of them, a strict separation between online selection and blinded evaluation, a declared analysis plan, and robustness checks for the treatment of failed runs, run-level variation, and models not used during development.', true],
-	['Evidence on which design decisions matter', 'a documented sequence of design experiments and a paired ablation on identical LLM outputs, which shows that a selection criterion derived from the LLM’s own output biased selection toward the candidate built from it.'],
+	['Evidence on which design decisions matter', 'a documented sequence of design experiments.'],
 	['Lessons for agentic AI in architectural refactoring', 'including the role of deterministic safeguards, model convergence on public benchmarks, and the need for repeated runs, which we show changes the conclusions of a comparison.', true],
 	['An open research workbench', 'with all prompts, protocols, run artifacts, and analysis scripts, from which every reported number, table, and figure is regenerated.'],
 ]

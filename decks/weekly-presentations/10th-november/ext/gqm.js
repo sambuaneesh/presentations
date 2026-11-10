@@ -28,7 +28,7 @@ const METRICS = {
 	1: ['CMod · CiD · DTP · DI · BCP', 'C2C-10 / 33 / 50'],
 	2: ['share of valid decompositions', 'distinct partitions over five runs', 'their pairwise distance'],
 	3: ['input and output tokens per system', 'their split across workflow stages'],
-	4: ['documented design experiments', 'paired ablation on identical LLM outputs'],
+	4: ['documented design experiments'],
 }
 const TINT = 1, Q1 = 2, MET = 6
 export const GQM_BEATS = MET

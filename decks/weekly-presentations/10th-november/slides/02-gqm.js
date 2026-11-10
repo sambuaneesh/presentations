@@ -21,7 +21,7 @@ CLICKS
   – RQ1: design metrics CMod, CiD, DTP, DI, BCP; reference similarity C2C at three thresholds.
   – RQ2: share of valid decompositions among all attempts; over five runs per system, how many distinct partitions and how far apart they are.
   – RQ3: input and output tokens per system, and their split across the workflow's stages.
-  – RQ4: the documented sequence of design experiments, and a paired ablation on identical LLM outputs.
+  – RQ4: the documented sequence of design experiments.
   – Ask the team: are these the right questions for the claim we make, and is any question or measure missing?
 
 REF · TSE draft §IV-A (goal and research questions) · §I (the RQs)`,

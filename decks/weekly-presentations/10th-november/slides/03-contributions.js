@@ -10,7 +10,7 @@ CLICKS
 1 · 2 (open) · The evaluation design: seventeen LLMs, eight run five times per system; the same inputs for every approach; the reference only after freezing; tests fixed before looking at results; robustness checks.
   – Case for it: it is the only contribution that carries the comparison results (RQ1–3), and the matched, repeated-run design is what prior work lacks (MicroAgent gives the service count from the reference and reports single runs).
   – Case against: as written it lists methodology, not a finding, and it overlaps with 4 (repeated runs) and 5 (reproducibility). Option: reword it around what the comparison found.
-2 · 3 · The design evidence: a documented sequence of design experiments, and a paired ablation on identical LLM outputs showing that a selection criterion taken from the LLM's own output biased selection toward the candidate built from it.
+2 · 3 · The design evidence: a documented sequence of design experiments, each changing one mechanism and recording what happened (next slide).
 3 · 4 (open) · Lessons: deterministic safeguards, models converging on public benchmarks, and that repeated runs change the conclusions of a comparison. Ask: is this a contribution or the discussion section?
 4 · 5 · The open workbench: every prompt, protocol, run artifact and script; every number, table and figure regenerates from it.
 
