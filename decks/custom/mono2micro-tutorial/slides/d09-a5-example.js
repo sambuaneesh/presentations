@@ -22,6 +22,5 @@ export default {
 		msg('Browser', 'OwnerController', 440, 'GET /owners?lastName=Sm', 0)
 		msg('OwnerController', 'OwnerRepository', 580, 'findByLastName…("Sm")', 350)
 		msg('OwnerRepository', 'DB', 720, "SELECT … LIKE 'Sm%'", 700)
-		k.text(110, 880, 'written by the LLM: nobody ran the app', { size: 'xl', color: 'red', beat: 2, anim: 'wipe' })
 	},
 }

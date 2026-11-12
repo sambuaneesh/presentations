@@ -1,5 +1,5 @@
 // So a migration plan is a partition of the map: the red cut lines (the talk's recurring mark) separate the
-// developers' groups; a smug stick figure says "it's just clustering!", and a red "…right?" sets up section II.
+// developers' groups; the Roll Safe meme says "migration is easy, it's just clustering", and a red "…right?" sets up section II.
 // ===== the PetClinic map ==============================================================================
 // The talk's recurring picture: Spring PetClinic's 23 classes and the 24 weighted dependencies the metrics see
 // (benchmark of Wang, Bornais & Rubin, ASE 2024), always at the SAME positions and in the SAME colours.
@@ -66,22 +66,9 @@ export default {
 		// 2: after the cut the edges are gone: services, each a list of classes
 		serviceColumns(k, [['customers', 'blue', DOMAIN.customers], ['vets', 'violet', DOMAIN.vets], ['visits', 'orange', DOMAIN.visits], ['shared + infrastructure', 'grey', [...DOMAIN.shared, ...DOMAIN.infra]]], { x: 60, y: 260, w: 1240, h: 640, o: { beat: 2, anim: 'fade' } })
 		k.text(60, 930, 'after the cut: services, each a list of classes', { size: 'l', beat: 2, anim: 'fade', delay: 1000 })
-		smug(k, 1640, 560, { beat: 1, anim: 'pop', delay: 900 })
-		k.box(1360, 270, 500, 210, { geo: 'cloud', text: 'it’s just\nclustering!', size: 'l', beat: 1, anim: 'pop', delay: 1100 })
+		k.image(1350, 280, 540, 540, 'meme-rollsafe.jpg', { rot: 1.5, beat: 1, anim: 'pop', delay: 900, alt: 'Roll Safe meme: migration is easy, it’s just clustering' })
 		k.text(1440, 900, '…right?', { size: 'xl', scale: 1.5, color: 'red', beat: 3, anim: 'wiggle', rot: -5 })
 	},
-}
-
-// a stick figure with sunglasses and folded arms
-function smug(k, cx, top, o) {
-	k.circle(cx, top + 55, 50, { size: 'm', ...o })
-	k.box(cx - 42, top + 35, 38, 20, { fill: 'solid', color: 'black', size: 's', ...o })
-	k.box(cx + 4, top + 35, 38, 20, { fill: 'solid', color: 'black', size: 's', ...o })
-	k.pen([[cx - 20, top + 80], [cx + 5, top + 88], [cx + 25, top + 76]], { size: 's', ...o })
-	k.pen([[cx, top + 105], [cx, top + 230]], { size: 'm', ...o })
-	k.pen([[cx - 50, top + 150], [cx + 45, top + 160], [cx - 40, top + 170]], { size: 'm', ...o })
-	k.pen([[cx, top + 230], [cx - 50, top + 300]], { size: 'm', ...o })
-	k.pen([[cx, top + 230], [cx + 50, top + 300]], { size: 'm', ...o })
 }
 
 // A decomposition as what it really is: services, each a list of classes (no edges). One tinted column per service.

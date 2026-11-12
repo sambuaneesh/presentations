@@ -68,11 +68,16 @@ export default {
 		k.note(1400, 470, 'judge a cut with\nno answer key', { color: 'yellow', size: 'm', rot: -3, beat: 2, anim: 'drop', delay: 200, until: 3 })
 		k.note(1650, 560, 'not game\nthe score', { color: 'yellow', size: 'm', rot: 3, beat: 2, anim: 'drop', delay: 450, until: 3 })
 		k.note(1420, 720, 'know what\nwill change', { color: 'yellow', size: 'm', rot: -2, beat: 2, anim: 'drop', delay: 700, until: 3 })
-		// 3: stays up for questions: the results link and the thanks
-		k.image(1420, 200, 380, 380, 'qr-visualizer.svg', { beat: 3, anim: 'fade', alt: 'QR code for the ICSA web visualizer' })
-		k.text(1420, 595, 'all the results', { size: 'l', beat: 3, anim: 'fade' })
-		k.text(1420, 650, 'sambuaneesh.github.io/llms4arch', { size: 's', font: 'mono', color: 'grey', beat: 3, anim: 'fade' })
-		k.text(1400, 760, 'thank you!', { size: 'xl', beat: 3, anim: 'fade', delay: 300 })
-		k.text(1405, 870, 'Aneesh Sambu · SERC, IIIT Hyderabad', { size: 's', color: 'grey', beat: 3, anim: 'fade', delay: 300 })
+		// 3: stays up for questions: my website and the thanks
+		k.image(1420, 200, 380, 380, 'qr-site.svg', { beat: 3, anim: 'fade', alt: 'QR code for my website' })
+		k.text(1420, 595, 'find me here', { size: 'l', beat: 3, anim: 'fade' })
+		k.text(1420, 650, 'sambuaneesh.github.io', { size: 's', font: 'mono', color: 'grey', beat: 3, anim: 'fade' })
+		k.text(1400, 735, 'thank you!', { size: 'xl', beat: 3, anim: 'fade', delay: 300 })
+		k.text(1405, 835, 'Aneesh', { size: 'm', beat: 3, anim: 'fade', delay: 300 })
+		// the group, the centre and the institute, as on the title slide (logos trimmed to their ink, one height)
+		const LH = 80, LY = 890, l = { beat: 3, anim: 'fade', delay: 400 }
+		k.image(1408, LY, Math.round(LH * 361 / 415), LH, 'logo-sa4s.png', { ...l, alt: 'SA4S logo' })
+		k.image(1408 + 70 + 32, LY, Math.round(LH * 1024 / 656), LH, 'logo-serc.png', { ...l, alt: 'SERC logo' })
+		k.image(1408 + 70 + 32 + 125 + 32, LY, Math.round(LH * 372 / 186), LH, 'logo-iiit.png', { ...l, alt: 'IIIT Hyderabad logo' })
 	},
 }

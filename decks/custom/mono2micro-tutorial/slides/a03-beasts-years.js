@@ -1,11 +1,16 @@
-// These beasts took years: Netflix, Amazon, Twitter on one canvas; one click slams all three stamps in.
+// These beasts took years: Netflix, Amazon, Twitter on one canvas; one click slams all three stamps in, and the
+// title's "???" becomes "years".
 export default {
 	name: 'Breaking up took years',
 	kicker: '0 · it’s complicated',
 	source: 'Netflix Tech Blog, 2016 · ACM Queue 4(4), 2006 · Twitter Eng., 2013',
 	draw(k) {
+		const TX = 724 // where the last word starts: just after "Breaking up took them"
 		k.box(110, 222, 940, 84, { fill: 'solid', color: 'yellow', size: 's', dash: 'solid' })
-		k.text(130, 230, 'Breaking up took them years', { size: 'xl', scale: 1.1 })
+		// the title asks first: "???" until the click, then "years" pops in its place (with the stamps)
+		k.text(130, 230, 'Breaking up took them', { size: 'xl', scale: 1.1, id: 'took' })
+		k.text(TX, 230, '???', { size: 'xl', scale: 1.1, color: 'grey', until: 1, id: 'q' })
+		k.text(TX, 230, 'years', { size: 'xl', scale: 1.1, beat: 1, anim: 'pop', id: 'years' })
 		// the hero: Netflix
 		k.image(110, 370, 470, 126, 'logo-netflix-trim.png', { alt: 'Netflix' })
 		k.text(110, 500, '7 YEARS', { size: 'xl', scale: 3.4, color: 'red', rot: -5, beat: 1, anim: 'zoom' })

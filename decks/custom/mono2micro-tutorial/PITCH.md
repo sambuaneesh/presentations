@@ -54,12 +54,12 @@ every "Click n" below is a real click on that slide, in order, with exactly what
 
 ### 3 · Breaking up took them years
 **Goal**: migration is huge, long work, even for the best engineers.
-**On screen**: "Breaking up took them years", the Netflix, Amazon and Twitter logos.
+**On screen**: "Breaking up took them ???", the Netflix, Amazon and Twitter logos.
 
 - **Ask**: "Guess: how long does it take a company like Netflix to split its monolith into services? A sprint? A
   quarter?" *(take one or two guesses)*
 
-**Click 1 → "7 YEARS" for Netflix (big), "~5 YEARS" for Amazon, "3 YEARS" for Twitter, with the facts; the X logo lands on Twitter's bird ("pun intended").**
+**Click 1 → the title's "???" turns into "years"; "7 YEARS" for Netflix (big), "~5 YEARS" for Amazon, "3 YEARS" for Twitter, with the facts; the X logo lands on Twitter's bird ("pun intended").**
 - "Netflix: **seven years.** In 2008 a database corruption stopped their DVD shipping. That was the trigger.
   The last piece left their data centre in early 2016."
 - "Amazon: about five. Werner Vogels, their CTO, in 2006: they moved 'from a two-tier monolith to a
@@ -175,7 +175,7 @@ every "Click n" below is a real click on that slide, in order, with exactly what
 
 - "So a migration plan is just this: cut the graph into groups."
 
-**Click 1 → two red dashed cut lines, a smug stick figure with sunglasses: "it's just clustering!"**
+**Click 1 → two red dashed cut lines, and the Roll Safe meme (finger to temple): "migration is easy / it's just clustering".**
 - "Red lines are cuts. And this guy has a take." *(smug)* "It's just clustering! First-year algorithms. Run
   k-means, go home."
 
@@ -349,15 +349,13 @@ every "Click n" below is a real click on that slide, in order, with exactly what
   from earlier? Same split."
 
 ### 21 · A5, for real: "find owners"
-**Goal**: show a real artefact; the LLM inferred behaviour without running anything.
+**Goal**: show a real artefact, inferred by the LLM from the code.
 **On screen**: four lifelines: Browser, OwnerController, OwnerRepository, DB.
 
 **Click 1 → the calls: "GET /owners?lastName=Sm" → "findByLastName…("Sm")" → "SELECT … LIKE 'Sm%'".**
 - "A real A5 from one of our runs, the 'find owners' use case: the browser asks for owners named 'Sm…', the
   controller asks the repository, the repository queries the database."
-
-**Click 2 → "written by the LLM: nobody ran the app".**
-- "And the twist: an LLM wrote this. Nobody ran the app. It inferred the behaviour from the code summary."
+- "An LLM wrote this from the code summary: it worked out the behaviour without running the app."
 
 ### 22 · We tried without the dynamic view first
 **Goal**: evidence that the dynamic view matters.
@@ -717,7 +715,7 @@ with a red ✗ and the reason; players who joined but never sent, dashed, "ran o
 
 ### 45 · Every decomposition, every score: explore it
 **Goal**: hand over to the live web visualiser.
-**On screen**: "live demo", the QR code for sambuaneesh.github.io/llms4arch.
+**On screen**: only "wanna browse the results? check it out here" and the QR code for sambuaneesh.github.io/mono2micro, filling the slide.
 
 - "Every one of the 112 decompositions, every score, every class: it's all public. Let me show you."
 - *(open the visualiser; keep it to 3–5 minutes: one system, compare one LLM answer with a tool and the reference)*
@@ -787,7 +785,7 @@ with a red ✗ and the reason; players who joined but never sent, dashed, "ran o
 
 ---
 
-## VI · what to take home (slides 50–54, ~5 min)
+## VI · what to take home (slides 50–53, ~5 min)
 
 ### 50 · Spot the smell
 **Goal**: students apply what they learned (retrieval before the summary).
@@ -811,9 +809,8 @@ with a red ✗ and the reason; players who joined but never sent, dashed, "ran o
 - "Software that's used keeps changing, and its structure decays unless someone actively pushes back. That's an old
   law of software evolution."
 
-**Click 2 → a note "every shortcut is a loan", "a decomposition is a maintenance decision, not a one-off project".**
-- "Every shortcut is a loan you'll repay with interest. A decomposition is a maintenance decision, not a one-off
-  project."
+**Click 2 → "a decomposition is a maintenance decision, not a one-off project".**
+- "A decomposition is a maintenance decision, not a one-off project."
 
 ### 52 · Where tools stop, engineering starts
 **Goal**: the three things tools can't do for you (promise three).
@@ -830,20 +827,7 @@ with a red ✗ and the reason; players who joined but never sent, dashed, "ran o
 - "Three: a metric is a smoke detector, not a target. Remember the hall of shame?"
 - "And sometimes the right cut is: don't split. Segment and Prime Video would agree."
 
-### 53 · An AI's cut is a proposal, not a decision
-**Goal**: how to use AI tools for refactoring responsibly.
-**On screen**: "LLM / agent" → "a proposed cut" → "checks" → "you decide"; "valid? tested? every class accounted for?"
-
-- "So how should you use these tools? The agent proposes. Checks verify: is it valid, is every class accounted for,
-  do the tests pass? And then you decide."
-
-**Click 1 → "no tests, no safe refactoring: by a human or by an LLM".**
-- "No tests, no safe refactoring. That's true for a human, and it's true for an LLM."
-
-**Click 2 → "turn your architecture rules into checks that run on every commit".**
-- "And turn your architecture rules into checks that run on every commit. Then an agent can't quietly break them."
-
-### 54 · The whole map
+### 53 · The whole map
 **Goal**: close the loop, and leave the AutoSE question open.
 **On screen**: the small grey tangle, "remember 'it's complicated'?"
 
@@ -858,8 +842,8 @@ with a red ✗ and the reason; players who joined but never sent, dashed, "ran o
   your business next year."
 - "Those are open problems for autonomous software engineering. That's where you come in."
 
-**Click 3 → one big QR code, "all the results" (sambuaneesh.github.io/llms4arch), and "thank you!"**
-- "Every decomposition and every score from the study is online here. Thank you!" *(leave this slide up for questions)*
+**Click 3 → one big QR code, "find me here" (my website, sambuaneesh.github.io), "thank you!", my name and the SA4S, SERC and IIITH logos.**
+- "That's my website: the papers, the code, and how to reach me. Thank you!" *(leave this slide up for questions)*
 
 ---
 
