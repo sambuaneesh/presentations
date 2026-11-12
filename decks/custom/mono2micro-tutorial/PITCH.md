@@ -785,20 +785,9 @@ with a red ✗ and the reason; players who joined but never sent, dashed, "ran o
 
 ---
 
-## VI · what to take home (slides 50–53, ~5 min)
+## VI · what to take home (slides 50–52, ~5 min)
 
-### 50 · Spot the smell
-**Goal**: students apply what they learned (retrieval before the summary).
-**On screen**: a deliberately bad cut on the map: one huge blue service, two smaller ones, a "vets table"; "what's wrong with this cut?"
-
-- **Ask**: "Last exercise. What's wrong with this cut? Shout it out." *(wait for three answers)*
-
-**Click 1 → "god service: one team owns it all", "cycle: can't deploy alone", "shared table: can't change alone".**
-- "A god service: one team owns almost everything. A cycle: these two can't deploy alone. A shared table: these two
-  can't change alone."
-- "If you spotted those, you can judge a cut. That was promise number one."
-
-### 51 · You will maintain this
+### 50 · You will maintain this
 **Goal**: the maintenance perspective (pays off slide 6).
 **On screen**: a timeline: a short "build", then a long "change, fix, extend, change again…"; "Netflix: 7 years".
 
@@ -812,7 +801,7 @@ with a red ✗ and the reason; players who joined but never sent, dashed, "ran o
 **Click 2 → "a decomposition is a maintenance decision, not a one-off project".**
 - "A decomposition is a maintenance decision, not a one-off project."
 
-### 52 · Where tools stop, engineering starts
+### 51 · Where tools stop, engineering starts
 **Goal**: the three things tools can't do for you (promise three).
 **On screen**: a small map with the cut: "cut where change is independent", "tools see calls; only you see what will change".
 
@@ -827,7 +816,7 @@ with a red ✗ and the reason; players who joined but never sent, dashed, "ran o
 - "Three: a metric is a smoke detector, not a target. Remember the hall of shame?"
 - "And sometimes the right cut is: don't split. Segment and Prime Video would agree."
 
-### 53 · The whole map
+### 52 · The whole map
 **Goal**: close the loop, and leave the AutoSE question open.
 **On screen**: the small grey tangle, "remember 'it's complicated'?"
 
