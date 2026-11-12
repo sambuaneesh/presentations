@@ -1,0 +1,11 @@
+{
+	"title": "Terms of Separation",
+	"description": "Class talk: why monoliths get split, why it is not 'just clustering', what one plain LLM can do (our ICSA 2026 study), how to judge a decomposition (with a game), and where agents and engineering come in.",
+	"date": "2026-11-12",
+	"listed": true,
+	"pack": 7,
+	"publish": {
+		"folder": "custom"
+	},
+	"home": "~/IIITH/Research/decomplab/presentations/mono2micro-tutorial"
+}
