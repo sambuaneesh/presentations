@@ -70,6 +70,16 @@ const router = AutoRouter<IRequest, [env: Env, ctx: ExecutionContext]>({
 		return cors(origin, await roomStub(env, request.params.roomId).fetch(request.url, { method: 'POST' }))
 	})
 
+	// End an open room for everyone: needs a presenter token of that room (checked by the room).
+	.post('/api/rooms/:roomId/close', async (request, env) => {
+		const origin = allowedOrigin(request, env)!
+		if (!ROOM_ID.test(request.params.roomId)) return cors(origin, error(400, 'bad room id'))
+		const body = (await request.json().catch(() => ({}))) as { token?: unknown }
+		if (typeof body.token !== 'string' || !body.token) return cors(origin, error(403, 'not a presenter'))
+		const init = { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ token: body.token }) }
+		return cors(origin, await roomStub(env, request.params.roomId).fetch(request.url, init))
+	})
+
 	.get('/', () => new Response('presentations sync server'))
 	.all('*', () => error(404))
 

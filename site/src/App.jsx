@@ -10,7 +10,7 @@ import { Tldraw, inlineBase64AssetStore, defaultShapeUtils, useValue } from 'tld
 import { useSync } from '@tldraw/sync'
 import 'tldraw/tldraw.css'
 import { loadPack } from './pack.js'
-import { SYNC_URL, roomId, hashPath, seedFromDeck, useLiveRoom, LiveBar, slideCount, roomStatus, connectUri, RoomClosed, roomUrl } from './live.jsx'
+import { SYNC_URL, roomId, hashPath, seedFromDeck, useLiveRoom, LiveBar, slideCount, roomStatus, connectUri, RoomClosed, roomUrl, ROOM_ENDED } from './live.jsx'
 import { ensureJoinSlide, hasJoinSlide } from './joinSlide.js'
 import { Gallery, NotFound, LoadFailed, Loading } from './Gallery.jsx'
 import { useLandscape } from './landscape.jsx'
@@ -80,6 +80,8 @@ function Live({ deck, isPresenter }) {
 	const [editor, setEditor] = useState(null)
 	const components = useComponents(deck)
 	useLiveRoom(editor, isPresenter)
+	const ended = useRoomEnded(store)
+	if (ended) return <RoomClosed ended />
 	return (
 		<Tldraw
 			store={store}
@@ -99,6 +101,24 @@ function Live({ deck, isPresenter }) {
 			}}
 		/>
 	)
+}
+
+// Has the room been ended for everyone? The server closes every connection with ROOM_ENDED; a
+// device that was offline at that moment (a sleeping phone) finds out when it can't reconnect.
+function useRoomEnded(store) {
+	const [ended, setEnded] = useState(false)
+	const fatal = store.status === 'error' && store.error?.reason
+	const offline = store.status === 'synced-remote' && store.connectionStatus === 'offline'
+	useEffect(() => {
+		if (fatal === ROOM_ENDED || fatal === 'NOT_FOUND') return void setEnded(true)
+		if (!offline) return
+		let gone = false
+		const check = () => roomStatus(roomId).then((s) => !gone && !s.exists && setEnded(true), () => {})
+		const timer = setTimeout(check, 1500)
+		const again = setInterval(check, 15000)
+		return () => ((gone = true), clearTimeout(timer), clearInterval(again))
+	}, [fatal, offline])
+	return ended
 }
 
 // Only connect to rooms that are open (started with the room password and not yet abandoned).

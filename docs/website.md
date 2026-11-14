@@ -32,7 +32,7 @@ Open a deck, click **● Go live**, enter the room password (and optionally a ro
 `weekly`), then **Copy link** and share it.
 
 - **Presenter**: whoever started the room with the password (or used **Presenter login** in it).
-  Full editor: present, laser, highlight, edit, **Reset to deck**.
+  Full editor: present, laser, highlight, edit, **Reset to deck**, **End for everyone**.
 - **Viewers**: anyone else with the link, no password needed. Read-only (the server rejects their
   edits) and they follow the presenter: the presenter's screen while they edit, their slide *and
   build step* while they present, fitted to each viewer's screen. A viewer who pans away gets a
@@ -43,6 +43,11 @@ Open a deck, click **● Go live**, enter the room password (and optionally a ro
 - **Rooms belong to a deck**: `?room=weekly` on two different decks is two separate rooms.
 - A room starts as a copy of the published deck, and closes 2 minutes after the last person leaves.
   Its link then shows "This room isn't live", with a password box to start it again.
+- **End for everyone** (presenter, in the room bar): closes the room at once. Everyone is disconnected
+  (viewers see "The presenter ended this live session", with a link to the presentation), and the
+  server deletes the room: its document, highlights and presenter logins. Nothing keeps running or
+  stays stored. **Leave** only takes you out; the room stays open for the others. Starting the room
+  again (same link and password) gives a fresh copy of the published deck.
 - Interactive slides work in rooms: when the presenter drags or clicks, everyone sees it.
 - **Phones**: on a small screen held upright, a **⟲ Landscape** button appears (live or solo). It asks
   the browser for fullscreen landscape; where that isn't allowed (iPhone Safari) it turns the deck 90° on

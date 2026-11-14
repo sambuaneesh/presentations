@@ -4,12 +4,14 @@
 // password) before anyone can connect. Opening returns a presenter token: sessions that connect
 // with it can edit, everyone else is read-only. An open room closes again (and its tokens are
 // forgotten) once it has been empty for the grace period, so an old link can't be used to get
-// back into an abandoned room.
+// back into an abandoned room. A presenter can also end the room for everyone (POST /close): every
+// connection is closed for good and the room's storage is deleted.
 import {
 	DurableObjectSqliteSyncWrapper,
 	type SessionStateSnapshot,
 	SQLiteSyncStorage,
 	TLSocketRoom,
+	TLSyncErrorCloseEventCode,
 } from '@tldraw/sync-core'
 import {
 	createTLSchema,
@@ -31,6 +33,10 @@ const schema = createTLSchema({
 // How long a room stays open with nobody in it (covers page reloads and brief network drops).
 // EMPTY_GRACE_SECONDS in the worker's vars overrides it (the local test uses a few seconds).
 const DEFAULT_EMPTY_GRACE_SECONDS = 120
+
+// Sent to everyone when a presenter ends the room. The close code is tldraw sync's "fatal" code, so
+// clients stop reconnecting; the site shows "the presenter ended this live session" (site/src/live.jsx).
+export const ROOM_ENDED = 'ROOM_ENDED'
 
 interface SocketAttachment {
 	sessionId: string
@@ -78,7 +84,11 @@ export class TldrawDurableObject extends DurableObject {
 				clientTimeout: Infinity,
 				onSessionSnapshot: (sessionId, snapshot) => {
 					const ws = this.sessionIdToWs.get(sessionId)
-					if (ws) ws.serializeAttachment({ sessionId, snapshot })
+					try {
+						if (ws) ws.serializeAttachment({ sessionId, snapshot })
+					} catch {
+						// the socket closed in the meantime (e.g. the room was just ended)
+					}
 				},
 			})
 
@@ -109,6 +119,13 @@ export class TldrawDurableObject extends DurableObject {
 			await this.scheduleCloseIfEmpty()
 			return Response.json({ exists: true, token })
 		})
+		// End the room for everyone (presenters only): see endRoom.
+		.post('/api/rooms/:roomId/close', async (request) => {
+			const body = (await request.json().catch(() => ({}))) as { token?: unknown }
+			if (!(await this.isPresenterToken(body.token))) return error(403, 'only a presenter can end the room')
+			await this.endRoom()
+			return Response.json({ exists: false })
+		})
 
 	private isOpen() {
 		return this.ctx.storage.get('opened').then(Boolean)
@@ -129,6 +146,27 @@ export class TldrawDurableObject extends DurableObject {
 	// Runs a grace period after the room last emptied: close it unless someone came back.
 	override async alarm() {
 		if (this.ctx.getWebSockets().length === 0) await this.ctx.storage.delete(['opened', 'presenterTokens'])
+	}
+
+	// Disconnect everyone for good and delete the room (document, highlights, presenter tokens), so
+	// an ended room costs nothing. Starting it again with the password seeds it fresh from the deck.
+	private async endRoom() {
+		for (const ws of this.ctx.getWebSockets()) {
+			try {
+				ws.close(TLSyncErrorCloseEventCode, ROOM_ENDED)
+			} catch {
+				// already closing
+			}
+		}
+		this.sessionIdToWs.clear()
+		try {
+			this.room?.close()
+		} catch {
+			// its sockets are closed already
+		}
+		this.room = null
+		await this.ctx.storage.deleteAlarm()
+		await this.ctx.storage.deleteAll()
 	}
 
 	// Entry point for all requests to the Durable Object
@@ -173,11 +211,13 @@ export class TldrawDurableObject extends DurableObject {
 	}
 
 	override async webSocketClose(ws: WebSocket) {
+		if (!(await this.isOpen())) return // the room was ended: nothing left to update
 		this.handleWebSocketEnd(ws, 'handleSocketClose')
 		await this.scheduleCloseIfEmpty(ws)
 	}
 
 	override async webSocketError(ws: WebSocket) {
+		if (!(await this.isOpen())) return
 		this.handleWebSocketEnd(ws, 'handleSocketError')
 		await this.scheduleCloseIfEmpty(ws)
 	}

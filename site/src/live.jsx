@@ -4,6 +4,8 @@
 //               can edit, present, laser and highlight, like the normal editor.
 //   viewer    – anyone else with the link; read-only (enforced by the server) and follows the
 //               presenter: their screen while they edit, their slides while they present.
+// A presenter can end the room for everyone ("End for everyone"): the server disconnects everybody
+// for good and deletes the room, and viewers see "The presenter ended this live session".
 // Cursors, laser pointers and highlighter strokes travel through tldraw sync; this file adds
 // filling a new room from the published deck, and the following.
 import { useEffect, useState } from 'react'
@@ -37,7 +39,8 @@ export function presenterToken(id = roomId) {
 }
 function savePresenterToken(id, token) {
 	try {
-		localStorage.setItem(tokenKey(id), token)
+		if (token) localStorage.setItem(tokenKey(id), token)
+		else localStorage.removeItem(tokenKey(id))
 	} catch {}
 }
 
@@ -62,6 +65,21 @@ async function openRoom(id, password) {
 	if (!r.ok) throw new Error(`Could not open the room (${r.status})`)
 	savePresenterToken(id, (await r.json()).token)
 }
+
+// End the room for everyone (presenters only): the server closes every connection and deletes it.
+export async function endRoom(id = roomId) {
+	const r = await fetch(`${SYNC_URL}/api/rooms/${serverRoom(id)}/close`, {
+		method: 'POST',
+		headers: { 'content-type': 'application/json' },
+		body: JSON.stringify({ token: presenterToken(id) }),
+	})
+	if (r.status === 403) throw new Error('Only the presenter can end this room.')
+	if (!r.ok) throw new Error(`Could not end the room (${r.status})`)
+	savePresenterToken(id, null)
+}
+
+// The server's close reason when a presenter ends the room (sync-worker/src/TldrawDurableObject.ts).
+export const ROOM_ENDED = 'ROOM_ENDED'
 
 export function connectUri(isPresenter) {
 	const token = isPresenter && presenterToken()
@@ -261,7 +279,21 @@ export function LiveBar({ deck, isPresenter }) {
 					ensureJoinSlide(editor, roomUrl(roomId))
 				},
 			}),
-			h(Button, { label: 'Leave', onClick: () => (location.href = roomUrl(null)) }))
+			h(Button, { label: 'Leave', title: 'Leave; the room stays open for the others', onClick: () => (location.href = roomUrl(null)) }),
+			h(Button, {
+				label: '■ End for everyone',
+				title: 'Close this live room for everyone and delete it from the server',
+				style: { color: 'var(--tl-color-warn, #e03131)', fontWeight: 600 },
+				onClick: async () => {
+					if (!confirm('End this live session for everyone?\n\nEveryone is disconnected and the room is deleted (highlights and edits made here are lost). The published deck is not changed.')) return
+					try {
+						await endRoom()
+						location.href = roomUrl(null)
+					} catch (err) {
+						alert(err.message)
+					}
+				},
+			}))
 	}
 	return h('div', { ...guard(editor), style: bar },
 		status,
@@ -271,9 +303,10 @@ export function LiveBar({ deck, isPresenter }) {
 		h(Button, { label: 'Leave', onClick: () => (location.href = roomUrl(null)) }))
 }
 
-// Shown when a room link isn't live: it was never started, or everyone left and it closed.
-// The presenter can start it again here with the room password; others wait for them.
-export function RoomClosed() {
+// Shown when a room link isn't live: it was never started, everyone left and it closed, or (ended)
+// the presenter just ended it for everyone. The presenter can start it again here with the room
+// password; others wait for them.
+export function RoomClosed({ ended = false }) {
 	const [password, setPassword] = useState('')
 	const [status, setStatus] = useState(null) // null | 'busy' | error message
 	const submit = async (e) => {
@@ -290,9 +323,11 @@ export function RoomClosed() {
 	return (
 		<div style={{ height: '100%', display: 'grid', placeItems: 'center', fontFamily: 'system-ui, sans-serif', color: '#333', background: '#f8f9fa' }}>
 			<div style={{ textAlign: 'center', maxWidth: 380, padding: 24 }}>
-				<h2 style={{ margin: '0 0 8px' }}>This room isn't live</h2>
+				<h2 style={{ margin: '0 0 8px' }}>{ended ? 'The presenter ended this live session' : "This room isn't live"}</h2>
 				<p style={{ margin: '0 0 16px', color: '#666' }}>
-					Room <b>{roomId}</b> hasn't been started, or everyone has left. Ask the presenter to start it, then reload.
+					{ended
+						? <>Thanks for following along. You can still open the presentation on your own.</>
+						: <>Room <b>{roomId}</b> hasn't been started, or everyone has left. Ask the presenter to start it, then reload.</>}
 				</p>
 				<form onSubmit={submit} style={{ display: 'flex', gap: 6, justifyContent: 'center', marginBottom: 8 }}>
 					<input type="password" placeholder="Room password" value={password} onChange={(e) => setPassword(e.target.value)} style={input} />
