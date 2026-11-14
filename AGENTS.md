@@ -23,7 +23,7 @@ you need to work on the tooling itself.
 | `presentation-pack/paper/kit.exec.js` | the kit code-drawn slides use (`pres build`) |
 | `presentation-pack/paper/starter.tldraw`, `starter/` | what `pres new` copies ({{TITLE}}/{{PRESENTER}} filled in) |
 | `presentation-pack/bin/` | low-level builders (`install.mjs`, `paper.mjs`, `tl.mjs`) used by `pres` |
-| `site/` | the website (gallery + player); `scripts/export-decks.mjs`; `vite.config.js` resolves pack versions |
+| `site/` | the website (gallery + player); `src/phone.jsx` is its phone interface; `scripts/export-decks.mjs`; `vite.config.js` resolves pack versions |
 | `sync-worker/` | the live-room server (Cloudflare Worker) |
 | `docs/` | presentations.md · drawing-slides.md · extending.md · website.md |
 

@@ -108,7 +108,8 @@ pres upgrade my-deck               # move a deck to the newest version, then loo
 ```
 
 The website bundles every version and loads the one a deck asks for. A version must keep exporting
-what `script/site-entry.js` lists. `paper/kit.exec.js` (the slide builder) isn't versioned: it only
+what `script/site-entry.js` lists (from pack 8 that includes `annotateMode`, `slideBeats` and
+`clearAnnotations`, which the phone interface uses). `paper/kit.exec.js` (the slide builder) isn't versioned: it only
 matters when you rebuild slides.
 
 The [pack README](../presentation-pack/README.md) describes its internals.

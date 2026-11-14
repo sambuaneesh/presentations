@@ -63,7 +63,8 @@ export function useLandscape() {
 			<style>{LANDSCAPE_CSS}</style>
 		</button>
 	) : null
-	return { style, button }
+	// The phone interface (phone.jsx) shows its own button; it uses `enter` and `canOffer`.
+	return { style, button, enter: toLandscape, canOffer: offer }
 }
 
 const LANDSCAPE_CSS = `

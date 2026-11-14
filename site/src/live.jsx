@@ -55,7 +55,7 @@ export async function roomStatus(id) {
 }
 
 // Open (or re-open) a room with the room password; makes this browser its presenter.
-async function openRoom(id, password) {
+export async function openRoom(id, password) {
 	const r = await fetch(`${SYNC_URL}/api/rooms/${serverRoom(id)}/open`, {
 		method: 'POST',
 		headers: { 'content-type': 'application/json' },
@@ -137,13 +137,15 @@ function writeDeckMeta(editor, patch) {
 }
 
 // Presenters announce themselves (host) and publish their presenting (live); viewers follow.
-export function useLiveRoom(editor, isPresenter) {
+// `shareScreen: false` (the phone interface) publishes only presenting, never the presenter's
+// screen, so a presenter can look through the deck on their phone without everyone watching.
+export function useLiveRoom(editor, isPresenter, { shareScreen = true } = {}) {
 	useEffect(() => {
 		if (!editor) return
 		const me = bare(editor.user.getId())
 
 		if (isPresenter) {
-			writeDeckMeta(editor, { host: me })
+			if (shareScreen) writeDeckMeta(editor, { host: me })
 			pack.live.set({
 				onPresent: (index, beat = 0) => {
 					const current = pack.getDeck(editor).live
@@ -204,10 +206,14 @@ export function useLiveRoom(editor, isPresenter) {
 			pack.live.set(null)
 			followAgain = null
 		}
-	}, [editor, isPresenter])
+	}, [editor, isPresenter, shareScreen])
 }
 
 let followAgain = null
+// A viewer who panned away (or stopped following) follows the presenter again.
+export function followPresenter() {
+	followAgain?.()
+}
 
 // ---------- UI ----------
 
@@ -329,7 +335,7 @@ export function RoomClosed({ ended = false }) {
 						? <>Thanks for following along. You can still open the presentation on your own.</>
 						: <>Room <b>{roomId}</b> hasn't been started, or everyone has left. Ask the presenter to start it, then reload.</>}
 				</p>
-				<form onSubmit={submit} style={{ display: 'flex', gap: 6, justifyContent: 'center', marginBottom: 8 }}>
+				<form onSubmit={submit} style={{ display: 'flex', flexWrap: 'wrap', gap: 6, justifyContent: 'center', marginBottom: 8 }}>
 					<input type="password" placeholder="Room password" value={password} onChange={(e) => setPassword(e.target.value)} style={input} />
 					<button type="submit" disabled={!password || status === 'busy'} style={{ ...input, background: '#4465e9', color: '#fff', border: 'none', cursor: 'pointer' }}>
 						{status === 'busy' ? 'Starting…' : 'Start room'}

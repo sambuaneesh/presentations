@@ -8,3 +8,7 @@ export { live, presentIndex, presentBeat } from './ui/state.js'
 export { h, css, guard, Button } from './ui/kit.js'
 export { getDeck } from './lib/deck.js'
 export { getSlides } from './lib/slides.js'
+// Since pack 8: what the phone interface (site/src/phone.jsx) uses when present.
+export { annotateMode } from './ui/state.js'
+export { slideBeats } from './lib/beats.js'
+export { clearAnnotations } from './ui/presentTool.js'

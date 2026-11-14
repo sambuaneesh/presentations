@@ -49,11 +49,7 @@ Open a deck, click **● Go live**, enter the room password (and optionally a ro
   stays stored. **Leave** only takes you out; the room stays open for the others. Starting the room
   again (same link and password) gives a fresh copy of the published deck.
 - Interactive slides work in rooms: when the presenter drags or clicks, everyone sees it.
-- **Phones**: on a small screen held upright, a **⟲ Landscape** button appears (live or solo). It asks
-  the browser for fullscreen landscape; where that isn't allowed (iPhone Safari) it turns the deck 90° on
-  screen instead, so turning the phone sideways shows it full size. The phone's back button returns to portrait
-  (`site/src/landscape.jsx`). In the on-screen rotation, pinching and panning may not follow the fingers;
-  following the presenter, the usual case for viewers, is unaffected.
+- **Phones** get their own interface: see [Phones](#phones) below.
 
 The room server (`sync-worker/`) runs on Cloudflare's free plan and serves every deck. One-time setup:
 
@@ -87,6 +83,34 @@ For live rooms locally: put `ROOM_PASSWORD=<anything>` in `sync-worker/.dev.vars
 `npx wrangler dev --port 8799` in `sync-worker/`, and start the site with
 `VITE_SYNC_URL=http://localhost:8799 npm run dev`.
 
+## Phones
+
+On a small screen (the shorter side under 600px) a deck opens in the phone interface
+(`site/src/phone.jsx`) instead of the editor: no toolbars or panels, just the slide and big controls.
+
+- **Held upright**: the deck's title at the top (‹ back to the folder, ⋯ menu), the slide, big ‹ ›
+  buttons with `12 / 44` and a dot per build step, the slide's title, what you can do, and the list
+  of slides with small pictures (tap one to jump).
+- **Turned sideways**: the slide fills the screen; a control pill floats at the bottom and fades when
+  you leave it alone (any touch brings it back). **Turn sideways for a bigger slide** asks the browser
+  for fullscreen landscape; where that isn't allowed (iPhone Safari) it turns the deck 90° on screen,
+  and the phone's back button undoes it (`site/src/landscape.jsx`). Turning never restarts the deck.
+- **Reading on your own**: tap the slide or › for the next step.
+- **Viewer in a live room**: follows the presenter's slides; before they present it says "Waiting for
+  the presenter to start", and after a pan there's **Follow the presenter**.
+- **Presenter in a live room**: you start out browsing privately (nobody sees it). **Present to
+  everyone** makes the phone the clicker: everyone follows it, and you get **Laser** (drag on the
+  slide), **Highlight** and **Clear**. **Stop presenting** goes back to private browsing. The ⋯ menu
+  has share link, reset to deck, leave, and **End for everyone**. A phone presenter never shares their
+  screen, only their presenting, so a laptop presenter in the same room isn't disturbed.
+- The ⋯ menu also has **Go live…** and **Presenter login…** (as full pages, so the keyboard works), and
+  **Desktop view** for the full editor (a **Phone view** button goes back; `?ui=phone` / `?ui=desktop`
+  in the link force either one for that tab).
+
+The phone interface lives in the site, so every deck gets it whatever its pack version. Pack 8 and
+later also export the highlighter switch and step counting; older decks get laser only, and the dots
+for a scene's steps appear as they go by.
+
 ## Licence key
 
 The tldraw SDK needs a licence key on a public site. This project uses the free **hobby** licence
@@ -100,5 +124,6 @@ For local production builds, put it in `site/.env.local` (see `site/.env.example
 | the folder pages | `site/src/Gallery.jsx` (`VITE_SITE_OWNER` sets the name shown) |
 | routes, the deck player, the back link | `site/src/App.jsx` |
 | live rooms | `site/src/live.jsx` |
+| the phone interface | `site/src/phone.jsx` (and `landscape.jsx`) |
 | what gets exported per deck | `site/scripts/export-decks.mjs` |
 | which pack version a deck runs | `site/vite.config.js` (bundles every `presentation-pack/releases/<n>/` and resolves `@pack/…` per deck) and `site/src/pack.js` (loads a deck's version) |

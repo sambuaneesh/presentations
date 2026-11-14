@@ -14,6 +14,7 @@ import { SYNC_URL, roomId, hashPath, seedFromDeck, useLiveRoom, LiveBar, slideCo
 import { ensureJoinSlide, hasJoinSlide } from './joinSlide.js'
 import { Gallery, NotFound, LoadFailed, Loading } from './Gallery.jsx'
 import { useLandscape } from './landscape.jsx'
+import { PhoneDeck, phoneComponents, usePhone, PhoneViewLink } from './phone.jsx'
 
 // The deck's pack version (see pack.js), set up once it has loaded.
 let P = null // its site-entry
@@ -63,36 +64,53 @@ function mountPack(editor) {
 function useComponents(deck) {
 	return useMemo(() => {
 		// Editors (solo visitors and live-room presenters): the full pack UI.
-		const editor = { ...pack.components, InFrontOfTheCanvas: () => (<><pack.components.InFrontOfTheCanvas /><style>{BACK_CSS}</style><BackLink /><LiveBar deck={deck} isPresenter /></>) }
+		const editor = { ...pack.components, InFrontOfTheCanvas: () => (<><pack.components.InFrontOfTheCanvas /><style>{BACK_CSS}</style><BackLink /><LiveBar deck={deck} isPresenter /><PhoneViewLink /></>) }
 		// Live-room viewers: no editing UI, just the presenting overlay and the room bar.
-		const viewer = { InFrontOfTheCanvas: () => (<><style>{P.DECK_CSS + BACK_CSS}</style><P.BeatStyles /><P.PresentOverlay /><BackLink /><LiveBar deck={deck} isPresenter={false} /></>) }
+		const viewer = { InFrontOfTheCanvas: () => (<><style>{P.DECK_CSS + BACK_CSS}</style><P.BeatStyles /><P.PresentOverlay /><BackLink /><LiveBar deck={deck} isPresenter={false} /><PhoneViewLink /></>) }
 		return { editor, viewer }
 	}, [deck])
 }
 
-function Solo({ deck }) {
+function Solo({ deck, entry, phone, landscape }) {
 	const { editor } = useComponents(deck)
-	return <Tldraw snapshot={deck} tools={pack.tools} shapeUtils={pack.shapeUtils} getShapeVisibility={P.getShapeVisibility} components={editor} licenseKey={licenseKey} onMount={mountPack} />
+	const [ed, setEd] = useState(null)
+	const phoneUi = useMemo(() => phoneComponents(P), [])
+	const canvas = (
+		<Tldraw
+			snapshot={deck}
+			tools={pack.tools}
+			shapeUtils={pack.shapeUtils}
+			getShapeVisibility={P.getShapeVisibility}
+			components={phone ? phoneUi : editor}
+			hideUi={phone}
+			licenseKey={licenseKey}
+			onMount={(e) => (setEd(e), mountPack(e))}
+		/>
+	)
+	if (!phone) return canvas
+	return <PhoneDeck editor={ed} role="solo" deck={deck} entry={entry} landscape={landscape}>{canvas}</PhoneDeck>
 }
 
-function Live({ deck, isPresenter }) {
+function Live({ deck, isPresenter, entry, phone, landscape }) {
 	const store = useSync({ uri: connectUri(isPresenter), assets: inlineBase64AssetStore, shapeUtils: syncShapeUtils })
 	const [editor, setEditor] = useState(null)
 	const components = useComponents(deck)
-	useLiveRoom(editor, isPresenter)
+	useLiveRoom(editor, isPresenter, { shareScreen: !phone })
 	const ended = useRoomEnded(store)
+	const phoneUi = useMemo(() => phoneComponents(P), [])
 	if (ended) return <RoomClosed ended />
-	return (
+	const canvas = (
 		<Tldraw
 			store={store}
 			tools={pack.tools}
 			shapeUtils={pack.shapeUtils}
 			getShapeVisibility={P.getShapeVisibility}
-			components={isPresenter ? components.editor : components.viewer}
+			components={phone ? phoneUi : isPresenter ? components.editor : components.viewer}
+			hideUi={phone}
 			licenseKey={licenseKey}
 			onMount={(editor) => {
 				setEditor(editor)
-				if (!isPresenter) return zoomToFirstSlide(editor)
+				if (!isPresenter) return phone ? undefined : zoomToFirstSlide(editor)
 				// A new room starts empty: the presenter fills it from the published deck, then puts the
 				// join slide (a QR code of this room's link) in front of it.
 				if (slideCount(editor) === 0) seedFromDeck(editor, deck)
@@ -101,6 +119,8 @@ function Live({ deck, isPresenter }) {
 			}}
 		/>
 	)
+	if (!phone) return canvas
+	return <PhoneDeck editor={editor} role={isPresenter ? 'presenter' : 'viewer'} deck={deck} entry={entry} landscape={landscape}>{canvas}</PhoneDeck>
 }
 
 // Has the room been ended for everyone? The server closes every connection with ROOM_ENDED; a
@@ -122,16 +142,17 @@ function useRoomEnded(store) {
 }
 
 // Only connect to rooms that are open (started with the room password and not yet abandoned).
-function LiveGate({ deck }) {
+function LiveGate(props) {
 	const [status, setStatus] = useState(null)
 	useEffect(() => {
 		roomStatus(roomId).then(setStatus, () => setStatus({ exists: false }))
 	}, [])
 	if (!status) return <Loading />
-	return status.exists ? <Live deck={deck} isPresenter={status.presenter} /> : <RoomClosed />
+	return status.exists ? <Live {...props} isPresenter={status.presenter} /> : <RoomClosed />
 }
 
-function DeckView({ entry }) {
+function DeckView({ entry, landscape }) {
+	const phone = usePhone()
 	const [state, setState] = useState({ deck: null, error: null })
 	useEffect(() => {
 		let gone = false
@@ -144,7 +165,13 @@ function DeckView({ entry }) {
 	}, [entry.path])
 	if (state.error) return <LoadFailed path={entry.path} error={state.error} />
 	if (!state.deck) return <Loading />
-	return roomId && SYNC_URL ? <LiveGate deck={state.deck} /> : <Solo deck={state.deck} />
+	const props = { deck: state.deck, entry, phone, landscape }
+	return (
+		<>
+			{roomId && SYNC_URL ? <LiveGate {...props} /> : <Solo {...props} />}
+			{!phone && landscape.button}
+		</>
+	)
 }
 
 export default function App() {
@@ -172,9 +199,8 @@ export default function App() {
 		return (
 			<>
 				<div style={landscape.style}>
-					<DeckView entry={deck} />
+					<DeckView entry={deck} landscape={landscape} />
 				</div>
-				{landscape.button}
 			</>
 		)
 	if (route && !index.folders.some((f) => f.path === route)) return <NotFound path={route} />
