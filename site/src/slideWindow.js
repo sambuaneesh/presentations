@@ -20,14 +20,23 @@ function slideIndex(P, editor) {
 	return c.get()
 }
 
+// Set before the editor first renders when presenting will start right away (the phone's reading
+// mode): until it has, only the first slides are rendered, instead of building every slide just to
+// take most of them away a moment later.
+export const startsPresenting = atom('site:startsPresenting', false)
+
 // The getShapeVisibility to give tldraw for this pack version.
 // (?window=off in the address turns the site's windowing off, to compare.)
 export function shapeVisibilityFor(P) {
-	if (P.keepSlideMounted || new URLSearchParams(location.search).get('window') === 'off') return P.getShapeVisibility
+	const off = new URLSearchParams(location.search).get('window') === 'off'
+	const ownWindow = !!P.keepSlideMounted
 	return (shape, editor) => {
-		if (shape.type === 'frame' && shape.parentId === editor.getCurrentPageId()) {
+		if (!off && shape.type === 'frame' && shape.parentId === editor.getCurrentPageId()) {
 			const i = P.presentIndex.get()
-			if (i >= 0) {
+			if (i < 0 && startsPresenting.get()) {
+				const k = slideIndex(P, editor).get(shape.id)
+				if (k !== undefined && k > 1 && !kept.get().has(shape.id)) return 'hidden'
+			} else if (i >= 0 && !ownWindow) {
 				const k = slideIndex(P, editor).get(shape.id)
 				const w = warm.get()
 				const near = k === undefined || k === i || (w >= 0 && Math.abs(k - w) <= 1)

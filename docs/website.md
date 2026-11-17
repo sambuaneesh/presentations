@@ -144,6 +144,9 @@ What keeps the site quick (measured on a mid-range phone profile; see the commit
 - **While presenting, only the shown slide (and, once it has painted, its neighbours) is rendered.**
   Packs from 9 do this themselves (`presentation-pack/script/lib/window.js`), and the site does the
   same for older packs (`site/src/slideWindow.js`). Add `?window=off` to a link to compare without it.
+- **On a phone, the first render holds only the first slides**: reading, following and browsing all
+  start on a slide, so the rest isn't built just to be taken away (`startsPresenting` in
+  `slideWindow.js`; on a mid-range phone profile the first slide shows in ~5 s instead of ~8.5 s).
 
 ## Changing the site
 

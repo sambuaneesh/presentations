@@ -19,7 +19,7 @@ import { useValue } from 'tldraw'
 import { pack } from './pack.js'
 import { SYNC_URL, roomId, roomUrl, hashPath, openRoom, endRoom, seedFromDeck, followPresenter } from './live.jsx'
 import { ensureJoinSlide } from './joinSlide.js'
-import { keepMounted } from './slideWindow.js'
+import { keepMounted, startsPresenting } from './slideWindow.js'
 
 // ---------- when to use it ----------
 
@@ -163,6 +163,12 @@ export function PhoneDeck({ editor, role, deck, entry, landscape, children }) {
 	}
 
 	const state = usePhoneState(editor, role)
+	// Once presenting (or following someone's screen) has begun, it decides what's rendered: stop
+	// limiting the first render to the first slides (slideWindow.js).
+	const started = state.index >= 0 || state.mode === 'watching' || state.mode === 'free'
+	useEffect(() => {
+		if (started) startsPresenting.set(false)
+	}, [started])
 	useSoloPresenting(editor, role)
 	usePresenterBrowsing(editor, role)
 	useViewerResting(editor, role, state, size)

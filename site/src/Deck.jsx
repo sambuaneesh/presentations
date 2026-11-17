@@ -11,7 +11,7 @@ import { SYNC_URL, roomId, hashPath, seedFromDeck, useLiveRoom, LiveBar, slideCo
 import { ensureJoinSlide, hasJoinSlide } from './joinSlide.js'
 import { LoadFailed, Loading } from './Gallery.jsx'
 import { PhoneDeck, phoneComponents, usePhone, PhoneViewLink } from './phone.jsx'
-import { shapeVisibilityFor, watchSlideWindow } from './slideWindow.js'
+import { shapeVisibilityFor, watchSlideWindow, startsPresenting } from './slideWindow.js'
 import { loadDeck } from './routes.js'
 
 // The deck's pack version (see pack.js), set up once it has loaded.
@@ -86,6 +86,8 @@ function useComponents(deck) {
 
 function Solo({ deck, entry, phone, landscape }) {
 	const { editor } = useComponents(deck)
+	// On a phone, reading starts presenting at once: render only the first slides until it has.
+	useState(() => startsPresenting.set(phone))
 	const [ed, setEd] = useState(null)
 	const phoneUi = useMemo(() => phoneComponents(P), [])
 	const canvas = (
@@ -111,6 +113,9 @@ function Live({ deck, isPresenter, entry, phone, landscape }) {
 	const components = useComponents(deck)
 	useLiveRoom(editor, isPresenter, { shareScreen: !phone })
 	const ended = useRoomEnded(store)
+	// On a phone, everyone starts on a slide (following, resting or browsing): render only the first
+	// slides until that has begun.
+	useState(() => startsPresenting.set(phone))
 	const phoneUi = useMemo(() => phoneComponents(P), [])
 	if (ended) return <RoomClosed ended />
 	const canvas = (
