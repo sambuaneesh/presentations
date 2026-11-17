@@ -1,0 +1,11 @@
+{
+	"title": "17th November",
+	"description": "Weekly update for the team: the workflow diagram, revised after last week's feedback.",
+	"date": "2026-11-17",
+	"listed": true,
+	"pack": 9,
+	"publish": {
+		"folder": "weekly-presentations"
+	},
+	"home": "~/IIITH/Research/decomplab/presentations/17th-november"
+}
