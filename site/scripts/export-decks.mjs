@@ -25,9 +25,9 @@ const KEEP = new Set(['document', 'page', 'shape', 'binding', 'asset'])
 // transparency become looping videos (several times smaller than an animated WebP or GIF).
 // Covers are shrunk to the size the gallery shows them.
 //
-// Conversions need ffmpeg. Their results are kept in media-cache/ (committed), keyed by the
-// source's hash, so the website build (CI) never needs ffmpeg; run `npm run export` after adding
-// pictures or covers and commit media-cache/. Without ffmpeg or a cached result, the original is used.
+// Conversions need ffmpeg (the website build installs it). Results are kept in media-cache/, keyed
+// by the source's hash, and may be committed to save the build the work. Without ffmpeg or a cached
+// result, the original is used.
 const CACHE = path.join(SITE, 'media-cache')
 const MEDIA = path.join(OUT, 'media')
 const usedCache = new Set()

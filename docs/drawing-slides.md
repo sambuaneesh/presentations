@@ -64,7 +64,7 @@ The full source is `presentation-pack/paper/kit.exec.js`.
 | `k.underline(x, y, w, o)` · `k.cross(x, y, s, o)` · `k.tick(x, y, s, o)` | marks |
 | `k.arrow(from, to, o)` | an arrow; between two `id` tags it is a real **bound** arrow that follows its shapes; `[x, y]` points give a free arrow. `text`, `bend`, `dash`, `head`, `tail` |
 | `k.grid(x, y, cols, count, pitch, size, o)` | many small shapes (dots, squares); `each(i)` returns per-item options |
-| `k.image(x, y, w, h, 'name.webp', o)` | a picture from the deck's `slides/assets/` folder (png, jpg, gif, webp, svg), embedded in the deck so it shows on the website too; animated gif/webp play. Prefer webp for animations: far smaller |
+| `k.image(x, y, w, h, 'name.webp', o)` | a picture from the deck's `slides/assets/` folder (png, jpg, gif, webp, svg), embedded in the deck so it shows on the website too; animated gif/webp play (on the website, ones without transparency become small looping videos by themselves). Prefer webp for animations: far smaller |
 | `k.tag(t)` | the shape id for tag `t` |
 
 Common options on every call:

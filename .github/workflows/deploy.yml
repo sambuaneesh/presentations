@@ -32,6 +32,9 @@ jobs:
           cache: npm
           cache-dependency-path: site/package-lock.json
       - run: npm ci
+      # The export shrinks covers and turns animated pictures into videos with ffmpeg; results already
+      # in site/media-cache/ are reused, anything new (e.g. a just-published deck) is made here.
+      - run: command -v ffmpeg || (sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg)
       - run: npm run build
         env:
           VITE_TLDRAW_LICENSE_KEY: ${{ secrets.TLDRAW_LICENSE_KEY }}

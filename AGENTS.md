@@ -23,7 +23,7 @@ you need to work on the tooling itself.
 | `presentation-pack/paper/kit.exec.js` | the kit code-drawn slides use (`pres build`) |
 | `presentation-pack/paper/starter.tldraw`, `starter/` | what `pres new` copies ({{TITLE}}/{{PRESENTER}} filled in) |
 | `presentation-pack/bin/` | low-level builders (`install.mjs`, `paper.mjs`, `tl.mjs`) used by `pres` |
-| `site/` | the website: `src/App.jsx` (routes, gallery) loads `src/Deck.jsx` (the player) only for decks; `src/phone.jsx` is its phone interface; `scripts/export-decks.mjs` (pictures out to `decks/media/`, conversions cached in `media-cache/`, committed); `vite.config.js` resolves pack versions and gives each deck with `ext/` its own copy; `public/sw.js` caches for repeat visits |
+| `site/` | the website: `src/App.jsx` (routes, gallery) loads `src/Deck.jsx` (the player) only for decks; `src/phone.jsx` is its phone interface; `scripts/export-decks.mjs` (pictures out to `decks/media/`, conversions with ffmpeg, cached in `media-cache/`; the build installs ffmpeg); `vite.config.js` resolves pack versions and gives each deck with `ext/` its own copy; `public/sw.js` caches for repeat visits |
 | `sync-worker/` | the live-room server (Cloudflare Worker) |
 | `docs/` | presentations.md · drawing-slides.md · extending.md · website.md |
 
@@ -43,5 +43,8 @@ you need to work on the tooling itself.
   tldraw-offline skill documents it. Launching the app while it runs overwrites `server.json`
   (`pres` repairs it); kill processes by PID, never with `pkill -f`.
 - Commit, push, deploy the worker, or rename the GitHub repo only when the user asks.
+- Keep the website quick (docs/website.md, "Speed"): the gallery must not import tldraw (only
+  `site/src/Deck.jsx` and what it imports may); a new pack keeps `lib/window.js` (render only nearby
+  slides while presenting) and exports `keepSlideMounted`; pictures go in decks, not in `ext/` code.
 - Keep the docs in step: if you change a command, a folder convention or the kit, update
   `PRESENTATIONS.md`, `docs/` and this file in the same change.

@@ -156,7 +156,13 @@ A deck is frozen to the version of the template (the "pack": slide panel, presen
 made with, `"pack"` in deck.json, so template changes never break old talks, on the desktop or on the
 website. `pres pack` shows the versions and which decks use them. Changes to the template are made in
 `{{REPO}}/presentation-pack/script/` and become a version with `pres pack release`. A deck moves to a
-newer version only with `pres upgrade <deck>` (look at it afterwards).
+newer version only with `pres upgrade <deck>` (look at it afterwards). New decks get the newest.
+
+Newer versions are worth moving to: **from version 9, presenting renders only the slide on screen and
+its neighbours**, so clicks stay instant however big the deck (a 43-slide deck went from ~90 ms to
+~35 ms a click on a laptop, ~300 ms to ~65 ms on a phone). Nothing changes for slide files; slides
+with shapes of their own type (scenes, a deck's `ext/` shapes) stay loaded so their state survives.
+After `pres upgrade`, look (`pres shot <deck> --all`) and click through interactive slides once.
 
 **A deck's own colours** (version 7 on): store a palette in the deck's document meta, `pp.palette`,
 mapping tldraw colour names to hex, plus `solid` (the slide paper; keep it white), `background` (the
@@ -164,6 +170,22 @@ canvas around the slides) and `paper` (what light tints are mixed towards). A pl
 mixed for you; an object sets variants (`solid`, `semi`, `pattern`, `noteFill`). It travels in the
 .tldraw file and shows on the desktop, the website and in live rooms. Details:
 `{{REPO}}/docs/extending.md`.
+
+## On the website
+
+`{{REPO}}/docs/website.md` has the details; what an agent should know:
+
+- **Pictures need no care.** Keep them in `slides/assets/` and embedded in the deck as usual. On the
+  website they become separate files by themselves, animated ones without transparency become small
+  looping videos, and covers are shrunk. Don't put pictures (or other big data) inside `ext/` code:
+  that is downloaded as script before the deck can open.
+- **Phones get their own interface** (big buttons, a slide list, turn sideways for full screen);
+  nothing to do per deck. Check that a slide reads at phone size if it matters.
+- **Live rooms**: anyone with the room password can **● Go live** on a deck and share the link;
+  others follow on their own screens. When the talk is over, the presenter uses **End for everyone**
+  (in the room bar, or the phone's ⋯ menu): it disconnects everyone and deletes the room, so nothing
+  keeps running. **Leave** keeps the room open for the others.
+- Publishing updates the site in about a minute; visitors who opened it before may need a reload.
 
 ## Rules
 

@@ -81,10 +81,10 @@ export (a broken `deck.json`, a missing file, an unknown pack version) is skippe
 
 **Pictures and covers.** The export takes each deck's pictures out of its snapshot into
 `decks/media/<hash>.<ext>` files, turns animated pictures without transparency into looping MP4
-videos, and shrinks covers to 800px WebP. Conversions need `ffmpeg`; their results are kept in
-`site/media-cache/` (committed), so the website build never needs it. After adding a picture or a
-cover to a deck, run `pres export` (or `npm run export`) here and commit `site/media-cache/` with it.
-Without ffmpeg or a cached result, the original picture is used as it is.
+videos, and shrinks covers to 800px WebP. This happens by itself when the site is built: nothing to
+do when publishing. Conversions use `ffmpeg` (the GitHub build installs it); results are kept in
+`site/media-cache/`, keyed by the picture's content, and committing them just saves the build the
+work. Without ffmpeg or a cached result, the original picture is used as it is.
 
 For live rooms locally: put `ROOM_PASSWORD=<anything>` in `sync-worker/.dev.vars`, run
 `npx wrangler dev --port 8799` in `sync-worker/`, and start the site with
