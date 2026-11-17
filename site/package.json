@@ -9,6 +9,7 @@
 		"preview": "vite preview"
 	},
 	"dependencies": {
+		"@tldraw/assets": "^5.4.2",
 		"@tldraw/sync": "^5.4.2",
 		"qrcode-generator": "^2.0.4",
 		"react": "^19.3.0",

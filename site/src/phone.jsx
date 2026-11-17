@@ -19,6 +19,7 @@ import { useValue } from 'tldraw'
 import { pack } from './pack.js'
 import { SYNC_URL, roomId, roomUrl, hashPath, openRoom, endRoom, seedFromDeck, followPresenter } from './live.jsx'
 import { ensureJoinSlide } from './joinSlide.js'
+import { keepMounted } from './slideWindow.js'
 
 // ---------- when to use it ----------
 
@@ -606,12 +607,19 @@ function Thumb({ editor, id }) {
 			io.disconnect()
 			queue = queue.then(async () => {
 				if (gone || cache.has(id)) return !gone && setSrc(cache.get(id))
+				// While presenting, faraway slides aren't rendered (slideWindow.js): keep this one
+				// rendered while its picture is made, or it would come out blank.
+				const release = keepMounted(pack, id)
 				try {
+					if (editor.isShapeHidden(id)) await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)))
 					const { blob } = await editor.toImage([id], { format: 'png', scale: 0.12, pixelRatio: 2, background: true, padding: 0 })
 					const url = URL.createObjectURL(blob)
 					cache.set(id, url)
 					if (!gone) setSrc(url)
-				} catch {}
+				} catch {
+				} finally {
+					release()
+				}
 			})
 		}, { rootMargin: '200px' })
 		io.observe(ref.current)

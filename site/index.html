@@ -12,6 +12,23 @@
 			/* The pack's panels inherit this; the desktop app sets it for them. */
 			body { font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif; }
 		</style>
+		<script>
+			// Start the page's downloads now, alongside its scripts, not after them (src/routes.js
+			// picks them up): the deck list and, when the address names a deck, the deck itself.
+			;(function () {
+				try {
+					var opts = { cache: 'no-cache' }
+					var json = function (r) { return r.ok ? r.json() : Promise.reject(new Error('HTTP ' + r.status)) }
+					window.__ppIndex = fetch('decks/index.json', opts).then(json)
+					window.__ppIndex.catch(function () {})
+					var path = decodeURIComponent(location.hash.replace(/^#\/?/, '').split('?')[0]).replace(/[^a-z0-9/-]/g, '').replace(/^\/+|\/+$/g, '')
+					if (path.indexOf('/') > 0) {
+						window.__ppDeck = { path: path, json: fetch('decks/' + path + '.json', opts).then(json) }
+						window.__ppDeck.json.catch(function () {})
+					}
+				} catch (e) {}
+			})()
+		</script>
 	</head>
 	<body>
 		<div id="root"></div>

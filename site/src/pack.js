@@ -6,11 +6,12 @@ import PACKS from 'virtual:packs'
 
 export let pack = null // that version's site-entry.js, once loaded
 
-export async function loadPack(version) {
+// The pack a deck runs: its own copy if it has extensions (vite.config.js), else its version's.
+export async function loadPack(version, deckPath) {
 	// A deck with no (or an unknown) version, e.g. from an index saved before versions existed:
 	// the newest release is the best guess.
-	const newest = Object.keys(PACKS).filter((v) => /^\d+$/.test(v)).sort((a, b) => a - b).at(-1)
-	const load = PACKS[String(version)] ?? PACKS[newest]
+	const newest = Object.keys(PACKS.versions).filter((v) => /^\d+$/.test(v)).sort((a, b) => a - b).at(-1)
+	const load = PACKS.decks[deckPath] ?? PACKS.versions[String(version)] ?? PACKS.versions[newest]
 	if (!load) throw new Error(`this site has no pack version ${version}`)
 	pack = await load()
 	return pack

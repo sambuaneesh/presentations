@@ -79,6 +79,13 @@ npm run build      # the static site in site/dist/ (npx vite preview to look at 
 tldraw Desktop is open, but it reads the **saved** `.tldraw` files, so save first. A deck it can't
 export (a broken `deck.json`, a missing file, an unknown pack version) is skipped with a warning.
 
+**Pictures and covers.** The export takes each deck's pictures out of its snapshot into
+`decks/media/<hash>.<ext>` files, turns animated pictures without transparency into looping MP4
+videos, and shrinks covers to 800px WebP. Conversions need `ffmpeg`; their results are kept in
+`site/media-cache/` (committed), so the website build never needs it. After adding a picture or a
+cover to a deck, run `pres export` (or `npm run export`) here and commit `site/media-cache/` with it.
+Without ffmpeg or a cached result, the original picture is used as it is.
+
 For live rooms locally: put `ROOM_PASSWORD=<anything>` in `sync-worker/.dev.vars`, run
 `npx wrangler dev --port 8799` in `sync-worker/`, and start the site with
 `VITE_SYNC_URL=http://localhost:8799 npm run dev`.
@@ -117,12 +124,36 @@ The tldraw SDK needs a licence key on a public site. This project uses the free 
 (non-commercial, shows a "made with tldraw" watermark), in the repository secret `TLDRAW_LICENSE_KEY`.
 For local production builds, put it in `site/.env.local` (see `site/.env.example`).
 
+## Speed
+
+What keeps the site quick (measured on a mid-range phone profile; see the commit history for numbers):
+
+- **The gallery doesn't load tldraw.** Everything a deck needs is in `site/src/Deck.jsx`, loaded
+  only when a deck opens (`App.jsx` starts it early when the address is a deck).
+- **Downloads start at once.** `index.html` asks for the deck list and the deck in the address
+  before any script has loaded (`site/src/routes.js` picks them up).
+- **A deck downloads only its own extensions**: each deck with an `ext/` gets its own copy of its
+  pack version's code (`vite.config.js`).
+- **Pictures are separate files** (see "Pictures and covers" above), fetched when their slide comes
+  near; **covers are small**.
+- **tldraw's fonts, icons and translations come from this site** (`@tldraw/assets`), and only the
+  fonts the slides use are fetched (tldraw would otherwise preload all 16 in the background).
+- **Repeat visits** load from the device (`site/public/sw.js`, a service worker): content-named files
+  never touch the network again; pages and decks are fetched fresh first, so a publish shows at once,
+  and come from the device when offline.
+- **While presenting, only the shown slide (and, once it has painted, its neighbours) is rendered.**
+  Packs from 9 do this themselves (`presentation-pack/script/lib/window.js`), and the site does the
+  same for older packs (`site/src/slideWindow.js`). Add `?window=off` to a link to compare without it.
+
 ## Changing the site
 
 | Want | Where |
 |---|---|
 | the folder pages | `site/src/Gallery.jsx` (`VITE_SITE_OWNER` sets the name shown) |
-| routes, the deck player, the back link | `site/src/App.jsx` |
+| routes and the gallery/deck switch | `site/src/App.jsx`, `site/src/routes.js` |
+| the deck player, the back link | `site/src/Deck.jsx` |
+| rendering only nearby slides while presenting (older packs) | `site/src/slideWindow.js` |
+| offline and repeat-visit caching | `site/public/sw.js` |
 | live rooms | `site/src/live.jsx` |
 | the phone interface | `site/src/phone.jsx` (and `landscape.jsx`) |
 | what gets exported per deck | `site/scripts/export-decks.mjs` |
