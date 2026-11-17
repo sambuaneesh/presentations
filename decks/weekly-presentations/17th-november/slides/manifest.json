@@ -1,5 +1,7 @@
 [
 	"01-workflow",
 	"02-gqm",
-	"03-results"
+	"03-results",
+	"04-tokens",
+	"05-permodel"
 ]
