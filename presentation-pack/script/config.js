@@ -9,14 +9,16 @@ import { SceneShapeUtil } from './scenes/SceneShapeUtil.js'
 import { EXTENSIONS } from './extensions.js'
 import { SCENE_CSS } from './scenes/kit.js'
 import { beatVisibility } from './lib/beats.js'
+import { slideWindowVisibility } from './lib/window.js'
 
 // tldraw outlines text in the canvas colour so it reads over lines; on slides (and especially dark
 // themes) that shows up as a halo, so decks turn it off.
 export const DECK_CSS = `.tl-container { --tl-text-outline: none; } .tl-text__outline { text-shadow: none !important; }` + SCENE_CSS + BEAT_CSS
 
 // Shapes waiting for a later build step are hidden (see lib/beats.js).
+// While presenting, slides other than the shown one (and its neighbours) aren't rendered (lib/window.js).
 export function getShapeVisibility(shape, editor) {
-	return beatVisibility(shape, editor)
+	return slideWindowVisibility(shape, editor) ?? beatVisibility(shape, editor)
 }
 
 /** @param {import('../.script-workspace/script-context').ConfigScriptContext} ctx */

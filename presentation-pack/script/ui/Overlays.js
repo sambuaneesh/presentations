@@ -9,6 +9,7 @@ import { goTo } from './SlidePanel.js'
 import { getSlides, getCurrentIndex, insertSlide } from '../lib/slides.js'
 import { SLIDE_GAP, getDeck } from '../lib/deck.js'
 import { applyPalette } from '../lib/palette.js'
+import { watchSlideWindow } from '../lib/window.js'
 
 export function NotesPanel() {
 	const editor = useEditor()
@@ -74,6 +75,8 @@ export function BeatStyles() {
 	// the deck's own colours (deck meta `palette`, lib/palette.js); mounted wherever a deck is shown
 	const palette = useValue('palette', () => JSON.stringify(getDeck(editor).palette ?? null), [editor])
 	useEffect(() => applyPalette(editor, JSON.parse(palette)), [editor, palette])
+	// while presenting, render only the shown slide and its neighbours (lib/window.js)
+	useEffect(() => watchSlideWindow(editor), [editor])
 	const css = useValue('beatCss', () => {
 		const i = presentIndex.get()
 		const p = previewBeat.get()

@@ -4,16 +4,28 @@ import { SLIDE_W, SLIDE_GAP, getDeck, updateDeck, footerText } from './deck.js'
 import { getTheme, roleProps } from './themes.js'
 import { buildSlide, LAYOUTS } from './layouts.js'
 import { TEMPLATES } from './templates.js'
+import { computed } from 'tldraw'
 
 const UNLOCKED = { ignoreShapeLock: true }
 
+// Cached per editor (a computed signal): it recalculates only when the page's top-level shapes
+// change, so the many calls per click (step visibility asks for every shape) cost nothing.
+// Callers must not change the array: copy it first, as the structural operations below do.
+const SLIDES = new WeakMap()
 export function getSlides(editor) {
-	const pageId = editor.getCurrentPageId()
-	return editor
-		.getSortedChildIdsForParent(pageId)
-		.map((id) => editor.getShape(id))
-		.filter((s) => s?.type === 'frame')
-		.sort((a, b) => a.x - b.x || a.y - b.y)
+	let c = SLIDES.get(editor)
+	if (!c) {
+		c = computed('pp:slides', () => {
+			const pageId = editor.getCurrentPageId()
+			return editor
+				.getSortedChildIdsForParent(pageId)
+				.map((id) => editor.getShape(id))
+				.filter((s) => s?.type === 'frame')
+				.sort((a, b) => a.x - b.x || a.y - b.y)
+		})
+		SLIDES.set(editor, c)
+	}
+	return c.get()
 }
 
 // The slide containing `shapeId`, if any.

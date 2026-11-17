@@ -109,7 +109,13 @@ pres upgrade my-deck               # move a deck to the newest version, then loo
 
 The website bundles every version and loads the one a deck asks for. A version must keep exporting
 what `script/site-entry.js` lists (from pack 8 that includes `annotateMode`, `slideBeats` and
-`clearAnnotations`, which the phone interface uses). `paper/kit.exec.js` (the slide builder) isn't versioned: it only
+`clearAnnotations`, which the phone interface uses; from pack 9, `keepSlideMounted`).
+
+From pack 9, while presenting only the shown slide and its neighbours are rendered
+(`lib/window.js`), which makes clicks several times quicker in big decks. Slides holding shapes of a
+type of their own (scenes, a deck's `ext/` shapes) always stay rendered, so component state there
+survives leaving the slide. If you need a far slide rendered while presenting (say, to export a
+picture of it), call `keepSlideMounted(slideId)` and the function it returns when done. `paper/kit.exec.js` (the slide builder) isn't versioned: it only
 matters when you rebuild slides.
 
 The [pack README](../presentation-pack/README.md) describes its internals.

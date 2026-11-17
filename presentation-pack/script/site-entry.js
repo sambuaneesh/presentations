@@ -12,3 +12,5 @@ export { getSlides } from './lib/slides.js'
 export { annotateMode } from './ui/state.js'
 export { slideBeats } from './lib/beats.js'
 export { clearAnnotations } from './ui/presentTool.js'
+// Since pack 9: while presenting only nearby slides are rendered; keep one rendered (e.g. to export it).
+export { keepSlideMounted } from './lib/window.js'
